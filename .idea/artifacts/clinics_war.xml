@@ -9,7 +9,7 @@
         <unpackNestedArchives>false</unpackNestedArchives>
       </options>
     </properties>
-    <root id="archive" name="clinics-1.0-SNAPSHOT.war">
+    <root id="archive" name="clinics.war">
       <element id="artifact" artifact-name="clinics:war exploded" />
     </root>
   </artifact>
