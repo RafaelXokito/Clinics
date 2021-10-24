@@ -28,7 +28,7 @@ make up
 make deploy
 ```
 
-## Entities (Colunas & Features)
+## Entities (Columns & Features)
 
 ### Persons
 
@@ -57,58 +57,58 @@ This is a superclass that involves Administrators, Doctors, Patients.
 ### Patients (extend Pessoas)
 
 #### Column
- - Número de Utente (UNIQUE)
- - Médicos (N to M)
- - Prescrições (1 to M)
- - Dados_Biométricos (N to M)
+ - Número de Utente **(UNIQUE)**
+ - Médicos **(N to M)**
+ - Prescrições **(1 to M)**
+ - Dados_Biométricos **(N to M)**
  - Created_by :only by Administradores/Médicos
 #### Features
  - Inscrição Própria
  - Consultas de estados próprios
  - Visualização de histórico de dados/sinais biométricos (Próprio)
 
-### Médicos (extend Pessoas)
+### Doctors (extend Persons)
 
-#### Colunas
+#### Columns
  - especialidade
- - Utentes (N to M)
- - Created_by (FK_USER) :only by Administradores
- - Prescrições (1 to M)
+ - Utentes **(N to M)**
+ - Created_by **(FK_USER)** :only by Administradores
+ - Prescrições **(1 to M)**
 #### Features
  - Inscrição de Utentes
  - Consultas de estados de Utentes
  - Atribuir Prescrições aos Utentes
  - Gerir os dados/sinais biométricos dos seus utentes
 
-### Tipos_De_Dados_Biométricos (Alimentação, Exercício regular, Temperatura corporal, Frequência cardíaca)
+### Biometric_Data_Type (Alimentação, Exercício regular, Temperatura corporal, Frequência cardíaca)
 
-#### Colunas
+#### Columns
  - id (UNIQUE PK)
  - name :temperatura corporal (pode este campo ser a PK?)
  - limite_min :30(º)
  - limite_max :45(º)
- - unidade_medida (STRING) :ºC (Graus)
+ - unidade_medida **(STRING)** :ºC (Graus)
 #### Features
  - Notificar os Utentes e Médicos
 
-### Dados_Biométricos (Resultados)
+### Biometric_Data (Resultados)
 
-#### Colunas
- - id (UNIQUE PK)
- - Tipos_De_Dados_Biométricos (1 to M)
+#### Columns
+ - id **(UNIQUE PK)**
+ - Tipos_De_Dados_Biométricos **(1 to M)**
  - Valores
- - Notas (String)
+ - Notas **(String)**
 
-### Prescrições (uma prescrição de exercício físico para doentes com obesidade)
+### Prescriptions (uma prescrição de exercício físico para doentes com obesidade)
 
-#### Colunas
+#### Columns
 
  - id (UNIQUE PK)
- - Tipos_De_Dados_Biométricos (1 to M)
- - Utente (M to 1) :um utente tem várias prescrições, e uma prescrição vários utentes
- - Médico (M to 1) :um médico tem várias prescrições, e uma prescrição tem apenas um médito
- - Duração (Data) :Data inicio e data fim
- - Notas (String)
+ - Tipos_De_Dados_Biométricos **(1 to M)**
+ - Utente **(M to 1)** :um utente tem várias prescrições, e uma prescrição vários utentes
+ - Médico **(M to 1)** :um médico tem várias prescrições, e uma prescrição tem apenas um médito
+ - Duração **(Data)** :Data inicio e data fim
+ - Notas **(String)**
 
 #### Features
 
