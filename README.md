@@ -1,12 +1,10 @@
 # Clinics
 
-
-################################
-Entidades (Colunas & Features)
+##Entidades (Colunas & Features)
   Pessoas
     Colunas
-      - id (UNIQUE PK)
-      - email (UNIQUE) :as username
+      - username (UNIQUE PK)
+      - email (UNIQUE) :as username and can be null
       - password
       - name
       - gender
@@ -49,7 +47,7 @@ Entidades (Colunas & Features)
   Tipos_De_Dados_Biométricos (Alimentação, Exercício regular, Temperatura corporal, Frequência cardíaca)
     Colunas
       - id (UNIQUE PK)
-      - description :temperatura corporal
+      - name :temperatura corporal (pode este campo ser a PK?)
       - limite_min :30(º)
       - limite_max :45(º)
       - unidade_medida (STRING) :ºC (Graus)
@@ -67,13 +65,12 @@ Entidades (Colunas & Features)
     Colunas
       - id (UNIQUE PK)
       - Tipos_De_Dados_Biométricos (1 to M)
-      - Utente (M to 1)
-      - Médico (M to 1)
-      - Duração (Data)
+      - Utente (M to 1) :um utente tem várias prescrições, e uma prescrição vários utentes
+      - Médico (M to 1) :um médico tem várias prescrições, e uma prescrição tem apenas um médito
+      - Duração (Data) :Data inicio e data fim
       - Notas (String)
 
-################################
-Features
+##Features
   Inscrição de Utentes
     - Número de Utente
     - Nome
@@ -96,4 +93,6 @@ Features
     - Tipo de exames Electrocardiogramas ECG, Radiografia do tórax)
   Deverá ainda permitir a gestão de itens de um PRC para determinado doente, com uma determinada duração, de acordo com os resultados obtidos desses processamentos de dados (por exemplo, sugerir, para o próximo mês, uma prescrição de exercício físico para doentes com obesidade, e/ou uma prescrição médica para doentes com índice de glicemia alto, e/ou uma prescrição de nutrição para doentes com níveis altos de colesterol).
     -  Consoante o tipo de prescrição, ele irá adicionar adicionar essa prescrição aos Utentes
- 
+
+##Dúvidas
+  - CascadeType.* :que tipo de cascade não permite a remoção enquanto houver entidades relacionadas
