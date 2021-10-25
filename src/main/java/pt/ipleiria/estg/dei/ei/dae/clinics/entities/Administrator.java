@@ -9,25 +9,43 @@ import java.util.List;
 
 @Entity
 @Table(name = "Administrators")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllAdministrators",
+                query = "SELECT a FROM Administrator a ORDER BY a.username"
+        )
+})
 public class Administrator extends Person implements Serializable {
 
     @NotNull
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
-    private List<Doctor> created_who;
+    private List<Doctor> doctors;
 
-    public Administrator(String username, String email, String password, String name, String gender, List<Doctor> created_who) {
+    public Administrator(String username, String email, String password, String name, String gender, List<Doctor> doctors) {
         super(username, email, password, name, gender);
-        this.created_who = new ArrayList<>();
+        this.doctors = new ArrayList<>();
     }
 
     public Administrator() {
     }
 
-    public List<Doctor> getCreated_who() {
-        return created_who;
+    public Doctor addDoctor(Doctor doctor){
+        if (doctor != null && !this.doctors.contains(doctor)) {
+            doctors.add(doctor);
+            return doctor;
+        }
+        return null;
     }
 
-    public void setCreated_who(List<Doctor> created_who) {
-        this.created_who = created_who;
+    public Doctor removeDoctor(Doctor doctor){
+        return doctor != null && doctors.remove(doctor) ? doctor : null;
+    }
+
+    public List<Doctor> getCreated_who() {
+        return doctors;
+    }
+
+    public void setCreated_who(List<Doctor> doctors) {
+        this.doctors = doctors;
     }
 }

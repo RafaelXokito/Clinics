@@ -2,13 +2,17 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "Biometric_Data_Types")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllBiometricDataTypes",
+                query = "SELECT bioDataTypes FROM Biometric_Data_Type bioDataTypes ORDER BY bioDataTypes.id"
+        )
+})
 public class Biometric_Data_Type implements Serializable {
     @Id
     private int id;

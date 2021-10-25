@@ -49,6 +49,7 @@ This is a superclass that involves Administrators, Doctors, Patients.
 ### Administrators (extend Persons)
 
 #### Column
+ - doctors **(M to 1)**
 
 #### Features
  - Adicionar Tipos de Prescrições

@@ -6,6 +6,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name="Biometric_Data")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllBiometricData",
+                query = "SELECT bioData FROM Biometric_Data bioData ORDER BY bioData.id"
+        )
+})
 public class Biometric_Data implements Serializable {
     @Id
     private Long id;

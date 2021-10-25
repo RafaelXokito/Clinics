@@ -3,12 +3,19 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
+import javax.print.Doc;
 import javax.validation.constraints.Digits;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "PATIENTS")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllPatients",
+                query = "SELECT p FROM Patient p ORDER BY p.username"
+        )
+})
 public class Patient extends Person implements Serializable {
 
     @NotNull
@@ -37,6 +44,30 @@ public class Patient extends Person implements Serializable {
     }
 
     public Patient() {
+    }
+
+    public Doctor addDoctor(Doctor doctor){
+        if (doctor != null && !this.doctors.contains(doctor)) {
+            doctors.add(doctor);
+            return doctor;
+        }
+        return null;
+    }
+
+    public Doctor removeDoctor(Doctor doctor){
+        return doctor != null && doctors.remove(doctor) ? doctor : null;
+    }
+
+    public Biometric_Data addBiometricData(Biometric_Data biometric_data){
+        if (biometric_data != null && !this.biometric_data.contains(biometric_data)) {
+            this.biometric_data.add(biometric_data);
+            return biometric_data;
+        }
+        return null;
+    }
+
+    public Biometric_Data removeBiometricData(Biometric_Data biometric_data){
+        return biometric_data != null && this.biometric_data.remove(biometric_data) ? biometric_data : null;
     }
 
     public Long getHealthNo() {

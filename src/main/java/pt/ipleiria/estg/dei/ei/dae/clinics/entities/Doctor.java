@@ -8,6 +8,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "DOCTORS")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllDoctors",
+                query = "SELECT d FROM Doctor d ORDER BY d.username"
+        )
+})
 public class Doctor extends Person implements Serializable {
     @NotNull
     private String specialty;
@@ -37,6 +43,30 @@ public class Doctor extends Person implements Serializable {
     }
 
     public Doctor() {
+    }
+
+    public Patient addPatient(Patient patient){
+        if (patient != null && !this.patients.contains(patient)) {
+            patients.add(patient);
+            return patient;
+        }
+        return null;
+    }
+
+    public Patient removePatient(Patient patient){
+        return patient != null && patients.remove(patient) ? patient : null;
+    }
+
+    public Prescription addPrescription(Prescription prescription){
+        if (prescription != null && !this.prescriptions.contains(prescription)) {
+            prescriptions.add(prescription);
+            return prescription;
+        }
+        return null;
+    }
+
+    public Prescription removePrescription(Prescription prescription){
+        return prescription != null && prescriptions.remove(prescription) ? prescription : null;
     }
 
     public String getSpecialty() {

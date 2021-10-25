@@ -13,6 +13,12 @@ import java.util.Date;
         name = "Persons",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email"})
 )
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllPersons",
+                query = "SELECT p FROM Person p ORDER BY p.username"
+        )
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
     @Id

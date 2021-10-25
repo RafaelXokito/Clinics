@@ -9,6 +9,12 @@ import java.util.Date;
 
 @Entity
 @Table(name = "prescriptions")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllPrescriptions",
+                query = "SELECT p FROM Prescription p ORDER BY p.id"
+        )
+})
 public class Prescription implements Serializable {
     @Id
     private Long id;
