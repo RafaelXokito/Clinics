@@ -15,6 +15,7 @@ import java.io.Serializable;
 })
 public class Biometric_Data implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -23,7 +24,7 @@ public class Biometric_Data implements Serializable {
     private Biometric_Data_Type biometric_data_type;
 
     @NotNull
-    private int value;
+    private double value;
 
     @NotNull
     private String notes;
@@ -33,11 +34,11 @@ public class Biometric_Data implements Serializable {
     @NotNull
     private Patient patient;
 
-    public Biometric_Data(Long id, Biometric_Data_Type biometric_data_type, int value, String notes) {
-        this.id = id;
+    public Biometric_Data(Biometric_Data_Type biometric_data_type, double value, String notes, Patient patient) {
         this.biometric_data_type = biometric_data_type;
         this.value = value;
         this.notes = notes;
+        this.patient = patient;
     }
 
     public Biometric_Data() {
@@ -59,11 +60,11 @@ public class Biometric_Data implements Serializable {
         this.biometric_data_type = biometric_data_type;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

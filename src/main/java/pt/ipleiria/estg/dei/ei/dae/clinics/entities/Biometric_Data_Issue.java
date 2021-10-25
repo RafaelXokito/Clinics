@@ -9,7 +9,9 @@ import java.util.List;
 
 @Entity
 public class Biometric_Data_Issue implements Serializable {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -33,13 +35,24 @@ public class Biometric_Data_Issue implements Serializable {
                     "ID"))
     private List<Prescription> prescriptions;
 
-    public Biometric_Data_Issue(Long id, String name, int min, int max, Biometric_Data_Type biometric_data_type) {
-        this.id = id;
+    public Biometric_Data_Issue(String name, int min, int max, Biometric_Data_Type biometric_data_type) {
         this.name = name;
         this.min = min;
         this.max = max;
         this.biometric_data_type = biometric_data_type;
         this.prescriptions = new ArrayList<>();
+    }
+
+    public Prescription addPrescription(Prescription prescription){
+        if (prescription != null && !this.prescriptions.contains(prescription)) {
+            prescriptions.add(prescription);
+            return prescription;
+        }
+        return null;
+    }
+
+    public Prescription removePrescription(Prescription prescription){
+        return prescription != null && prescriptions.remove(prescription) ? prescription : null;
     }
 
     public Biometric_Data_Issue() {

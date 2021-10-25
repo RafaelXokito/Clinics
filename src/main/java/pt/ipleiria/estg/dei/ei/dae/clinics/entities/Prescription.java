@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.common.constraint.Nullable;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataIssueBean;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,11 +20,12 @@ import java.util.List;
 })
 public class Prescription implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     @ManyToMany(mappedBy = "prescriptions") //Precisa ser alterado para ManyToMany uma prescrição pode ter vários tipos biométricos
-    private List<Biometric_Data_Issue> biometric_data_issue;
+    private List<Biometric_Data_Issue> biometric_data_issues;
 
     @ManyToOne
     @JoinColumn(name = "DOCTOR_USERNAME")
@@ -39,18 +41,28 @@ public class Prescription implements Serializable {
     @Nullable
     private String notes;
 
-    //TODO - Quando se recebe um *Biometric_Data_Issue* tem de passar a ser o *id*, e depois fazer o find em ciclo
-    public Prescription(Long id, Doctor doctor, Date start_date, Date end_date, String notes, Biometric_Data_Issue ...biometric_data_issues) {
-        this.id = id;
+    public Prescription(Doctor doctor, Date start_date, Date end_date, String notes, List<Biometric_Data_Issue> biometric_data_issues) {
         this.doctor = doctor;
         this.start_date = start_date;
         this.end_date = end_date;
         this.notes = notes;
 
-        this.biometric_data_issue = Arrays.asList(biometric_data_issues);
+        this.biometric_data_issues = biometric_data_issues;
     }
 
     public Prescription() {
+    }
+
+    public Biometric_Data_Issue addBiometricDataIssue(Biometric_Data_Issue biometricDataIssue){
+        if (biometricDataIssue != null && !this.biometric_data_issues.contains(biometricDataIssue)) {
+            biometric_data_issues.add(biometricDataIssue);
+            return biometricDataIssue;
+        }
+        return null;
+    }
+
+    public Biometric_Data_Issue removeBiometricDataIssue(Biometric_Data_Issue biometricDataIssue){
+        return biometricDataIssue != null && biometric_data_issues.remove(biometricDataIssue) ? biometricDataIssue : null;
     }
 
     public Long getId() {
@@ -91,5 +103,13 @@ public class Prescription implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<Biometric_Data_Issue> getBiometric_data_issue() {
+        return biometric_data_issues;
+    }
+
+    public void setBiometric_data_issues(List<Biometric_Data_Issue> biometric_data_issue) {
+        this.biometric_data_issues = biometric_data_issue;
     }
 }

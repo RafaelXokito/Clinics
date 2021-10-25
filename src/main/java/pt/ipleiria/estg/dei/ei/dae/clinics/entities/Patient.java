@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.print.Doc;
 import javax.validation.constraints.Digits;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @Digits(integer = 9, fraction = 0)
-    private Long healthNo;
+    private int healthNo;
 
     @NotNull
     @ManyToMany(mappedBy = "patients")
@@ -35,15 +36,17 @@ public class Patient extends Person implements Serializable {
     @JoinColumn(name = "DOCTOR_USERNAME")
     private Doctor created_by;
 
-    public Patient(String username, String email, String password, String name, String gender, Long healthNo, List<Doctor> doctors, List<Biometric_Data> biometric_data, Doctor created_by) {
+    public Patient(String username, String email, String password, String name, String gender, int healthNo, Doctor created_by) {
         super(username, email, password, name, gender);
         this.healthNo = healthNo;
-        this.doctors = doctors;
-        this.biometric_data = biometric_data;
+        this.doctors = new ArrayList<>();
         this.created_by = created_by;
+        this.biometric_data = new ArrayList<>();
+        addDoctor(created_by);
     }
 
     public Patient() {
+        this.biometric_data = new ArrayList<>();
     }
 
     public Doctor addDoctor(Doctor doctor){
@@ -70,11 +73,11 @@ public class Patient extends Person implements Serializable {
         return biometric_data != null && this.biometric_data.remove(biometric_data) ? biometric_data : null;
     }
 
-    public Long getHealthNo() {
+    public int getHealthNo() {
         return healthNo;
     }
 
-    public void setHealthNo(Long healthNo) {
+    public void setHealthNo(int healthNo) {
         this.healthNo = healthNo;
     }
 

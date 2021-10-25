@@ -15,7 +15,8 @@ import java.io.Serializable;
 })
 public class Biometric_Data_Type implements Serializable {
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotNull
     private String name;
     @NotNull
@@ -25,8 +26,7 @@ public class Biometric_Data_Type implements Serializable {
     @NotNull
     private String measurement_unit;
 
-    public Biometric_Data_Type(int id, String name, int min, int max, String measurement_unit) {
-        this.id = id;
+    public Biometric_Data_Type(String name, int min, int max, String measurement_unit) {
         this.name = name;
         this.min = min;
         this.max = max;
@@ -36,11 +36,11 @@ public class Biometric_Data_Type implements Serializable {
     public Biometric_Data_Type() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
