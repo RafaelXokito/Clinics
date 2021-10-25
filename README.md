@@ -54,14 +54,16 @@ This is a superclass that involves Administrators, Doctors, Patients.
  - Adicionar Tipos de Prescrições
  - Visualização de histórico de dados/sinais biométricos dos utentes (em anónimo talvez, não têm de saber quem são os utentes)
 
-### Patients (extend Pessoas)
+### Patients (extend Persons)
+
+As prescrições do utente vão ser baseadas nos valores dos dados biométricos, então a prescrição é aplicada a um tipo de dado biométrico, e esse tipo de dado biométrico se estiver irregular significa que o utente terá essa mesma prescrição.
+fazendo assim uma coligação com as prescriptions de **(N to M)**
 
 #### Column
- - Número de Utente **(UNIQUE)**
- - Médicos **(N to M)**
- - Prescrições **(1 to M)**
- - Dados_Biométricos **(N to M)**
- - Created_by :only by Administradores/Médicos
+ - healthNo **(UNIQUE)** :Número de Utente
+ - doctors **(N to M)**
+ - biometric_Data **(N to M)**
+ - Created_by :only by Médicos
 #### Features
  - Inscrição Própria
  - Consultas de estados próprios
@@ -70,10 +72,10 @@ This is a superclass that involves Administrators, Doctors, Patients.
 ### Doctors (extend Persons)
 
 #### Columns
- - especialidade
- - Utentes **(N to M)**
- - Created_by **(FK_USER)** :only by Administradores
- - Prescrições **(1 to M)**
+ - specialty **(String)**
+ - patients **(N to M)**
+ - created_by **(FK_USER)** :only by Administradores
+ - prescriptions **(1 to M)**
 #### Features
  - Inscrição de Utentes
  - Consultas de estados de Utentes
@@ -83,11 +85,11 @@ This is a superclass that involves Administrators, Doctors, Patients.
 ### Biometric_Data_Type (Alimentação, Exercício regular, Temperatura corporal, Frequência cardíaca)
 
 #### Columns
- - id (UNIQUE PK)
+ - id **(UNIQUE PK)**
  - name :temperatura corporal (pode este campo ser a PK?)
- - limite_min :30(º)
- - limite_max :45(º)
- - unidade_medida **(STRING)** :ºC (Graus)
+ - min :30(º)
+ - max :45(º)
+ - measurement_unit **(STRING)** :ºC (Graus)
 #### Features
  - Notificar os Utentes e Médicos
 
@@ -95,9 +97,9 @@ This is a superclass that involves Administrators, Doctors, Patients.
 
 #### Columns
  - id **(UNIQUE PK)**
- - Tipos_De_Dados_Biométricos **(1 to M)**
- - Valores
- - Notas **(String)**
+ - biometric_Data_Type **(1 to M)**
+ - values **(Integer)**
+ - notes **(String)**
 
 ### Prescriptions (uma prescrição de exercício físico para doentes com obesidade)
 
@@ -116,7 +118,7 @@ This is a superclass that involves Administrators, Doctors, Patients.
 
 ### Inscrição de Utentes
  - Número de Utente
- - Nome
+ - Name
  - Data de nascimento
  - Data inscrição
  - Médico (que inscreveu)

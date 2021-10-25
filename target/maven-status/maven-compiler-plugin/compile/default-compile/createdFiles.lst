@@ -1,0 +1,9 @@
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Prescription.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Administrator.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data_Type.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Person.class
+pt/ipleiria/estg/dei/ei/dae/clinics/ClinicsApplication.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Doctor.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data.class
+pt/ipleiria/estg/dei/ei/dae/clinics/providers/CorsFilter.class
+pt/ipleiria/estg/dei/ei/dae/clinics/entities/Patient.class
