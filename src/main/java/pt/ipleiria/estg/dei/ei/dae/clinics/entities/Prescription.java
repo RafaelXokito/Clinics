@@ -5,7 +5,9 @@ import io.smallrye.common.constraint.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "prescriptions")
@@ -20,17 +22,13 @@ public class Prescription implements Serializable {
     private Long id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "biometric_data_type_id")
-    private Biometric_Data_Type biometric_data_type;
+    @ManyToMany(mappedBy = "prescriptions") //Precisa ser alterado para ManyToMany uma prescrição pode ter vários tipos biométricos
+    private List<Biometric_Data_Issue> biometric_data_issue;
 
     @ManyToOne
     @JoinColumn(name = "DOCTOR_USERNAME")
     @NotNull
     private Doctor doctor;
-
-    @NotNull
-    private int value;
 
     @NotNull
     private Date start_date;
@@ -41,14 +39,15 @@ public class Prescription implements Serializable {
     @Nullable
     private String notes;
 
-    public Prescription(Long id, Biometric_Data_Type biometric_data_type, Doctor doctor, int value, Date start_date, Date end_date, String notes) {
+    //TODO - Quando se recebe um *Biometric_Data_Issue* tem de passar a ser o *id*, e depois fazer o find em ciclo
+    public Prescription(Long id, Doctor doctor, Date start_date, Date end_date, String notes, Biometric_Data_Issue ...biometric_data_issues) {
         this.id = id;
-        this.biometric_data_type = biometric_data_type;
         this.doctor = doctor;
-        this.value = value;
         this.start_date = start_date;
         this.end_date = end_date;
         this.notes = notes;
+
+        this.biometric_data_issue = Arrays.asList(biometric_data_issues);
     }
 
     public Prescription() {
@@ -62,28 +61,12 @@ public class Prescription implements Serializable {
         this.id = id;
     }
 
-    public Biometric_Data_Type getBiometric_data_type() {
-        return biometric_data_type;
-    }
-
-    public void setBiometric_data_type(Biometric_Data_Type biometric_data_type) {
-        this.biometric_data_type = biometric_data_type;
-    }
-
     public Doctor getDoctor() {
         return doctor;
     }
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
     public Date getStart_date() {

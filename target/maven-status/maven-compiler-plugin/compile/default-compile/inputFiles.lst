@@ -1,3 +1,4 @@
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/DoctorBean.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Person.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/providers/CorsFilter.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Doctor.java
@@ -7,3 +8,6 @@
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Prescription.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data_Type.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/ConfigBean.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data_Issue.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/AdministratorBean.java

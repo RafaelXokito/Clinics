@@ -21,7 +21,7 @@ public class Administrator extends Person implements Serializable {
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<Doctor> doctors;
 
-    public Administrator(String username, String email, String password, String name, String gender, List<Doctor> doctors) {
+    public Administrator(String username, String email, String password, String name, String gender) {
         super(username, email, password, name, gender);
         this.doctors = new ArrayList<>();
     }

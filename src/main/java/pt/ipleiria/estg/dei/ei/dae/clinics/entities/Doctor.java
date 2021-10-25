@@ -34,7 +34,7 @@ public class Doctor extends Person implements Serializable {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
-    public Doctor(String username, String email, String password, String name, String gender, String specialty, List<Patient> patients, Administrator created_by, List<Prescription> prescriptions) {
+    public Doctor(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {
         super(username, email, password, name, gender);
         this.specialty = specialty;
         this.patients = patients;

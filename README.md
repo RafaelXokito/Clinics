@@ -37,9 +37,9 @@ This is a superclass that involves Administrators, Doctors, Patients.
 #### Columns
  - username **(UNIQUE PK)**
  - email **(UNIQUE)** :as username and can be null
- - password
+ - password :should be encripted in client side
  - name
- - gender
+ - gender :could be [ ] - [M]ale [ ] - [F]emale [ ] - [O]ther
  - created_at
  - updated_at
  - deleted_at
@@ -83,7 +83,7 @@ fazendo assim uma coligação com as prescriptions de **(N to M)**
  - Atribuir Prescrições aos Utentes
  - Gerir os dados/sinais biométricos dos seus utentes
 
-### Biometric_Data_Type (Alimentação, Exercício regular, Temperatura corporal, Frequência cardíaca)
+### Biometric_Data_Type (Temperatura corporal, Frequência cardíaca)
 
 #### Columns
  - id **(UNIQUE PK)**
@@ -98,16 +98,29 @@ fazendo assim uma coligação com as prescriptions de **(N to M)**
 
 #### Columns
  - id **(UNIQUE PK)**
- - biometric_Data_Type **(1 to M)**
+ - Biometric_Data_Issue **(1 to M)**
  - values **(Integer)**
  - notes **(String)**
 
-### Prescriptions (uma prescrição de exercício físico para doentes com obesidade)
+### Biometric_Data_Issue
 
 #### Columns
 
- - id (UNIQUE PK)
- - Tipos_De_Dados_Biométricos **(1 to M)**
+ - id **(UNIQUE PK)**
+ - name **(UNIQUE)** :can this be unique?
+ - min **(Int)**
+ - max **(Int)**
+ - Biometric_Data_Type **(M to 1)**
+
+#### Features
+
+
+### Prescriptions (uma prescrição de exercício físico para doentes com obesidade, Alimentação, Exercício regular)
+
+#### Columns
+
+ - id **(UNIQUE PK)**
+ - Biometric_Data_Issue **(1 to M)**
  - Utente **(M to 1)** :um utente tem várias prescrições, e uma prescrição vários utentes
  - Médico **(M to 1)** :um médico tem várias prescrições, e uma prescrição tem apenas um médito
  - Duração **(Data)** :Data inicio e data fim
@@ -141,7 +154,39 @@ fazendo assim uma coligação com as prescriptions de **(N to M)**
  - Tipo de exames Electrocardiogramas ECG, Radiografia do tórax)
 
 ### Deverá ainda permitir a gestão de itens de um PRC para determinado doente, com uma determinada duração, de acordo com os resultados obtidos desses processamentos de dados (por exemplo, sugerir, para o próximo mês, uma prescrição de exercício físico para doentes com obesidade, e/ou uma prescrição médica para doentes com índice de glicemia alto, e/ou uma prescrição de nutrição para doentes com níveis altos de colesterol).
- -  Consoante o tipo de prescrição, ele irá adicionar adicionar essa prescrição aos Utentes
+ - Consoante o tipo de prescrição, ele irá adicionar adicionar essa prescrição aos Utentes
+ - Se o utente teve o ULTIMO Biometric_Data value do Biometric_Data_Type "Peso" > "max" (Biometric_Data_Type:max) essa prescrição será atribuida ao utente.
+ - Caso de estudo:
+  1. Existe um *Biometric_Data_Type* para a **temperatura corporal** com **max** de **45** e o **min** de **30** **Cº (Graus)**
+  2. É definido o *Biometric_Data_Issue* **Febre** com o **min** de **38** e o **max** de **45**
+  3. Dado *Patient* tem um *Biometric_Data* do *Biometric_Data_Type* **temperatura corporal** e com um valor de **39.5** **Cº (Graus)**
+  4. Um *Doctor* do *Patient* cria uma prescrição com *Biometric_Data_Issue* de **Febre** com o **start_date** de **25/11/2021** e **end_date** de **01/01/2022**
+
 
 ## Dúvidas
  - CascadeType.* :que tipo de cascade não permite a remoção enquanto houver entidades relacionadas
+ - Quando estamos a guardar uma password, devemos encriptá-la no lado do cliente ou do lado do servidor? Se o fizermos do lado do servidor se houver um ManInTheMiddle podemos expôr a nossa password. Se o fizermos do lado do cliente como sabemos se é aquele utilizador que está pedindo as informações?
+
+## Exemplos
+
+Biometric_Data_Type
+  name: "Temperatura corporal"
+  min: 30
+  max: 45
+  measurement_unit: "ºC (Graus Celsius)"
+
+Biometric_Data_Issue
+  name: "Febre"
+  min: 38
+  max: 40
+  Biometric_Data_Type: id:"Temperatura corporal"
+
+  name: "Febre Critica"
+  min: 40
+  max: 45
+  Biometric_Data_Type: id:"Temperatura corporal"
+
+  name: "Hipotremia"
+  min: 30
+  max: 35
+  Biometric_Data_Type: id:"Temperatura corporal"
