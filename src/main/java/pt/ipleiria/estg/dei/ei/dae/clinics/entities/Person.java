@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(
@@ -139,5 +140,18 @@ public abstract class Person {
 
     public void remove(){
         this.deleted_at = new Date();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return username.equals(person.username) && email.equals(person.email) && password.equals(person.password) && name.equals(person.name) && gender.equals(person.gender);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, email, password, name, gender);
     }
 }
