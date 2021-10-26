@@ -28,11 +28,12 @@ public class BiometricDataType implements Serializable {
     @NotNull
     private String unit_name; //Measure Unit Extended
 
-    public BiometricDataType(String name, int min, int max, String measurement_unit) {
+    public BiometricDataType(String name, int min, int max, String unit, String unit_name) {
         this.name = name;
         this.min = min;
         this.max = max;
-        this.unit = measurement_unit;
+        this.unit = unit;
+        this.unit_name = unit_name;
     }
 
     public BiometricDataType() {
@@ -40,10 +41,6 @@ public class BiometricDataType implements Serializable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -74,7 +71,15 @@ public class BiometricDataType implements Serializable {
         return unit;
     }
 
-    public void setUnitName(String measurement_unit) {
-        this.unit = measurement_unit;
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getUnit_name() {
+        return unit_name;
+    }
+
+    public void setUnit_name(String unit_name) {
+        this.unit_name = unit_name;
     }
 }

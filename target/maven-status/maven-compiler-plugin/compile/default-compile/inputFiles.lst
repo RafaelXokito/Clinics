@@ -8,11 +8,11 @@
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/BiometricDataTypeBean.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Administrator.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Prescription.java
-/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data.java
-/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data_Type.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/BiometricData.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/PatientBean.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/PrescriptionBean.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/ConfigBean.java
-/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/Biometric_Data_Issue.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/BiometricDataIssue.java
+/Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/entities/BiometricDataType.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/AdministratorBean.java
 /Users/Rafael/Desktop/Ambiente/IPL-EI/DesenvolvimentoDeAplicacoesEmpresariais/clinics/src/main/java/pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/BiometricDataIssueBean.java

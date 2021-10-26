@@ -19,13 +19,13 @@ public class AdministratorBean {
      * @param password of administrator acc
      * @param name of administrator acc
      * @param gender of administrator acc
-     * @return @Id passed as 'username' as confirmation
+     * @return Administrator created
      */
-    public String create(String username, String email, String password, String name, String gender) {
+    public Administrator create(String username, String email, String password, String name, String gender) {
         Administrator newAdministrator = new Administrator(username, email, password, name, gender);
         entityManager.persist(newAdministrator);
         entityManager.flush();
-        return newAdministrator.getUsername();
+        return newAdministrator;
     }
 
     /***

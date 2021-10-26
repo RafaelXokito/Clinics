@@ -83,10 +83,6 @@ public class BiometricData implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public BiometricDataType getBiometric_data_type() {
         return biometric_data_type;
     }

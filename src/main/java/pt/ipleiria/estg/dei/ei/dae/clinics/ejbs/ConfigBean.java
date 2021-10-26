@@ -1,5 +1,10 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -51,24 +56,24 @@ public class ConfigBean {
             patientBean.create("daniel.carreira", "219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789, "bruna.leitao");
 
             System.out.println("Creating some Biometric Data Types");
-            long temperaturaCorporalId = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC (Graus Celsius)");
-            long alturaId = biometricDataTypeBean.create("Altura", 0, 3, "m (Metros)");
+            BiometricDataType temperaturaCorporal = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC", "(Graus Celsius)");
+            BiometricDataType altura = biometricDataTypeBean.create("Altura", 0, 3, "m", "(Metros)");
 
             System.out.println("Creating some Biometric Data Issues");
-            long febreId = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporalId);
+            BiometricDataIssue febre = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporal.getId());
 
-            long hipotermiaId = biometricDataIssueBean.create("Hipotermia", 30, 35, temperaturaCorporalId);
-            biometricDataIssueBean.delete(hipotermiaId);
+            BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35, temperaturaCorporal.getId());
+            biometricDataIssueBean.delete(hipotermia.getId());
 
             System.out.println("Creating some Biometric Data");
-            long biometricData1 = biometricDataBean.create(temperaturaCorporalId,39.5,"Paciente com dores no peito.","daniel.carreira", "bruna.leitao");
-            long biometricData2 = biometricDataBean.create(alturaId,1.75,"Paciente pálido e alto.","daniel.carreira", "daniel.carreira");
+            BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(),39.5,"Paciente com dores no peito.","daniel.carreira", "bruna.leitao");
+            BiometricData biometricData2 = biometricDataBean.create(altura.getId(),1.75,"Paciente pálido e alto.","daniel.carreira", "daniel.carreira");
 
             System.out.println("Creating some Prescriptions");
-            long prescription1Id = prescriptionBean.create("bruna.leitao","25/12/2021", "01/01/2022","Para todos os doentes com febre, repousem e tomam ben-u-ron",febreId);
-
+            Prescription prescription1 = prescriptionBean.create("bruna.leitao","25/12/2021", "01/01/2022","Para todos os doentes com febre, repousem e tomam ben-u-ron",febre.getId());
 
             System.out.println("Updating some Administrators");
+            administratorBean.update("rafael.pereira", "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
         }catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
         }
