@@ -2,6 +2,10 @@
 
 O principal objetivo deste projeto é o desenvolvimento de uma aplicação empresarial clínica, para a gestão de dados/sinais biomédicos de pessoas com doença cardiovascular.
 
+# clinics
+
+Neste repositório mostramos a vertente server side da aplicação clinics.
+
 ## How to set it up?
 
 U should have docker running and in the root project directory
