@@ -6,12 +6,21 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class PatientBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    public List<Patient> getAllPatients() {
+        return (List<Patient>) entityManager.createNamedQuery("getAllPatients").getResultList();
+    }
+
+    public Patient findPatient(String username) {
+        return entityManager.find(Patient.class, username);
+    }
 
     /***
      * Creating a Patient by a Doctor
@@ -25,14 +34,14 @@ public class PatientBean {
      * @return @Id passed as 'username' as confirmation
      *         null if Not Found a Doctor with this created_byUsername
      */
-    public String create(String username, String email, String password, String name, String gender, int healthNo, String created_byUsername){
+    public Patient create(String username, String email, String password, String name, String gender, int healthNo, String created_byUsername){
         Doctor doctor = entityManager.find(Doctor.class, created_byUsername);
         if (doctor != null){
             Patient newPatient = new Patient(username,email,password,name,gender,healthNo,doctor);
             entityManager.persist(newPatient);
             entityManager.flush();
             doctor.addPatient(newPatient);
-            return newPatient.getUsername();
+            return newPatient;
         }
         return null; //Not Found a Doctor with this created_byUsername
     }

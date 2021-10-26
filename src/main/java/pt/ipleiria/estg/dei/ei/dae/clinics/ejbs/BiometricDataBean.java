@@ -5,11 +5,20 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class BiometricDataBean {
     @PersistenceContext
     private EntityManager entityManager;
+
+    public List<BiometricData> getAllBiometricData() {
+        return (List<BiometricData>) entityManager.createNamedQuery("getAllBiometricData").getResultList();
+    }
+
+    public BiometricData findBiometricData(long id) {
+        return entityManager.find(BiometricData.class, id);
+    }
 
     /***
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
