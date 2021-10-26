@@ -3,7 +3,6 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
-import javax.print.Doc;
 import javax.validation.constraints.Digits;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
-    private List<Biometric_Data> biometric_data;
+    private List<BiometricData> biometric_data;
 
     @NotNull
     @ManyToOne
@@ -61,7 +60,7 @@ public class Patient extends Person implements Serializable {
         return doctor != null && doctors.remove(doctor) ? doctor : null;
     }
 
-    public Biometric_Data addBiometricData(Biometric_Data biometric_data){
+    public BiometricData addBiometricData(BiometricData biometric_data){
         if (biometric_data != null && !this.biometric_data.contains(biometric_data)) {
             this.biometric_data.add(biometric_data);
             return biometric_data;
@@ -69,7 +68,7 @@ public class Patient extends Person implements Serializable {
         return null;
     }
 
-    public Biometric_Data removeBiometricData(Biometric_Data biometric_data){
+    public BiometricData removeBiometricData(BiometricData biometric_data){
         return biometric_data != null && this.biometric_data.remove(biometric_data) ? biometric_data : null;
     }
 
@@ -89,11 +88,11 @@ public class Patient extends Person implements Serializable {
         this.doctors = doctors;
     }
 
-    public List<Biometric_Data> getBiometric_data() {
+    public List<BiometricData> getBiometric_data() {
         return biometric_data;
     }
 
-    public void setBiometric_data(List<Biometric_Data> biometric_data) {
+    public void setBiometric_data(List<BiometricData> biometric_data) {
         this.biometric_data = biometric_data;
     }
 

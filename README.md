@@ -102,6 +102,8 @@ fazendo assim uma coligação com as prescriptions de **(N to M)**
  - values **(Integer)**
  - notes **(String)**
 
+#### Features
+
 ### Biometric_Data_Issue
 
 #### Columns
@@ -155,12 +157,12 @@ fazendo assim uma coligação com as prescriptions de **(N to M)**
 
 ### Deverá ainda permitir a gestão de itens de um PRC para determinado doente, com uma determinada duração, de acordo com os resultados obtidos desses processamentos de dados (por exemplo, sugerir, para o próximo mês, uma prescrição de exercício físico para doentes com obesidade, e/ou uma prescrição médica para doentes com índice de glicemia alto, e/ou uma prescrição de nutrição para doentes com níveis altos de colesterol).
  - Consoante o tipo de prescrição, ele irá adicionar adicionar essa prescrição aos Utentes
- - Se o utente teve o ULTIMO Biometric_Data value do Biometric_Data_Type "Peso" > "max" (Biometric_Data_Type:max) essa prescrição será atribuida ao utente.
+ - Se o utente teve o ULTIMO Biometric_Data value do Biometric_Data_Type "Peso" estiver contino no min e max do Biometric_Data_Issue a prescrição é dada a este utente.
  - Caso de estudo:
   1. Existe um *Biometric_Data_Type* para a **temperatura corporal** com **max** de **45** e o **min** de **30** **Cº (Graus)**
   2. É definido o *Biometric_Data_Issue* **Febre** com o **min** de **38** e o **max** de **45**
   3. Dado *Patient* tem um *Biometric_Data* do *Biometric_Data_Type* **temperatura corporal** e com um valor de **39.5** **Cº (Graus)**
-  4. Um *Doctor* do *Patient* cria uma prescrição com *Biometric_Data_Issue* de **Febre** com o **start_date** de **25/11/2021** e **end_date** de **01/01/2022**
+  4. Um *Doctor* do *Patient* cria uma *Prescription* com *Biometric_Data_Issue* de **Febre** com o **start_date** de **25/11/2021** e **end_date** de **01/01/2022**
 
 
 ## Dúvidas

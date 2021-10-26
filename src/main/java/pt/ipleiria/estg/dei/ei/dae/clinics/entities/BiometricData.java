@@ -4,16 +4,17 @@ import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name="Biometric_Data")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricData",
-                query = "SELECT bioData FROM Biometric_Data bioData ORDER BY bioData.id"
+                query = "SELECT bioData FROM BiometricData bioData ORDER BY bioData.id"
         )
 })
-public class Biometric_Data implements Serializable {
+public class BiometricData implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +22,7 @@ public class Biometric_Data implements Serializable {
     @ManyToOne
     @JoinColumn(name = "BIOMETRIC_DATA_TYPE_ID")
     @NotNull
-    private Biometric_Data_Type biometric_data_type;
+    private BiometricDataType biometric_data_type;
 
     @NotNull
     private double value;
@@ -34,14 +35,48 @@ public class Biometric_Data implements Serializable {
     @NotNull
     private Patient patient;
 
-    public Biometric_Data(Biometric_Data_Type biometric_data_type, double value, String notes, Patient patient) {
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created_at;
+
+    @NotNull
+    @ManyToOne
+    private Person created_by;
+
+    public BiometricData(BiometricDataType biometric_data_type, double value, String notes, Patient patient, Person person) {
         this.biometric_data_type = biometric_data_type;
         this.value = value;
         this.notes = notes;
         this.patient = patient;
+        this.created_at = new Date();
+        this.created_by = person;
     }
 
-    public Biometric_Data() {
+    public BiometricData() {
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Person getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(Person created_by) {
+        this.created_by = created_by;
     }
 
     public Long getId() {
@@ -52,11 +87,11 @@ public class Biometric_Data implements Serializable {
         this.id = id;
     }
 
-    public Biometric_Data_Type getBiometric_data_type() {
+    public BiometricDataType getBiometric_data_type() {
         return biometric_data_type;
     }
 
-    public void setBiometric_data_type(Biometric_Data_Type biometric_data_type) {
+    public void setBiometric_data_type(BiometricDataType biometric_data_type) {
         this.biometric_data_type = biometric_data_type;
     }
 

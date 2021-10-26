@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Biometric_Data_Type;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,7 +13,7 @@ public class BiometricDataTypeBean {
     private EntityManager entityManager;
 
     /***
-     *
+     * Creating Biometric Data Type
      * @param name of the Biometric Data Type ("Temperatura Corporal")
      * @param min value acepted in input (30)
      * @param max value acepted in input (45)
@@ -22,10 +22,15 @@ public class BiometricDataTypeBean {
      */
     public long create(String name, int min, int max, String measurement_unit){
 
-        Biometric_Data_Type biometricDataType = new Biometric_Data_Type(name, min, max, measurement_unit);
-        entityManager.persist(biometricDataType);
+        BiometricDataType newBiometricDataType = new BiometricDataType(name, min, max, measurement_unit);
+        entityManager.persist(newBiometricDataType);
         entityManager.flush();
-        return biometricDataType.getId();
+        return newBiometricDataType.getId();
 
+    }
+
+    public BiometricDataType delete(long id) {
+        entityManager.remove(entityManager.find(BiometricDataType.class,id));
+        return entityManager.find(BiometricDataType.class,id);
     }
 }

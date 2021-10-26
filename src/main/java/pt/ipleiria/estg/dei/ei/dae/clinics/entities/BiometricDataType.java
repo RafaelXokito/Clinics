@@ -10,10 +10,10 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataTypes",
-                query = "SELECT bioDataTypes FROM Biometric_Data_Type bioDataTypes ORDER BY bioDataTypes.id"
+                query = "SELECT bioDataTypes FROM BiometricDataType bioDataTypes ORDER BY bioDataTypes.id"
         )
 })
-public class Biometric_Data_Type implements Serializable {
+public class BiometricDataType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,16 +24,18 @@ public class Biometric_Data_Type implements Serializable {
     @NotNull
     private int max;
     @NotNull
-    private String measurement_unit;
+    private String unit; //Measure Unit Short
+    @NotNull
+    private String unit_name; //Measure Unit Extended
 
-    public Biometric_Data_Type(String name, int min, int max, String measurement_unit) {
+    public BiometricDataType(String name, int min, int max, String measurement_unit) {
         this.name = name;
         this.min = min;
         this.max = max;
-        this.measurement_unit = measurement_unit;
+        this.unit = measurement_unit;
     }
 
-    public Biometric_Data_Type() {
+    public BiometricDataType() {
     }
 
     public Long getId() {
@@ -68,11 +70,11 @@ public class Biometric_Data_Type implements Serializable {
         this.max = max;
     }
 
-    public String getMeasurement_unit() {
-        return measurement_unit;
+    public String getUnit() {
+        return unit;
     }
 
-    public void setMeasurement_unit(String measurement_unit) {
-        this.measurement_unit = measurement_unit;
+    public void setUnitName(String measurement_unit) {
+        this.unit = measurement_unit;
     }
 }

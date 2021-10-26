@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Biometric_Data_Issue implements Serializable {
+public class BiometricDataIssue implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Biometric_Data_Issue implements Serializable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "biometric_data_type_id")
-    private Biometric_Data_Type biometric_data_type;
+    private BiometricDataType biometric_data_type;
 
     @ManyToMany
     @JoinTable(name = "BIOMETRIC_DATA_ISSUES_PRESCRIPTIONS",
@@ -35,7 +35,7 @@ public class Biometric_Data_Issue implements Serializable {
                     "ID"))
     private List<Prescription> prescriptions;
 
-    public Biometric_Data_Issue(String name, int min, int max, Biometric_Data_Type biometric_data_type) {
+    public BiometricDataIssue(String name, int min, int max, BiometricDataType biometric_data_type) {
         this.name = name;
         this.min = min;
         this.max = max;
@@ -55,7 +55,7 @@ public class Biometric_Data_Issue implements Serializable {
         return prescription != null && prescriptions.remove(prescription) ? prescription : null;
     }
 
-    public Biometric_Data_Issue() {
+    public BiometricDataIssue() {
         this.prescriptions = new ArrayList<>();
     }
 
@@ -99,11 +99,11 @@ public class Biometric_Data_Issue implements Serializable {
         this.max = max;
     }
 
-    public Biometric_Data_Type getBiometric_data_type() {
+    public BiometricDataType getBiometric_data_type() {
         return biometric_data_type;
     }
 
-    public void setBiometric_data_type(Biometric_Data_Type biometric_data_type) {
+    public void setBiometric_data_type(BiometricDataType biometric_data_type) {
         this.biometric_data_type = biometric_data_type;
     }
 }

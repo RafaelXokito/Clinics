@@ -2,11 +2,11 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.common.constraint.Nullable;
-import jdk.jfr.Timestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(
@@ -16,7 +16,7 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPersons",
-                query = "SELECT p FROM Person p ORDER BY p.username"
+                query = "SELECT p FROM Person p WHERE p.deleted_at != NULL ORDER BY p.username"
         )
 })
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,6 +38,9 @@ public abstract class Person {
     private Date updated_at;
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleted_at;
+    @NotNull
+    @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
+    private List<BiometricData> biometricDatasCreated;
 
     public Person(String username, String email, String password, String name, String gender) {
         this.username = username;
@@ -45,11 +48,30 @@ public abstract class Person {
         this.password = password;
         this.name = name;
         this.gender = gender;
-        this.created_at = new Date();
-        this.updated_at = new Date();
     }
 
     public Person() {
+    }
+
+
+    public BiometricData addBiometricData(BiometricData biometricData){
+        if (biometricData != null && !this.biometricDatasCreated.contains(biometricData)) {
+            biometricDatasCreated.add(biometricData);
+            return biometricData;
+        }
+        return null;
+    }
+
+    public BiometricData removeBiometricData(BiometricData biometricData){
+        return biometricData != null && biometricDatasCreated.remove(biometricData) ? biometricData : null;
+    }
+
+    public List<BiometricData> getBiometricDataCreated() {
+        return biometricDatasCreated;
+    }
+
+    public void setBiometricDataCreated(List<BiometricData> biometricDataCreated) {
+        this.biometricDatasCreated = biometricDataCreated;
     }
 
     public String getUsername() {
@@ -96,16 +118,8 @@ public abstract class Person {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
     public Date getUpdated_at() {
         return updated_at;
-    }
-
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
     }
 
     public Date getDeleted_at() {
@@ -114,5 +128,20 @@ public abstract class Person {
 
     public void setDeleted_at(Date deleted_at) {
         this.deleted_at = deleted_at;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_at = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updated_at = new Date();
+        this.deleted_at = new Date();
+    }
+
+    public void remove(){
+        this.deleted_at = new Date();
     }
 }

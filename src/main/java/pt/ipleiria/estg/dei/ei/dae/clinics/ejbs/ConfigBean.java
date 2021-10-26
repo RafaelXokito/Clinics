@@ -52,17 +52,23 @@ public class ConfigBean {
 
             System.out.println("Creating some Biometric Data Types");
             long temperaturaCorporalId = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC (Graus Celsius)");
+            long alturaId = biometricDataTypeBean.create("Altura", 0, 3, "m (Metros)");
 
             System.out.println("Creating some Biometric Data Issues");
             long febreId = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporalId);
 
             long hipotermiaId = biometricDataIssueBean.create("Hipotermia", 30, 35, temperaturaCorporalId);
+            biometricDataIssueBean.delete(hipotermiaId);
 
             System.out.println("Creating some Biometric Data");
-            long biometricData1 = biometricDataBean.create(temperaturaCorporalId,39.5,"Paciente com dores no peito.","daniel.carreira");
+            long biometricData1 = biometricDataBean.create(temperaturaCorporalId,39.5,"Paciente com dores no peito.","daniel.carreira", "bruna.leitao");
+            long biometricData2 = biometricDataBean.create(alturaId,1.75,"Paciente pálido e alto.","daniel.carreira", "daniel.carreira");
 
             System.out.println("Creating some Prescriptions");
-            long prescription1Id = prescriptionBean.create("bruna.leitao",new Date(2021,12,25), new Date(2022,1,1),"Para todos os doentes com febre, repousem e tomam ben-u-ron",febreId);
+            long prescription1Id = prescriptionBean.create("bruna.leitao","25/12/2021", "01/01/2022","Para todos os doentes com febre, repousem e tomam ben-u-ron",febreId);
+
+
+            System.out.println("Updating some Administrators");
         }catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
         }
