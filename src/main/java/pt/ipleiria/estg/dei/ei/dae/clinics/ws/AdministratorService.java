@@ -22,7 +22,7 @@ public class AdministratorService {
     @GET
     @Path("/")
     public Response getAllAdministratorsWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(administratorBean.getAllAdministrators()))
                 .build();
     }

@@ -135,7 +135,6 @@ public abstract class Person {
     @PreUpdate
     protected void onUpdate() {
         this.updated_at = new Date();
-        this.deleted_at = new Date();
     }
 
     public void remove(){
