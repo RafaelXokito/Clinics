@@ -26,7 +26,6 @@ public class AdministratorDTO {
     public AdministratorDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.username = username;
         this.email = email;
-        this.password = "";
         this.name = name;
         this.gender = gender;
         this.created_at = created_at;
@@ -85,27 +84,27 @@ public class AdministratorDTO {
         this.gender = gender;
     }
 
-    public Date getCreatedAt() {
+    public Date getCreated_at() {
         return created_at;
     }
 
-    public void setCreatedAt(Date created_at) {
+    public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
 
-    public Date getUpdatedAt() {
+    public Date getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdatedAt(Date updated_at) {
+    public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
 
-    public Date getDeletedAt() {
+    public Date getDeleted_at() {
         return deleted_at;
     }
 
-    public void setDeletedAt(Date deleted_at) {
+    public void setDeleted_at(Date deleted_at) {
         this.deleted_at = deleted_at;
     }
 }
