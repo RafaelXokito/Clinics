@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("biometricdataissue") // relative url web path for this service
+@Path("biometricdataissues") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
@@ -24,7 +24,7 @@ public class BiometricDataIssueService {
     @GET
     @Path("/")
     public Response getAllBiometricDataIssuesWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(biometricDataIssueBean.getAllBiometricDataIssues()))
                 .build();
     }
@@ -38,7 +38,7 @@ public class BiometricDataIssueService {
             return Response.status(Response.Status.NOT_FOUND)
                     .build();
 
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTO(biometricDataIssue))
                 .build();
     }

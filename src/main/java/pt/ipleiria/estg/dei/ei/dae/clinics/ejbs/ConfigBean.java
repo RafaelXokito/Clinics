@@ -71,10 +71,11 @@ public class ConfigBean {
             BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(),39.5,"Paciente com dores no peito.","daniel.carreira", "bruna.leitao");
             BiometricData biometricData2 = biometricDataBean.create(altura.getId(),1.75,"Paciente pálido e alto.","daniel.carreira", "daniel.carreira");
 
-            //List<BiometricDataIssue> issues = new ArrayList<>();
-            //issues.add(hipotermia);
+            List<BiometricDataIssue> issues = new ArrayList<>();
+            issues.add(hipotermia);
+            issues.add(febre);
             System.out.println("Creating some Prescriptions");
-            //Prescription prescription1 = prescriptionBean.create("bruna.leitao","25/12/2021", "01/01/2022","Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
+            Prescription prescription1 = prescriptionBean.create("bruna.leitao","25/12/2021", "01/01/2022","Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
 
             System.out.println("Updating some Administrators");
             administratorBean.update("rafael.pereira", "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");

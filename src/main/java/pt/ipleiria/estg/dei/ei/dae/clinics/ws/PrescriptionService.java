@@ -12,6 +12,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(prescriptionBean.getAllPrescriptions()))
                 .build();
     }
@@ -36,7 +37,7 @@ public class PrescriptionService {
             return Response.status(Response.Status.NOT_FOUND)
                     .build();
 
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTO(prescription))
                 .build();
     }
@@ -44,12 +45,13 @@ public class PrescriptionService {
     @POST
     @Path("/")
     public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException {
+        List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         Prescription createdPrescription = prescriptionBean.create(
                 prescriptionDTO.getDoctorName(),
                 prescriptionDTO.getStart_date(),
                 prescriptionDTO.getEnd_date(),
                 prescriptionDTO.getNotes(),
-                prescriptionDTO.getIssues());
+                issues);
 
         Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
 
@@ -97,6 +99,14 @@ public class PrescriptionService {
                 .build();
     }
 
+    private List<BiometricDataIssue> fromDTOs(List<BiometricDataIssueDTO> issueDTOS) {
+        List<BiometricDataIssue> issues = new ArrayList<>();
+        for (BiometricDataIssueDTO issueDTO : issueDTOS) {
+            BiometricDataIssue issue = prescriptionBean.findBiometricDataIssue(issueDTO.getId());
+            issues.add(issue);
+        }
+        return issues;
+    }
 
     private List<PrescriptionDTO> toDTOs(List<Prescription> prescriptions) {
         return prescriptions.stream().map(this::toDTO).collect(Collectors.toList());

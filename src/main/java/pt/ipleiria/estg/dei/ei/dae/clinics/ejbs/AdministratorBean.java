@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,22 +13,6 @@ import java.util.List;
 public class AdministratorBean {
     @PersistenceContext
     private EntityManager entityManager;
-
-    /***
-     * Creating a Administrator Account
-     * @param username of administrator acc
-     * @param email of administrator acc
-     * @param password of administrator acc
-     * @param name of administrator acc
-     * @param gender of administrator acc
-     * @return Administrator created
-     */
-    public Administrator create(String username, String email, String password, String name, String gender) {
-        Administrator newAdministrator = new Administrator(username, email, password, name, gender);
-        entityManager.persist(newAdministrator);
-        entityManager.flush();
-        return newAdministrator;
-    }
 
     /***
      * Execute Administrator query getAllAdministrators getting all Administrators
@@ -41,18 +27,37 @@ public class AdministratorBean {
      * @param username @Id to find Administrator
      * @return founded Administrator or Null if dont
      */
-    public Administrator findAdministrator(String username) {
-        return entityManager.find(Administrator.class, username);
+    public Administrator findAdministrator(String username) throws MyEntityNotFoundException {
+        Administrator administrator = entityManager.find(Administrator.class, username);
+        if (administrator == null)
+            throw new MyEntityNotFoundException("Administrator \"" + username + "\" does not exist");
+        return administrator;
+    }
+
+    /***
+     * Creating a Administrator Account
+     * @param username of administrator acc
+     * @param email of administrator acc
+     * @param password of administrator acc
+     * @param name of administrator acc
+     * @param gender of administrator acc
+     */
+    public void create(String username, String email, String password, String name, String gender) throws MyEntityExistsException {
+        Administrator administrator = entityManager.find(Administrator.class, username);
+        if (administrator != null)
+            throw new MyEntityExistsException("Administrator \"" + username + "\" already exist");
+
+        Administrator newAdministrator = new Administrator(username, email, password, name, gender);
+        entityManager.persist(newAdministrator);
     }
 
     /***
      * Delete a Administrator by given @Id:username - Change deleted_at field to NOW() date
      * @param username @Id to find the proposal delete Administrator
-     * @return Administrator deleted or null if dont find the Administrator with @Id:username given
      */
-    public Administrator delete(String username) {
-        entityManager.find(Administrator.class,username).remove();
-        return entityManager.find(Administrator.class,username);
+    public void delete(String username) throws MyEntityNotFoundException {
+        Administrator administrator = findAdministrator(username);
+        administrator.remove();
     }
 
     /***
@@ -64,14 +69,12 @@ public class AdministratorBean {
      * @param gender to update Administrator
      * @return Administrator updated or null if dont find the Administrator with @Id:username given
      */
-    public Administrator update(String username, String email, String password, String name, String gender) {
-        Administrator administrator = entityManager.find(Administrator.class, username);
-        if (administrator != null){
-            administrator.setEmail(email);
-            administrator.setPassword(password);
-            administrator.setName(name);
-            administrator.setGender(gender);
-        }
-        return administrator;
+    public void update(String username, String email, String password, String name, String gender) throws MyEntityNotFoundException {
+        Administrator administrator = findAdministrator(username);
+
+        administrator.setEmail(email);
+        administrator.setPassword(password);
+        administrator.setName(name);
+        administrator.setGender(gender);
     }
 }

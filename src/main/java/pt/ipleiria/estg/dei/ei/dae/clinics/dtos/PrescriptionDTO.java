@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PrescriptionDTO {

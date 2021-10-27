@@ -25,7 +25,7 @@ public class BiometricDataService {
     @GET
     @Path("/")
     public Response getAllBiometricDataWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(biometricDataBean.getAllBiometricData()))
                 .build();
     }
@@ -39,7 +39,7 @@ public class BiometricDataService {
             return Response.status(Response.Status.NOT_FOUND)
                     .build();
 
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTO(biometricData))
                 .build();
     }

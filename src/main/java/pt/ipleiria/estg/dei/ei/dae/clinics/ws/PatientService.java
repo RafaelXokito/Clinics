@@ -25,7 +25,7 @@ public class PatientService {
     @GET
     @Path("/")
     public Response getAllPatientsWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(patientBean.getAllPatients()))
                 .build();
     }
@@ -39,7 +39,7 @@ public class PatientService {
             return Response.status(Response.Status.NOT_FOUND)
                     .build();
 
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTO(patient))
                 .build();
     }
@@ -111,7 +111,6 @@ public class PatientService {
     private PatientDTO toDTO(Patient patient) {
         return new PatientDTO(patient.getUsername(),
                 patient.getEmail(),
-                patient.getPassword(),
                 patient.getName(),
                 patient.getGender(),
                 patient.getCreated_at(),

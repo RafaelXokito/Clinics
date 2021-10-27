@@ -22,7 +22,7 @@ public class DoctorService {
     @GET
     @Path("/")
     public Response getAllDoctorsWS() {
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTOs(doctorBean.getAllDoctors()))
                 .build();
     }
@@ -36,7 +36,7 @@ public class DoctorService {
             return Response.status(Response.Status.NOT_FOUND)
                     .build();
 
-        return Response.status(Response.Status.FOUND)
+        return Response.status(Response.Status.OK)
                 .entity(toDTO(doctor))
                 .build();
     }
@@ -108,7 +108,6 @@ public class DoctorService {
     private DoctorDTO toDTO(Doctor doctor) {
         return new DoctorDTO(doctor.getUsername(),
                 doctor.getEmail(),
-                doctor.getPassword(),
                 doctor.getName(),
                 doctor.getGender(),
                 doctor.getCreated_at(),

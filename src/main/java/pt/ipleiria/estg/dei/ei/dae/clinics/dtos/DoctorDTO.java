@@ -27,6 +27,19 @@ public class DoctorDTO {
         this.created_by = created_by;
     }
 
+    public DoctorDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
+        this.username = username;
+        this.email = email;
+        this.password = "";
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.specialty = specialty;
+        this.created_by = created_by;
+    }
+
     public DoctorDTO() {
         username = "";
         email = "";
