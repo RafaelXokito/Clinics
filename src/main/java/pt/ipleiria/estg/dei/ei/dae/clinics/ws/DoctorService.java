@@ -3,6 +3,8 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DoctorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.DoctorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -22,19 +24,17 @@ public class DoctorService {
     @GET
     @Path("/")
     public Response getAllDoctorsWS() {
+        List<Doctor> doctors = doctorBean.getAllDoctors();
+
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(doctorBean.getAllDoctors()))
+                .entity(toDTOs(doctors))
                 .build();
     }
 
     @GET
     @Path("{username}")
-    public Response getDoctorWS(@PathParam("username") String username) {
+    public Response getDoctorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
         Doctor doctor = doctorBean.findDoctor(username);
-
-        if (doctor == null)
-            return Response.status(Response.Status.NOT_FOUND)
-                    .build();
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(doctor))
@@ -43,58 +43,43 @@ public class DoctorService {
 
     @POST
     @Path("/")
-    public Response createDoctorWS(DoctorDTO doctorDTO) {
-        Doctor createdDoctor = doctorBean.create(
-                doctorDTO.getUsername(),
-                doctorDTO.getEmail(),
-                doctorDTO.getPassword(),
-                doctorDTO.getName(),
-                doctorDTO.getGender(),
-                doctorDTO.getSpecialty(),
-                doctorDTO.getCreated_by());
+    public Response createDoctorWS(DoctorDTO doctorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+        doctorBean.create(doctorDTO.getUsername(),
+            doctorDTO.getEmail(),
+            doctorDTO.getPassword(),
+            doctorDTO.getName(),
+            doctorDTO.getGender(),
+            doctorDTO.getSpecialty(),
+            doctorDTO.getCreated_by());
 
-        Doctor doctor = doctorBean.findDoctor(createdDoctor.getUsername());
-
-        if (doctor == null) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
+        Doctor doctor = doctorBean.findDoctor(doctorDTO.getUsername());
 
         return Response.status(Response.Status.CREATED)
-                .entity(createdDoctor)
+                .entity(doctor)
                 .build();
     }
 
     @PUT
     @Path("{username}")
-    public Response updateDoctorWS(@PathParam("username") String username, DoctorDTO doctorDTO) {
-        Doctor updatedDoctor = doctorBean.update(
-                doctorDTO.getUsername(),
-                doctorDTO.getEmail(),
-                doctorDTO.getPassword(),
-                doctorDTO.getName(),
-                doctorDTO.getGender(),
-                doctorDTO.getSpecialty());
+    public Response updateDoctorWS(@PathParam("username") String username, DoctorDTO doctorDTO) throws MyEntityNotFoundException {
+        doctorBean.update(username,
+            doctorDTO.getEmail(),
+            doctorDTO.getPassword(),
+            doctorDTO.getName(),
+            doctorDTO.getGender(),
+            doctorDTO.getSpecialty());
 
-        Doctor doctor = doctorBean.findDoctor(updatedDoctor.getUsername());
-
-        if (!updatedDoctor.equals(doctor))
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+        Doctor doctor = doctorBean.findDoctor(username);
 
         return Response.status(Response.Status.OK)
-                .entity(updatedDoctor)
+                .entity(doctor)
                 .build();
     }
 
     @DELETE
     @Path("{username}")
-    public Response deleteDoctorWS(@PathParam("username") String username) {
-        Doctor removedDoctor = doctorBean.delete(username);
-
-        if (removedDoctor != null)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+    public Response deleteDoctorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
+        doctorBean.delete(username);
 
         return Response.status(Response.Status.OK)
                 .build();

@@ -1,11 +1,10 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -25,19 +24,17 @@ public class BiometricDataService {
     @GET
     @Path("/")
     public Response getAllBiometricDataWS() {
+        List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
+
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(biometricDataBean.getAllBiometricData()))
+                .entity(toDTOs(biometricData))
                 .build();
     }
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataWS(@PathParam("id") long id) {
+    public Response getBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         BiometricData biometricData = biometricDataBean.findBiometricData(id);
-
-        if (biometricData == null)
-            return Response.status(Response.Status.NOT_FOUND)
-                    .build();
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(biometricData))
@@ -46,7 +43,7 @@ public class BiometricDataService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO) {
+    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricData createdBiometricData = biometricDataBean.create(
                 biometricDataDTO.getBiometricTypeId(),
                 biometricDataDTO.getValue(),
@@ -56,24 +53,15 @@ public class BiometricDataService {
 
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
-        if (biometricData == null) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
         return Response.status(Response.Status.CREATED)
-                .entity(createdBiometricData)
+                .entity(biometricData)
                 .build();
     }
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataWS(@PathParam("id") long id) {
-        BiometricData removedBiometricData = biometricDataBean.delete(id);
-
-        if (removedBiometricData != null)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+    public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        biometricDataBean.delete(id);
 
         return Response.status(Response.Status.OK)
                 .build();
