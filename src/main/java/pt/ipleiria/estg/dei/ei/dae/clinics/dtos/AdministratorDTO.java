@@ -26,7 +26,6 @@ public class AdministratorDTO {
     public AdministratorDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.username = username;
         this.email = email;
-        this.password = "";
         this.name = name;
         this.gender = gender;
         this.created_at = created_at;
