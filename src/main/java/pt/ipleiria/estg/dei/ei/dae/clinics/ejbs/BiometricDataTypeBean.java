@@ -1,17 +1,27 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class BiometricDataTypeBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    public List<BiometricDataType> getAllBiometricDataTypes() {
+        return (List<BiometricDataType>) entityManager.createNamedQuery("getAllBiometricDataTypes").getResultList();
+    }
+
+    public BiometricDataType findBiometricDataType(long id) {
+        return entityManager.find(BiometricDataType.class, id);
+    }
 
     /***
      * Creating Biometric Data Type

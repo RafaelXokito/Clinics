@@ -93,3 +93,6 @@ local.properties
 
 # Testing environment specific
 derby.log
+.idea/runConfigurations.xml
+.idea/artifacts/clinics_war_exploded.xml
+.idea/artifacts/clinics_war.xml
