@@ -17,7 +17,7 @@ import java.util.Date;
 public class BiometricData implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "BIOMETRIC_DATA_TYPE_ID")

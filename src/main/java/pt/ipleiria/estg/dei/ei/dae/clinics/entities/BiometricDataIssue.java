@@ -8,11 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllBiometricDataIssues",
+                query = "SELECT b FROM BiometricDataIssue b ORDER BY b.id"
+        )
+})
 public class BiometricDataIssue implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @NotNull
     private String name;

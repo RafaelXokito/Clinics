@@ -5,11 +5,20 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class BiometricDataIssueBean {
     @PersistenceContext
     private EntityManager entityManager;
+
+    public List<BiometricDataIssue> getAllBiometricDataIssues() {
+        return (List<BiometricDataIssue>) entityManager.createNamedQuery("getAllBiometricDataIssues").getResultList();
+    }
+
+    public BiometricDataIssue findBiometricDataIssue(long id) {
+        return entityManager.find(BiometricDataIssue.class, id);
+    }
 
     /***
      * Creating a Biometric Data Issue based on a Biometric Data Type
