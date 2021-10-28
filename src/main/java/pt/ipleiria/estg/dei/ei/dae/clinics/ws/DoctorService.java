@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DoctorDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.DoctorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
 
@@ -8,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +26,24 @@ public class DoctorService {
     @Path("/")
     public Response getAllDoctorsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(doctorBean.getAllDoctors()))
+                .entity(new EntitiesDTO<DoctorDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
+                        "username","email","name","gender","specialty"))
                 .build();
+    }
+
+
+    private List<DoctorDTO> toDTOAllDoctors(List<Object[]> allDoctors) {
+        List<DoctorDTO> doctorDTOList = new ArrayList<>();
+        for (Object[] obj: allDoctors) {
+            doctorDTOList.add(new DoctorDTO(
+                    obj[0].toString(),
+                    obj[1].toString(),
+                    obj[2].toString(),
+                    obj[3].toString(),
+                    obj[4].toString()
+            ));
+        }
+        return doctorDTOList;
     }
 
     @GET

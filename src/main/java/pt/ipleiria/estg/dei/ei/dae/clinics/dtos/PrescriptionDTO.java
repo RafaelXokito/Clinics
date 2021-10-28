@@ -32,6 +32,13 @@ public class PrescriptionDTO {
         issues = new ArrayList<>();
     }
 
+    public PrescriptionDTO(String doctorName, String start_date, String end_date, String notes) {
+        this.doctorName = doctorName;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.notes = notes;
+    }
+
     public long getId() {
         return id;
     }

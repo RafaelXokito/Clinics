@@ -6,6 +6,7 @@ pt/ipleiria/estg/dei/ei/dae/clinics/ejbs/BiometricDataBean.class
 pt/ipleiria/estg/dei/ei/dae/clinics/ClinicsApplication.class
 pt/ipleiria/estg/dei/ei/dae/clinics/exceptions/MyEntityExistsException.class
 pt/ipleiria/estg/dei/ei/dae/clinics/entities/Doctor.class
+pt/ipleiria/estg/dei/ei/dae/clinics/dtos/EntitiesDTO.class
 pt/ipleiria/estg/dei/ei/dae/clinics/ws/AdministratorService.class
 pt/ipleiria/estg/dei/ei/dae/clinics/dtos/AdministratorDTO.class
 pt/ipleiria/estg/dei/ei/dae/clinics/entities/Patient.class

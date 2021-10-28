@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Stateless
@@ -15,8 +16,11 @@ public class BiometricDataTypeBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<BiometricDataType> getAllBiometricDataTypes() {
-        return (List<BiometricDataType>) entityManager.createNamedQuery("getAllBiometricDataTypes").getResultList();
+    public List<Object[]> getAllBiometricDataTypes() {
+        Query query = entityManager.createQuery("SELECT bioData.name, bioData.unit, bioData.unit_name FROM BiometricDataType bioData");
+        List<Object[]> biometricDataTypeList = query.getResultList();
+        return biometricDataTypeList;
+        //return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();
     }
 
     public BiometricDataType findBiometricDataType(long id) {

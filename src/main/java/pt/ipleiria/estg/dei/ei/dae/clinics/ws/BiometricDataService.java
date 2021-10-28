@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
@@ -11,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +29,22 @@ public class BiometricDataService {
     @Path("/")
     public Response getAllBiometricDataWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(biometricDataBean.getAllBiometricData()))
+                .entity(new EntitiesDTO<BiometricDataDTO>(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),
+                        "patientName", "healthNo", "biometricDataTypeName", "valueUnit"))
                 .build();
+    }
+
+    private List<BiometricDataDTO> toDTOAllBiometricDatas(List<Object[]> allBiometricDatas) {
+        List<BiometricDataDTO> BiometricDataDTOList = new ArrayList<>();
+        for (Object[] obj: allBiometricDatas) {
+            BiometricDataDTOList.add(new BiometricDataDTO(
+                    obj[0].toString(),
+                    obj[1].toString(),
+                    obj[2].toString(),
+                    obj[3].toString() + " " + obj[4].toString()
+            ));
+        }
+        return BiometricDataDTOList;
     }
 
     @GET

@@ -1,8 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataTypeDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
@@ -10,11 +8,16 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+@Path("prescriptions")
+@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
+@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
 public class PrescriptionService {
     @EJB
@@ -24,8 +27,22 @@ public class PrescriptionService {
     @Path("/")
     public Response getAllPrescriptionsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(prescriptionBean.getAllPrescriptions()))
+                .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
+                        "doctorName","start_date","end_date","notes"))
                 .build();
+    }
+
+    private List<PrescriptionDTO> toDTOAllPrescriptions(List<Object[]> allPrescriptions) {
+        List<PrescriptionDTO> prescriptionDTOList = new ArrayList<>();
+        for (Object[] obj: allPrescriptions) {
+            prescriptionDTOList.add(new PrescriptionDTO(
+                    obj[0].toString(),
+                    obj[1].toString(),
+                    obj[2].toString(),
+                    obj[3].toString()
+            ));
+        }
+        return prescriptionDTOList;
     }
 
     @GET

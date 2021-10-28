@@ -4,8 +4,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
+import javax.print.Doc;
 import java.util.List;
 
 @Stateless
@@ -13,8 +13,11 @@ public class DoctorBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Doctor> getAllDoctors() {
-        return (List<Doctor>) entityManager.createNamedQuery("getAllDoctors").getResultList();
+    public List<Object[]> getAllDoctors() {
+        Query query = entityManager.createQuery("SELECT d.username, d.email, d.name, d.gender, d.specialty  FROM Doctor d");
+        List<Object[]> doctorList = query.getResultList();
+        return doctorList;
+        //return entityManager.createNamedQuery("getAllDoctors", Doctor.class).getResultList();
     }
 
     public Doctor findDoctor(String username) {

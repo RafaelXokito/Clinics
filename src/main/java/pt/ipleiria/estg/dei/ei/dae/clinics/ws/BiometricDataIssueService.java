@@ -1,7 +1,9 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataTypeDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataIssueBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
@@ -10,6 +12,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +28,20 @@ public class BiometricDataIssueService {
     @Path("/")
     public Response getAllBiometricDataIssuesWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(biometricDataIssueBean.getAllBiometricDataIssues()))
+                .entity(new EntitiesDTO<BiometricDataIssueDTO>(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()),
+                        "name","biometricDataTypeName"))
                 .build();
+    }
+
+    private List<BiometricDataIssueDTO> toDTOAllBiometricDataIssues(List<Object[]> allBiometricDataIssues) {
+        List<BiometricDataIssueDTO> BiometricDataIssueDTOList = new ArrayList<>();
+        for (Object[] obj: allBiometricDataIssues) {
+            BiometricDataIssueDTOList.add(new BiometricDataIssueDTO(
+                    obj[0].toString(),
+                    obj[1].toString()
+            ));
+        }
+        return BiometricDataIssueDTOList;
     }
 
     @GET

@@ -7,6 +7,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Stateless
@@ -18,8 +20,11 @@ public class AdministratorBean {
      * Execute Administrator query getAllAdministrators getting all Administrators
      * @return a list of All Administrators
      */
-    public List<Administrator> getAllAdministrators() {
-        return (List<Administrator>) entityManager.createNamedQuery("getAllAdministrators").getResultList();
+    public List<Object[]> getAllAdministrators() {
+        Query query = entityManager.createQuery("SELECT a.username, a.email, a.name, a.gender  FROM Administrator a");
+        List<Object[]> administratorList = query.getResultList();
+        return administratorList;
+        //return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
     }
 
     /***

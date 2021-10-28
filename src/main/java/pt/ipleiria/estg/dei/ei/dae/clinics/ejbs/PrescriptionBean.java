@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +19,11 @@ public class PrescriptionBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Prescription> getAllPrescriptions() {
-        return (List<Prescription>) entityManager.createNamedQuery("getAllPrescriptions").getResultList();
+    public List<Object[]> getAllPrescriptions() {
+        Query query = entityManager.createQuery("SELECT p.doctor.username, p.start_date, p.end_date, p.notes FROM Prescription p");
+        List<Object[]> prescriptionList = query.getResultList();
+        return prescriptionList;
+        //return entityManager.createNamedQuery("getAllPrescriptions", Prescription.class).getResultList();
     }
 
     public Prescription findPrescription(long id) {
@@ -45,11 +49,12 @@ public class PrescriptionBean {
 
         Doctor doctor = entityManager.find(Doctor.class, doctor_username);
         if (doctor != null) {
-            Prescription prescription = new Prescription(doctor, start_date, end_date, notes, biometricDataIssues);
+            Prescription prescription = new Prescription(doctor, start_date, end_date, notes);
             entityManager.persist(prescription);
 
             for (BiometricDataIssue biometricDataIssue: biometricDataIssues) {
                 biometricDataIssue.addPrescription(prescription);
+                prescription.addBiometricDataIssue(biometricDataIssue);
             }
 
             entityManager.flush();

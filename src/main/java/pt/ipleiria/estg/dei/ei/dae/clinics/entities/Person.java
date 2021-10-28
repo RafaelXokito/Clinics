@@ -14,12 +14,19 @@ import java.util.Objects;
         name = "Persons",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email"})
 )
+
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPersons",
                 query = "SELECT p FROM Person p WHERE p.deleted_at != NULL ORDER BY p.username"
         )
 })
+
+@NamedNativeQuery(
+        name="getAllPersons2",
+        query = "SELECT p.username,p.email, p.name, p.gender FROM Person",
+        resultClass = Person.class
+)
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
     @Id
@@ -54,6 +61,9 @@ public abstract class Person {
     public Person() {
     }
 
+    public Person(String username) {
+        this.name = username;
+    }
 
     public BiometricData addBiometricData(BiometricData biometricData){
         if (biometricData != null && !this.biometricDatasCreated.contains(biometricData)) {

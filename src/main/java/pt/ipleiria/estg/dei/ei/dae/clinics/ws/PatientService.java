@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DoctorDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.DoctorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
@@ -11,6 +12,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +28,23 @@ public class PatientService {
     @Path("/")
     public Response getAllPatientsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(patientBean.getAllPatients()))
+                .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),
+                        "username","healthNo","email","name","gender"))
                 .build();
+    }
+
+    private List<PatientDTO> toDTOAllPatients(List<Object[]> allPatients) {
+        List<PatientDTO> patientDTOList = new ArrayList<>();
+        for (Object[] obj: allPatients) {
+            patientDTOList.add(new PatientDTO(
+                    obj[0].toString(),
+                    (Integer) obj[1],
+                    obj[2].toString(),
+                    obj[3].toString(),
+                    obj[4].toString()
+            ));
+        }
+        return patientDTOList;
     }
 
     @GET

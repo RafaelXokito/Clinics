@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.AdministratorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
@@ -10,6 +11,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +27,35 @@ public class AdministratorService {
     @Path("/")
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(administratorBean.getAllAdministrators()))
+                .entity(new EntitiesDTO<AdministratorDTO>(toDTOAllAdministrators(administratorBean.getAllAdministrators()),
+                        "username","email","name","gender"))
                 .build();
+    }
+    /*
+    {
+    columns: ["username", "name", "email", "gender"],
+    data: [
+        {
+            username: "rafael.pereira",
+            password: null,
+            ...
+            name: "Rafael Pereira"
+        }
+    ]
+    }
+     */
+
+    private List<AdministratorDTO> toDTOAllAdministrators(List<Object[]> allAdministrators) {
+        List<AdministratorDTO> administratorDTOList = new ArrayList<>();
+        for (Object[] obj: allAdministrators) {
+            administratorDTOList.add(new AdministratorDTO(
+                obj[0].toString(),
+                obj[1].toString(),
+                obj[2].toString(),
+                obj[3].toString()
+            ));
+        }
+        return administratorDTOList;
     }
 
     @GET

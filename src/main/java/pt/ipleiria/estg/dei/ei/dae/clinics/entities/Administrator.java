@@ -12,7 +12,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllAdministrators",
-                query = "SELECT a FROM Administrator a ORDER BY a.username"
+                query = "SELECT a.username FROM Administrator a ORDER BY a.username"
         )
 })
 public class Administrator extends Person implements Serializable {
@@ -24,6 +24,10 @@ public class Administrator extends Person implements Serializable {
     public Administrator(String username, String email, String password, String name, String gender) {
         super(username, email, password, name, gender);
         this.doctors = new ArrayList<>();
+    }
+
+    public Administrator(String username) {
+        super(username);
     }
 
     public Administrator() {

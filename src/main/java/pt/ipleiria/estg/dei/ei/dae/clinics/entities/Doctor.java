@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
+import javax.print.Doc;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;

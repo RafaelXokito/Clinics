@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,13 +47,13 @@ public class Prescription implements Serializable {
     private static SimpleDateFormat dateformat = new SimpleDateFormat("dd/M/yyyy");
 
 
-    public Prescription(Doctor doctor, String start_date, String end_date, String notes, List<BiometricDataIssue> biometric_data_issues) throws ParseException {
+    public Prescription(Doctor doctor, String start_date, String end_date, String notes) throws ParseException {
         this.doctor = doctor;
         this.start_date = dateformat.parse(start_date);
         this.end_date = dateformat.parse(end_date);
         this.notes = notes;
 
-        this.biometric_data_issues = biometric_data_issues;
+        this.biometric_data_issues = new ArrayList<>();
     }
 
     public Prescription() {

@@ -28,6 +28,11 @@ public class BiometricDataTypeDTO {
         unit_name = "";
     }
 
+    public BiometricDataTypeDTO(String name, String unit_name) {
+        this.name = name;
+        this.unit_name = unit_name;
+    }
+
     public long getId() {
         return id;
     }

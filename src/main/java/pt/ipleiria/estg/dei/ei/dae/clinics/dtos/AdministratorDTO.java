@@ -44,6 +44,13 @@ public class AdministratorDTO {
         deleted_at = new Date();
     }
 
+    public AdministratorDTO(String username, String email, String name, String gender) {
+        this.username = username;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+    }
+
     public String getUsername() {
         return username;
     }

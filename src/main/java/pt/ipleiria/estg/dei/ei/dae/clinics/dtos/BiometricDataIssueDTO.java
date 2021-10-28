@@ -18,6 +18,11 @@ public class BiometricDataIssueDTO {
         this.biometricDataTypeName = biometricDataTypeName;
     }
 
+    public BiometricDataIssueDTO(String name, String biometricDataTypeName) {
+        this.name = name;
+        this.biometricDataTypeName = biometricDataTypeName;
+    }
+
     public BiometricDataIssueDTO() {
         id = 0;
         name = "";

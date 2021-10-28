@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataTypeDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataTypeBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 
@@ -8,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +26,20 @@ public class BiometricDataTypeService {
     @Path("/")
     public Response getAllBiometricDataTypesWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(biometricDataTypeBean.getAllBiometricDataTypes()))
+                .entity(new EntitiesDTO<BiometricDataTypeDTO>(toDTOAllBiometricDataTypes(biometricDataTypeBean.getAllBiometricDataTypes()),
+                        "name", "unit_name"))
                 .build();
+    }
+
+    private List<BiometricDataTypeDTO> toDTOAllBiometricDataTypes(List<Object[]> allBiometricDataTypes) {
+        List<BiometricDataTypeDTO> BiometricDataTypeDTOList = new ArrayList<>();
+        for (Object[] obj: allBiometricDataTypes) {
+            BiometricDataTypeDTOList.add(new BiometricDataTypeDTO(
+                    obj[0].toString(),
+                    obj[1].toString() + " " + obj[2].toString()
+            ));
+        }
+        return BiometricDataTypeDTOList;
     }
 
     @GET

@@ -27,6 +27,14 @@ public class PatientDTO {
         this.created_by = created_by;
     }
 
+    public PatientDTO(String username, int healthNo, String email, String name, String gender) {
+        this.username = username;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.healthNo = healthNo;
+    }
+
     public PatientDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, String created_by) {
         this.username = username;
         this.email = email;
