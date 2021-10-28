@@ -2,6 +2,8 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,8 +24,12 @@ public class PatientBean {
         //return entityManager.createNamedQuery("getAllPatients", Patient.class).getResultList();
     }
 
-    public Patient findPatient(String username) {
-        return entityManager.find(Patient.class, username);
+    public Patient findPatient(String username) throws MyEntityNotFoundException {
+        Patient patient = entityManager.find(Patient.class, username);
+        if (patient == null)
+            throw new MyEntityNotFoundException("Patient \"" + username + "\" does not exist");
+
+        return patient;
     }
 
     /***
@@ -35,29 +41,28 @@ public class PatientBean {
      * @param gender of doctor acc
      * @param healthNo of doctor acc
      * @param created_byUsername Doctor Username that is creating the current Patient
-     * @return @Id passed as 'username' as confirmation
-     *         null if Not Found a Doctor with this created_byUsername
      */
-    public Patient create(String username, String email, String password, String name, String gender, int healthNo, String created_byUsername){
+    public void create(String username, String email, String password, String name, String gender, int healthNo, String created_byUsername) throws MyEntityExistsException, MyEntityNotFoundException {
+        Patient patient = entityManager.find(Patient.class, username);
+        if (patient != null)
+            throw new MyEntityExistsException("Patient \"" + username + "\" already exist");
+
         Doctor doctor = entityManager.find(Doctor.class, created_byUsername);
-        if (doctor != null){
-            Patient newPatient = new Patient(username,email,password,name,gender,healthNo,doctor);
-            entityManager.persist(newPatient);
-            entityManager.flush();
-            doctor.addPatient(newPatient);
-            return newPatient;
-        }
-        return null; //Not Found a Doctor with this created_byUsername
+        if (doctor == null)
+            throw new MyEntityNotFoundException("Doctor \"" + created_byUsername + "\" already exist");
+
+        Patient newPatient = new Patient(username, email, password, name, gender, healthNo, doctor);
+        entityManager.persist(newPatient);
+        doctor.addPatient(newPatient);
     }
 
     /***
      * Delete a Patient by given @Id:username - Change deleted_at field to NOW() date
      * @param username @Id to find the proposal delete Patient
-     * @return Patient deleted or null if dont find the Patient with @Id:username given
      */
-    public Patient delete(String username) {
-        entityManager.find(Patient.class,username).remove();
-        return entityManager.find(Patient.class,username);
+    public void delete(String username) throws MyEntityNotFoundException {
+        Patient patient = findPatient(username);
+        entityManager.remove(patient);
     }
 
     /***
@@ -68,17 +73,14 @@ public class PatientBean {
      * @param name to update Patient
      * @param gender to update Patient
      * @param healthNo to update Patient
-     * @return Patient updated or null if dont find the Patient with @Id:username given
      */
-    public Patient update(String username, String email, String password, String name, String gender, int healthNo) {
-        Patient patient = entityManager.find(Patient.class, username);
-        if (patient != null){
-            patient.setEmail(email);
-            patient.setPassword(password);
-            patient.setName(name);
-            patient.setGender(gender);
-            patient.setHealthNo(healthNo);
-        }
-        return patient;
+    public void update(String username, String email, String password, String name, String gender, int healthNo) throws MyEntityNotFoundException {
+        Patient patient = findPatient(username);
+
+        patient.setEmail(email);
+        patient.setPassword(password);
+        patient.setName(name);
+        patient.setGender(gender);
+        patient.setHealthNo(healthNo);
     }
 }

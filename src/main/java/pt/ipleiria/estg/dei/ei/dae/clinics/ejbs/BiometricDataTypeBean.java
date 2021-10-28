@@ -1,8 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -23,8 +22,12 @@ public class BiometricDataTypeBean {
         //return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();
     }
 
-    public BiometricDataType findBiometricDataType(long id) {
-        return entityManager.find(BiometricDataType.class, id);
+    public BiometricDataType findBiometricDataType(long id) throws MyEntityNotFoundException {
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, id);
+        if (biometricDataType == null)
+            throw new MyEntityNotFoundException("BiometricDataType \"" + id + "\" does not exist");
+
+        return biometricDataType;
     }
 
     /***
@@ -37,7 +40,6 @@ public class BiometricDataTypeBean {
      * @return BiometricDataType created
      */
     public BiometricDataType create(String name, int min, int max, String unit, String unit_name){
-
         BiometricDataType newBiometricDataType = new BiometricDataType(name, min, max, unit, unit_name);
         entityManager.persist(newBiometricDataType);
         entityManager.flush();
@@ -50,9 +52,9 @@ public class BiometricDataTypeBean {
      * @param id @Id to find the proposal delete Biometric Data Type
      * @return Biometric Data Type deleted or null if dont find the Biometric Data Type with @Id:id given
      */
-    public BiometricDataType delete(long id) {
-        entityManager.remove(entityManager.find(BiometricDataType.class,id));
-        return entityManager.find(BiometricDataType.class,id);
+    public void delete(long id) throws MyEntityNotFoundException {
+        BiometricDataType biometricDataType = findBiometricDataType(id);
+        entityManager.remove(biometricDataType);
     }
 
     /***
@@ -66,18 +68,13 @@ public class BiometricDataTypeBean {
      * @return Biometric Data
      * @throw TODO - Acrescentar os throws e a descrição
      */
-    public BiometricDataType update(long id, String name, int min, int max, String unit, String unit_name){
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, id);
-        if (biometricDataType != null) {
+    public void update(long id, String name, int min, int max, String unit, String unit_name) throws MyEntityNotFoundException {
+        BiometricDataType biometricDataType = findBiometricDataType(id);
 
-                biometricDataType.setName(name);
-                biometricDataType.setMin(min);
-                biometricDataType.setMax(max);
-                biometricDataType.setUnit(unit);
-                biometricDataType.setUnit(unit_name);
-
-                return biometricDataType;
-        }
-        return null; //Not found BiometricData with the given id
+        biometricDataType.setName(name);
+        biometricDataType.setMin(min);
+        biometricDataType.setMax(max);
+        biometricDataType.setUnit(unit);
+        biometricDataType.setUnit(unit_name);
     }
 }

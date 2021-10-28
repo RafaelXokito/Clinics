@@ -1,10 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -26,6 +28,8 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS() {
+        List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
+
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
                         "doctorName","start_date","end_date","notes"))
@@ -47,12 +51,8 @@ public class PrescriptionService {
 
     @GET
     @Path("{id}")
-    public Response getPrescriptionWS(@PathParam("id") long id) {
+    public Response getPrescriptionWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         Prescription prescription = prescriptionBean.findPrescription(id);
-
-        if (prescription == null)
-            return Response.status(Response.Status.NOT_FOUND)
-                    .build();
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(prescription))
@@ -61,56 +61,43 @@ public class PrescriptionService {
 
     @POST
     @Path("/")
-    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException {
+    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         Prescription createdPrescription = prescriptionBean.create(
-                prescriptionDTO.getDoctorName(),
-                prescriptionDTO.getStart_date(),
-                prescriptionDTO.getEnd_date(),
-                prescriptionDTO.getNotes(),
-                issues);
+            prescriptionDTO.getDoctorName(),
+            prescriptionDTO.getStart_date(),
+            prescriptionDTO.getEnd_date(),
+            prescriptionDTO.getNotes(),
+            issues);
 
         Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
 
-        if (prescription == null) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
         return Response.status(Response.Status.CREATED)
-                .entity(createdPrescription)
+                .entity(prescription)
                 .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO) throws ParseException {
-        Prescription updatedPrescription = prescriptionBean.update(
-                prescriptionDTO.getId(),
-                prescriptionDTO.getStart_date(),
-                prescriptionDTO.getEnd_date(),
-                prescriptionDTO.getNotes(),
-                prescriptionDTO.getIssues());
+    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
+        List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
+        prescriptionBean.update(id,
+            prescriptionDTO.getStart_date(),
+            prescriptionDTO.getEnd_date(),
+            prescriptionDTO.getNotes(),
+            issues);
 
-        Prescription prescription = prescriptionBean.findPrescription(updatedPrescription.getId());
-
-        if (!updatedPrescription.equals(prescription))
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+        Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.OK)
-                .entity(updatedPrescription)
+                .entity(prescription)
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deletePrescriptionWS(@PathParam("id") long id) {
-        Prescription removedPrescription = prescriptionBean.delete(id);
-
-        if (removedPrescription != null)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+        prescriptionBean.delete(id);
 
         return Response.status(Response.Status.OK)
                 .build();

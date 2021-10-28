@@ -72,7 +72,6 @@ public class AdministratorBean {
      * @param password to update Administrator
      * @param name to update Administrator
      * @param gender to update Administrator
-     * @return Administrator updated or null if dont find the Administrator with @Id:username given
      */
     public void update(String username, String email, String password, String name, String gender) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(username);

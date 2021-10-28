@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.print.Doc;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "DOCTORS")
