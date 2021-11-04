@@ -4,14 +4,12 @@ services:
     image: bitnami/postgresql
     ports:
       - "5432:5432"
-    volumes:
-      - "postgresql_data:/bitnami/postgresql"
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
   webserver:
-    build: .
+    build: ../../../../../Downloads/docker-wildfly-postgres-main 4
     ports:
       - "8080:8080"
       - "9990:9990"
@@ -26,8 +24,18 @@ services:
       - ECLIPSELINK_VERSION
       - WILDFLY_ADMIN_PASSWORD
       - POSTGRES_DRIVER_VERSION
+      - JWT_ALGORITHM
+      - JWT_ALIAS
+      - JWT_KEYSIZE
+      - JWT_KEYPASS
+      - JWT_KEYSTORE
+      - JWT_STOREPASS
+      - JWT_CANONICAL_NAME
+      - JWT_ORGANIZATIONAL_UNIT
+      - JWT_ORGANIZATION
+      - JWT_COUNTRY
+      - JWT_ISSUER
+      - JWT_AUDIENCE
+      - JWT_REALM
     depends_on:
       - db
-volumes:
-  postgresql_data:
-    driver: local

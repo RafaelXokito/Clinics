@@ -1,13 +1,13 @@
-FROM jboss/wildfly
+FROM jboss/wildfly:24.0.0.Final
 
 ENV WILDFLY_HOME=/opt/jboss/wildfly
 ENV DEPLOYMENTS_DIR=${WILDFLY_HOME}/standalone/deployments
 
-COPY scripts ${WILDFLY_HOME}/bin
+COPY ../../../../../Downloads/docker-wildfly-postgres-main%204/scripts ${WILDFLY_HOME}/bin
 
 USER root
 
-RUN yum install -y dos2unix
+RUN yum install -y dos2unix nano
 RUN dos2unix ${WILDFLY_HOME}/bin/*.sh
 
 RUN chown jboss:jboss ${WILDFLY_HOME}/bin/*.sh
