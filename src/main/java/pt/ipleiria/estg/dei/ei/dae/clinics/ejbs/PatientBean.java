@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -47,7 +47,7 @@ public class PatientBean {
         if (patient != null)
             throw new MyEntityExistsException("Patient \"" + username + "\" already exist");
 
-        Doctor doctor = entityManager.find(Doctor.class, created_byUsername);
+        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, created_byUsername);
         if (doctor == null)
             throw new MyEntityNotFoundException("Doctor \"" + created_byUsername + "\" already exist");
 

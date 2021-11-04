@@ -12,10 +12,10 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllDoctors",
-                query = "SELECT d FROM Doctor d ORDER BY d.username"
+                query = "SELECT d FROM HealthcareProfessional d ORDER BY d.username"
         )
 })
-public class Doctor extends Person implements Serializable {
+public class HealthcareProfessional extends Person implements Serializable {
     @NotNull
     private String specialty;
 
@@ -35,7 +35,7 @@ public class Doctor extends Person implements Serializable {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
-    public Doctor(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {
+    public HealthcareProfessional(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {
         super(username, email, password, name, gender);
         this.specialty = specialty;
         this.patients = patients;
@@ -43,7 +43,7 @@ public class Doctor extends Person implements Serializable {
         this.prescriptions = prescriptions;
     }
 
-    public Doctor() {
+    public HealthcareProfessional() {
     }
 
     public Patient addPatient(Patient patient){

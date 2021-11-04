@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DoctorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
@@ -27,7 +26,7 @@ public class PatientService {
     @GET
     @Path("/")
     public Response getAllPatientsWS() {
-        List<Patient> patients = patientBean.getAllPatients();
+        //List<Patient> patients = patientBean.getAllPatients();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),

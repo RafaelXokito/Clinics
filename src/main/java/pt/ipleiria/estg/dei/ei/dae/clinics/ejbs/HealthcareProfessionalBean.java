@@ -1,29 +1,28 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
-import javax.print.Doc;
 import java.util.List;
 
 @Stateless
-public class DoctorBean {
+public class HealthcareProfessionalBean {
     @PersistenceContext
     private EntityManager entityManager;
 
     public List<Object[]> getAllDoctors() {
-        Query query = entityManager.createQuery("SELECT d.username, d.email, d.name, d.gender, d.specialty  FROM Doctor d");
+        Query query = entityManager.createQuery("SELECT d.username, d.email, d.name, d.gender, d.specialty  FROM HealthcareProfessional d");
         List<Object[]> doctorList = query.getResultList();
         return doctorList;
         //return entityManager.createNamedQuery("getAllDoctors", Doctor.class).getResultList();
     }
 
-    public Doctor findDoctor(String username) throws MyEntityNotFoundException {
-        Doctor doctor = entityManager.find(Doctor.class, username);
+    public HealthcareProfessional findDoctor(String username) throws MyEntityNotFoundException {
+        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, username);
         if (doctor == null)
             throw new MyEntityNotFoundException("Doctor \"" + username + "\" does not exist");
 
@@ -41,7 +40,7 @@ public class DoctorBean {
      * @param created_ByUsername Administrator Username that is creating the current Doctor
      */
     public void create(String username, String email, String password, String name, String gender, String specialty,String created_ByUsername) throws MyEntityNotFoundException, MyEntityExistsException {
-        Doctor doctor = findDoctor(username);
+        HealthcareProfessional doctor = findDoctor(username);
         if (doctor != null)
             throw new MyEntityExistsException("Doctor \"" + username + "\" already exist");
 
@@ -49,7 +48,7 @@ public class DoctorBean {
         if (created_by == null)
             throw new MyEntityNotFoundException("Administrator \"" + username + "\" does not exist");
 
-        Doctor newDoctor = new Doctor(username, email, password, name, gender, specialty, created_by);
+        HealthcareProfessional newDoctor = new HealthcareProfessional(username, email, password, name, gender, specialty, created_by);
         entityManager.persist(newDoctor);
     }
 
@@ -58,7 +57,7 @@ public class DoctorBean {
      * @param username @Id to find the proposal delete Doctor
      */
     public void delete(String username) throws MyEntityNotFoundException {
-        Doctor doctor = findDoctor(username);
+        HealthcareProfessional doctor = findDoctor(username);
         entityManager.remove(doctor);
     }
 
@@ -72,7 +71,7 @@ public class DoctorBean {
      * @param specialty to update Doctor
      */
     public void update(String username, String email, String password, String name, String gender, String specialty) throws MyEntityNotFoundException {
-        Doctor doctor = findDoctor(username);
+        HealthcareProfessional doctor = findDoctor(username);
 
         doctor.setEmail(email);
         doctor.setPassword(password);

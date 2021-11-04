@@ -1,7 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -48,7 +48,7 @@ public class PrescriptionBean {
      *         null if Not found Biometric Data Issue with this id (bio_data_issues_id)
      */
     public Prescription create(String doctor_username, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
-        Doctor doctor = entityManager.find(Doctor.class, doctor_username);
+        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, doctor_username);
         
         if (doctor == null)
             throw new MyEntityNotFoundException("Doctor \"" + doctor_username + "\" does not exist");

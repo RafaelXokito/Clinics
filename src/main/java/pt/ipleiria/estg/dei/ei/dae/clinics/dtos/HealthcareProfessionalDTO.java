@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
 import java.util.Date;
 
-public class DoctorDTO {
+public class HealthcareProfessionalDTO {
     private String username;
     private String email;
     private String password;
@@ -14,7 +14,7 @@ public class DoctorDTO {
     private String specialty;
     private String created_by;
 
-    public DoctorDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
+    public HealthcareProfessionalDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -27,7 +27,7 @@ public class DoctorDTO {
         this.created_by = created_by;
     }
 
-    public DoctorDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
+    public HealthcareProfessionalDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
         this.username = username;
         this.email = email;
         this.name = name;
@@ -39,7 +39,7 @@ public class DoctorDTO {
         this.created_by = created_by;
     }
 
-    public DoctorDTO(String username, String email, String name, String gender, String specialty) {
+    public HealthcareProfessionalDTO(String username, String email, String name, String gender, String specialty) {
         this.username = username;
         this.email = email;
         this.name = name;
@@ -47,7 +47,7 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public DoctorDTO() {
+    public HealthcareProfessionalDTO() {
         username = "";
         email = "";
         password = "";

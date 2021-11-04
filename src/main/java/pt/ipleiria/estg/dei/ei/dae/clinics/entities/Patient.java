@@ -24,7 +24,7 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToMany(mappedBy = "patients")
-    private List<Doctor> doctors;
+    private List<HealthcareProfessional> doctors;
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
@@ -33,9 +33,9 @@ public class Patient extends Person implements Serializable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "DOCTOR_USERNAME")
-    private Doctor created_by;
+    private HealthcareProfessional created_by;
 
-    public Patient(String username, String email, String password, String name, String gender, int healthNo, Doctor created_by) {
+    public Patient(String username, String email, String password, String name, String gender, int healthNo, HealthcareProfessional created_by) {
         super(username, email, password, name, gender);
         this.healthNo = healthNo;
         this.doctors = new ArrayList<>();
@@ -48,7 +48,7 @@ public class Patient extends Person implements Serializable {
         this.biometric_data = new ArrayList<>();
     }
 
-    public Doctor addDoctor(Doctor doctor){
+    public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
         if (doctor != null && !this.doctors.contains(doctor)) {
             doctors.add(doctor);
             return doctor;
@@ -56,7 +56,7 @@ public class Patient extends Person implements Serializable {
         return null;
     }
 
-    public Doctor removeDoctor(Doctor doctor){
+    public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
         return doctor != null && doctors.remove(doctor) ? doctor : null;
     }
 
@@ -80,11 +80,11 @@ public class Patient extends Person implements Serializable {
         this.healthNo = healthNo;
     }
 
-    public List<Doctor> getDoctors() {
+    public List<HealthcareProfessional> getDoctors() {
         return doctors;
     }
 
-    public void setDoctors(List<Doctor> doctors) {
+    public void setDoctors(List<HealthcareProfessional> doctors) {
         this.doctors = doctors;
     }
 
@@ -96,11 +96,11 @@ public class Patient extends Person implements Serializable {
         this.biometric_data = biometric_data;
     }
 
-    public Doctor getCreated_by() {
+    public HealthcareProfessional getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(Doctor created_by) {
+    public void setCreated_by(HealthcareProfessional created_by) {
         this.created_by = created_by;
     }
 }

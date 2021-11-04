@@ -31,7 +31,7 @@ public class Prescription implements Serializable {
     @ManyToOne
     @JoinColumn(name = "DOCTOR_USERNAME")
     @NotNull
-    private Doctor doctor;
+    private HealthcareProfessional doctor;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,7 +47,7 @@ public class Prescription implements Serializable {
     private static SimpleDateFormat dateformat = new SimpleDateFormat("dd/M/yyyy");
 
 
-    public Prescription(Doctor doctor, String start_date, String end_date, String notes) throws ParseException {
+    public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes) throws ParseException {
         this.doctor = doctor;
         this.start_date = dateformat.parse(start_date);
         this.end_date = dateformat.parse(end_date);
@@ -57,6 +57,18 @@ public class Prescription implements Serializable {
     }
 
     public Prescription() {
+    }
+
+    public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException {
+        this.doctor = doctor;
+        this.start_date = dateformat.parse(start_date);
+        this.end_date = dateformat.parse(end_date);
+        this.notes = notes;
+
+        for (BiometricDataIssue biometricDataIssue :
+                biometricDataIssues) {
+            addBiometricDataIssue(biometricDataIssue);
+        }
     }
 
     public BiometricDataIssue addBiometricDataIssue(BiometricDataIssue biometricDataIssue){
@@ -79,11 +91,11 @@ public class Prescription implements Serializable {
         this.id = id;
     }
 
-    public Doctor getDoctor() {
+    public HealthcareProfessional getDoctor() {
         return doctor;
     }
 
-    public void setDoctor(Doctor doctor) {
+    public void setDoctor(HealthcareProfessional doctor) {
         this.doctor = doctor;
     }
 

@@ -22,7 +22,7 @@ public class ConfigBean {
     AdministratorBean administratorBean;
 
     @EJB
-    DoctorBean doctorBean;
+    HealthcareProfessionalBean doctorBean;
 
     @EJB
     PatientBean patientBean;

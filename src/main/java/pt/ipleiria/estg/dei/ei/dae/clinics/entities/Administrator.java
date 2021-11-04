@@ -19,7 +19,7 @@ public class Administrator extends Person implements Serializable {
 
     @NotNull
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
-    private List<Doctor> doctors;
+    private List<HealthcareProfessional> doctors;
 
     public Administrator(String username, String email, String password, String name, String gender) {
         super(username, email, password, name, gender);
@@ -33,7 +33,7 @@ public class Administrator extends Person implements Serializable {
     public Administrator() {
     }
 
-    public Doctor addDoctor(Doctor doctor){
+    public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
         if (doctor != null && !this.doctors.contains(doctor)) {
             doctors.add(doctor);
             return doctor;
@@ -41,15 +41,15 @@ public class Administrator extends Person implements Serializable {
         return null;
     }
 
-    public Doctor removeDoctor(Doctor doctor){
+    public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
         return doctor != null && doctors.remove(doctor) ? doctor : null;
     }
 
-    public List<Doctor> getCreated_who() {
+    public List<HealthcareProfessional> getCreated_who() {
         return doctors;
     }
 
-    public void setCreated_who(List<Doctor> doctors) {
+    public void setCreated_who(List<HealthcareProfessional> doctors) {
         this.doctors = doctors;
     }
 }

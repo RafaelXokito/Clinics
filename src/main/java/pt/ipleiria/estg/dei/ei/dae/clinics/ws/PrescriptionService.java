@@ -28,7 +28,7 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS() {
-        List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
+        //List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),

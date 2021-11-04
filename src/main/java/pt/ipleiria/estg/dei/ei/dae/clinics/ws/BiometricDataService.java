@@ -28,7 +28,7 @@ public class BiometricDataService {
     @GET
     @Path("/")
     public Response getAllBiometricDataWS() {
-        List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
+        //List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataDTO>(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),

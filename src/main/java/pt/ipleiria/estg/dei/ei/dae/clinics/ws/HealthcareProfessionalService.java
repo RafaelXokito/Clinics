@@ -1,10 +1,9 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DoctorDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.HealthcareProfessionalDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.DoctorBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Doctor;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -20,26 +19,26 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
-public class DoctorService {
+public class HealthcareProfessionalService {
     @EJB
-    private DoctorBean doctorBean;
+    private HealthcareProfessionalBean doctorBean;
 
     @GET
     @Path("/")
     public Response getAllDoctorsWS() {
-        List<Doctor> doctors = doctorBean.getAllDoctors();
+        //List<Doctor> doctors = doctorBean.getAllDoctors();
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<DoctorDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
+                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
                         "username","email","name","gender","specialty"))
                 .build();
     }
 
 
-    private List<DoctorDTO> toDTOAllDoctors(List<Object[]> allDoctors) {
-        List<DoctorDTO> doctorDTOList = new ArrayList<>();
+    private List<HealthcareProfessionalDTO> toDTOAllDoctors(List<Object[]> allDoctors) {
+        List<HealthcareProfessionalDTO> doctorDTOList = new ArrayList<>();
         for (Object[] obj: allDoctors) {
-            doctorDTOList.add(new DoctorDTO(
+            doctorDTOList.add(new HealthcareProfessionalDTO(
                     obj[0].toString(),
                     obj[1].toString(),
                     obj[2].toString(),
@@ -53,7 +52,7 @@ public class DoctorService {
     @GET
     @Path("{username}")
     public Response getDoctorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        Doctor doctor = doctorBean.findDoctor(username);
+        HealthcareProfessional doctor = doctorBean.findDoctor(username);
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(doctor))
@@ -62,7 +61,7 @@ public class DoctorService {
 
     @POST
     @Path("/")
-    public Response createDoctorWS(DoctorDTO doctorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+    public Response createDoctorWS(HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
         doctorBean.create(doctorDTO.getUsername(),
             doctorDTO.getEmail(),
             doctorDTO.getPassword(),
@@ -71,7 +70,7 @@ public class DoctorService {
             doctorDTO.getSpecialty(),
             doctorDTO.getCreated_by());
 
-        Doctor doctor = doctorBean.findDoctor(doctorDTO.getUsername());
+        HealthcareProfessional doctor = doctorBean.findDoctor(doctorDTO.getUsername());
 
         return Response.status(Response.Status.CREATED)
                 .entity(doctor)
@@ -80,7 +79,7 @@ public class DoctorService {
 
     @PUT
     @Path("{username}")
-    public Response updateDoctorWS(@PathParam("username") String username, DoctorDTO doctorDTO) throws MyEntityNotFoundException {
+    public Response updateDoctorWS(@PathParam("username") String username, HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
         doctorBean.update(username,
             doctorDTO.getEmail(),
             doctorDTO.getPassword(),
@@ -88,7 +87,7 @@ public class DoctorService {
             doctorDTO.getGender(),
             doctorDTO.getSpecialty());
 
-        Doctor doctor = doctorBean.findDoctor(username);
+        HealthcareProfessional doctor = doctorBean.findDoctor(username);
 
         return Response.status(Response.Status.OK)
                 .entity(doctor)
@@ -105,12 +104,12 @@ public class DoctorService {
     }
 
 
-    private List<DoctorDTO> toDTOs(List<Doctor> doctors) {
+    private List<HealthcareProfessionalDTO> toDTOs(List<HealthcareProfessional> doctors) {
         return doctors.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    private DoctorDTO toDTO(Doctor doctor) {
-        return new DoctorDTO(doctor.getUsername(),
+    private HealthcareProfessionalDTO toDTO(HealthcareProfessional doctor) {
+        return new HealthcareProfessionalDTO(doctor.getUsername(),
                 doctor.getEmail(),
                 doctor.getName(),
                 doctor.getGender(),
