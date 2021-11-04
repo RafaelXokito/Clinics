@@ -3,7 +3,7 @@ FROM jboss/wildfly:24.0.0.Final
 ENV WILDFLY_HOME=/opt/jboss/wildfly
 ENV DEPLOYMENTS_DIR=${WILDFLY_HOME}/standalone/deployments
 
-COPY ../../../../../Downloads/docker-wildfly-postgres-main%204/scripts ${WILDFLY_HOME}/bin
+COPY scripts ${WILDFLY_HOME}/bin
 
 USER root
 
