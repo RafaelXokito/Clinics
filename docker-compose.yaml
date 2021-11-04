@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
   webserver:
-    build: ../../../../../Downloads/docker-wildfly-postgres-main 4
+    build: .
     ports:
       - "8080:8080"
       - "9990:9990"
