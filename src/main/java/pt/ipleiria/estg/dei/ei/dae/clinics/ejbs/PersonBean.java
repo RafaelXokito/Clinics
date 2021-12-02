@@ -13,6 +13,7 @@ public class PersonBean {
 
     public Person authenticate(final String Personname, final String password) throws
             Exception {
+
         Person Person = em.find(Person.class, Personname);
         if (Person != null &&
                 Person.getPassword().equals(Person.generateStorngPasswordHash(password))) {

@@ -105,9 +105,10 @@ public class AdministratorService {
     @DELETE
     @Path("{username}")
     public Response deleteAdministratorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        administratorBean.delete(username);
-
-        return Response.status(Response.Status.OK)
+        if (administratorBean.delete(username))
+            return Response.status(Response.Status.OK)
+                    .build();
+        return Response.status(Response.Status.BAD_REQUEST)
                 .build();
     }
 
