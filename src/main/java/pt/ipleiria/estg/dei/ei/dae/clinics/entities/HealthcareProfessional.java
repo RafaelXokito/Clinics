@@ -5,6 +5,7 @@ import io.smallrye.common.constraint.NotNull;
 import javax.persistence.*;
 import javax.print.Doc;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,12 +39,14 @@ public class HealthcareProfessional extends Person implements Serializable {
     public HealthcareProfessional(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {
         super(username, email, password, name, gender);
         this.specialty = specialty;
-        this.patients = patients;
         this.created_by = created_by;
-        this.prescriptions = prescriptions;
+        this.patients = new ArrayList<Patient>();
+        this.prescriptions = new ArrayList<Prescription>();
     }
 
     public HealthcareProfessional() {
+        this.patients = new ArrayList<Patient>();
+        this.prescriptions = new ArrayList<Prescription>();
     }
 
     public Patient addPatient(Patient patient){

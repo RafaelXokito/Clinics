@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,36 +36,39 @@ public class Prescription implements Serializable {
     private HealthcareProfessional doctor;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date start_date;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime start_date;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date end_date;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime end_date;
 
     @Nullable
     private String notes;
 
-    private static SimpleDateFormat dateformat = new SimpleDateFormat("dd/M/yyyy");
-
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes) throws ParseException {
         this.doctor = doctor;
-        this.start_date = dateformat.parse(start_date);
-        this.end_date = dateformat.parse(end_date);
+        this.start_date = LocalDateTime.parse(start_date, formatter);
+        this.end_date = LocalDateTime.parse(end_date, formatter);
+
         this.notes = notes;
 
         this.biometric_data_issues = new ArrayList<>();
     }
 
     public Prescription() {
+        this.biometric_data_issues = new ArrayList<>();
     }
 
     public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException {
         this.doctor = doctor;
-        this.start_date = dateformat.parse(start_date);
-        this.end_date = dateformat.parse(end_date);
+        this.start_date = LocalDateTime.parse(start_date, formatter);
+        this.end_date = LocalDateTime.parse(end_date, formatter);
         this.notes = notes;
+
+        this.biometric_data_issues = new ArrayList<>();
 
         for (BiometricDataIssue biometricDataIssue :
                 biometricDataIssues) {
@@ -99,20 +104,20 @@ public class Prescription implements Serializable {
         this.doctor = doctor;
     }
 
-    public Date getStart_date() {
+    public LocalDateTime getStart_date() {
         return start_date;
     }
 
-    public void setStart_date(String start_date) throws ParseException {
-        this.start_date = dateformat.parse(start_date);
+    public void setStart_date(String start_date) {
+        this.start_date = LocalDateTime.parse(start_date, formatter);
     }
 
-    public Date getEnd_date() {
+    public LocalDateTime getEnd_date() {
         return end_date;
     }
 
-    public void setEnd_date(String end_date) throws ParseException {
-        this.end_date = dateformat.parse(end_date);
+    public void setEnd_date(String end_date) {
+        this.end_date = LocalDateTime.parse(end_date, formatter);
     }
 
     public String getNotes() {

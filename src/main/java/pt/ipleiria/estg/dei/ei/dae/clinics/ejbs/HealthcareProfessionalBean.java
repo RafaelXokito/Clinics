@@ -40,7 +40,7 @@ public class HealthcareProfessionalBean {
      * @param created_ByUsername Administrator Username that is creating the current Doctor
      */
     public void create(String username, String email, String password, String name, String gender, String specialty,String created_ByUsername) throws MyEntityNotFoundException, MyEntityExistsException {
-        HealthcareProfessional doctor = findDoctor(username);
+        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, username);
         if (doctor != null)
             throw new MyEntityExistsException("Doctor \"" + username + "\" already exist");
 
