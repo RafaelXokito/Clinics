@@ -16,7 +16,7 @@ public class BiometricDataTypeBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricDataTypes() {
-        Query query = entityManager.createQuery("SELECT bioData.name, bioData.unit, bioData.unit_name FROM BiometricDataType bioData");
+        Query query = entityManager.createQuery("SELECT bioData.id, bioData.name, bioData.unit, bioData.unit_name, bioData.min, bioData.max FROM BiometricDataType bioData");
         List<Object[]> biometricDataTypeList = query.getResultList();
         return biometricDataTypeList;
         //return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();

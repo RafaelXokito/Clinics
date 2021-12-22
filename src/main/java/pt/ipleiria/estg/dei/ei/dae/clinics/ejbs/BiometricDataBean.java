@@ -17,7 +17,7 @@ public class BiometricDataBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT bioData.patient.name as Patient, bioData.patient.healthNo as HealthNumber, bioData.biometric_data_type.name as BiometricDataTypeName, bioData.value, bioData.biometric_data_type.unit as Unit FROM BiometricData bioData");
+        Query query = entityManager.createQuery("SELECT bioData.id, bioData.patient.username as PatientUsername, bioData.patient.name as Patient, bioData.patient.healthNo as HealthNumber, bioData.biometric_data_type.id, bioData.biometric_data_type.name as BiometricDataTypeName, bioData.value, bioData.biometric_data_type.unit as Unit FROM BiometricData bioData");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
         //return (List<BiometricData>) entityManager.createNamedQuery("getAllBiometricData").getResultList();
@@ -53,6 +53,7 @@ public class BiometricDataBean {
         if (patient == null)
             throw new MyEntityNotFoundException("Patient \"" + patientUsername + "\" does not exist");
 
+        //TODO Replace with interface uning Patient & HealthcareProfe
         Person person = entityManager.find(Person.class, personUsername);
         if (person == null)
             throw new MyEntityNotFoundException("Person \"" + personUsername + "\" does not exist");
