@@ -8,31 +8,32 @@ public class BiometricDataDTO {
     private double value;
     private String notes;
     private String patientUsername;
-    private Date created_at;
-    private String created_by;
+    private Date createdAt;
+    private String createdByUsername;
+    private String createdByName;
     private String patientName;
     private String healthNo;
-    private String BiometricDataTypeName;
+    private String biometricDataTypeName;
     private String valueUnit;
     //Origem- exame, equipamento, consulta
 
-    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, String patientUsername, Date created_at, String created_by) {
+    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, String patientUsername, Date createdAt, String createdByUsername) {
         this.id = id;
         this.biometricTypeId = biometricTypeId;
         this.value = value;
         this.notes = notes;
         this.patientUsername = patientUsername;
-        this.created_at = created_at;
-        this.created_by = created_by;
+        this.createdAt = createdAt;
+        this.createdByUsername = createdByUsername;
     }
 
-    public BiometricDataDTO(long biometricTypeId, double value, String notes, String patientUsername, Date created_at, String created_by) {
+    public BiometricDataDTO(long biometricTypeId, double value, String notes, String patientUsername, Date createdAt, String createdByUsername) {
         this.biometricTypeId = biometricTypeId;
         this.value = value;
         this.notes = notes;
         this.patientUsername = patientUsername;
-        this.created_at = created_at;
-        this.created_by = created_by;
+        this.createdAt = createdAt;
+        this.createdByUsername = createdByUsername;
     }
 
     public BiometricDataDTO() {
@@ -41,8 +42,17 @@ public class BiometricDataDTO {
         value = 0;
         notes = "";
         patientUsername = "";
-        created_at = null;
-        created_by = "";
+        createdAt = null;
+        createdByUsername = "";
+    }
+
+    public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, String createdByUsername, String createdByName, Date createdAt) {
+        this.value = value;
+        this.valueUnit = valueUnit;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.createdByUsername = createdByUsername;
+        this.createdByName = createdByName;
+        this.createdAt = createdAt;
     }
 
     public BiometricDataDTO(long id,String patientUsername, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit) {
@@ -51,7 +61,7 @@ public class BiometricDataDTO {
         this.patientName = patientName;
         this.healthNo = healthNo;
         this.biometricTypeId = biometricDataTypeId;
-        this.BiometricDataTypeName = biometricDataTypeName;
+        this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.valueUnit = valueUnit;
     }
@@ -73,11 +83,11 @@ public class BiometricDataDTO {
     }
 
     public String getBiometricDataTypeName() {
-        return BiometricDataTypeName;
+        return biometricDataTypeName;
     }
 
     public void setBiometricDataTypeName(String biometricDataTypeName) {
-        BiometricDataTypeName = biometricDataTypeName;
+        this.biometricDataTypeName = biometricDataTypeName;
     }
 
     public String getValueUnit() {
@@ -128,19 +138,19 @@ public class BiometricDataDTO {
         this.patientUsername = patientUsername;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getCreated_by() {
-        return created_by;
+    public String getCreatedByUsername() {
+        return createdByUsername;
     }
 
-    public void setCreated_by(String created_by) {
-        this.created_by = created_by;
+    public void setCreatedByUsername(String createdByUsername) {
+        this.createdByUsername = createdByUsername;
     }
 }

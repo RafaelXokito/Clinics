@@ -24,7 +24,7 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToMany(mappedBy = "patients")
-    private List<HealthcareProfessional> doctors;
+    private List<HealthcareProfessional> healthcareProfessionals;
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
@@ -32,44 +32,44 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "DOCTOR_USERNAME")
+    @JoinColumn(name = "HEALTHCARE_PROFESSIONAL_USERNAME")
     private HealthcareProfessional created_by;
 
-    public Patient(String username, String email, String password, String name, String gender, int healthNo, HealthcareProfessional created_by) {
+    public Patient(String username, String email, String password, String name, String gender, int healthNo, HealthcareProfessional createdBy) {
         super(username, email, password, name, gender);
         this.healthNo = healthNo;
-        this.doctors = new ArrayList<>();
-        this.created_by = created_by;
+        this.healthcareProfessionals = new ArrayList<>();
+        this.created_by = createdBy;
         this.biometric_data = new ArrayList<>();
-        addDoctor(created_by);
+        addHealthcareProfessional(createdBy);
     }
 
     public Patient() {
         this.biometric_data = new ArrayList<>();
     }
 
-    public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
-        if (doctor != null && !this.doctors.contains(doctor)) {
-            doctors.add(doctor);
-            return doctor;
+    public HealthcareProfessional addHealthcareProfessional(HealthcareProfessional healthcareProfessional){
+        if (healthcareProfessional != null && !this.healthcareProfessionals.contains(healthcareProfessional)) {
+            healthcareProfessionals.add(healthcareProfessional);
+            return healthcareProfessional;
         }
         return null;
     }
 
-    public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
-        return doctor != null && doctors.remove(doctor) ? doctor : null;
+    public HealthcareProfessional removeHealthcareProfessional(HealthcareProfessional healthcareProfessional){
+        return healthcareProfessional != null && healthcareProfessionals.remove(healthcareProfessional) ? healthcareProfessional : null;
     }
 
-    public BiometricData addBiometricData(BiometricData biometric_data){
-        if (biometric_data != null && !this.biometric_data.contains(biometric_data)) {
-            this.biometric_data.add(biometric_data);
-            return biometric_data;
+    public BiometricData addBiometricData(BiometricData biometricData){
+        if (biometricData != null && !this.biometric_data.contains(biometricData)) {
+            this.biometric_data.add(biometricData);
+            return biometricData;
         }
         return null;
     }
 
-    public BiometricData removeBiometricData(BiometricData biometric_data){
-        return biometric_data != null && this.biometric_data.remove(biometric_data) ? biometric_data : null;
+    public BiometricData removeBiometricData(BiometricData biometricData){
+        return biometricData != null && this.biometric_data.remove(biometricData) ? biometricData : null;
     }
 
     public int getHealthNo() {
@@ -80,27 +80,27 @@ public class Patient extends Person implements Serializable {
         this.healthNo = healthNo;
     }
 
-    public List<HealthcareProfessional> getDoctors() {
-        return doctors;
+    public List<HealthcareProfessional> getHealthcareProfessionals() {
+        return healthcareProfessionals;
     }
 
-    public void setDoctors(List<HealthcareProfessional> doctors) {
-        this.doctors = doctors;
+    public void setHealthcareProfessionals(List<HealthcareProfessional> doctors) {
+        this.healthcareProfessionals = doctors;
     }
 
     public List<BiometricData> getBiometric_data() {
         return biometric_data;
     }
 
-    public void setBiometric_data(List<BiometricData> biometric_data) {
-        this.biometric_data = biometric_data;
+    public void setBiometric_data(List<BiometricData> biometricData) {
+        this.biometric_data = biometricData;
     }
 
     public HealthcareProfessional getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(HealthcareProfessional created_by) {
-        this.created_by = created_by;
+    public void setCreated_by(HealthcareProfessional createdBy) {
+        this.created_by = createdBy;
     }
 }

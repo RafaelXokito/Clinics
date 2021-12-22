@@ -3,7 +3,6 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
-import javax.print.Doc;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +20,9 @@ public class HealthcareProfessional extends Person implements Serializable {
     private String specialty;
 
     @ManyToMany
-    @JoinTable(name = "DOCTORS_PATIENTS",
-            joinColumns = @JoinColumn(name = "DOCTOR_USERNAME", referencedColumnName = "USERNAME"),
-            inverseJoinColumns = @JoinColumn(name = "PATIENT_USERNAME", referencedColumnName =
-                    "USERNAME"))
+    @JoinTable(name = "HEALTHPROFESSIONALS_PATIENTS",
+            joinColumns = @JoinColumn(name = "HEALTHCARE_PROFESSIONAL_USERNAME", referencedColumnName = "USERNAME"),
+            inverseJoinColumns = @JoinColumn(name = "PATIENT_USERNAME", referencedColumnName = "USERNAME"))
     private List<Patient> patients;
 
     @ManyToOne
@@ -33,7 +31,7 @@ public class HealthcareProfessional extends Person implements Serializable {
     private Administrator created_by;
 
     @NotNull
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
     public HealthcareProfessional(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {

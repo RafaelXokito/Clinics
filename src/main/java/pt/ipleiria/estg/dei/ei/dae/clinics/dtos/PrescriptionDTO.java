@@ -5,38 +5,33 @@ import java.util.List;
 
 public class PrescriptionDTO {
     private long id;
-    private String doctorUsername;
-    private String doctorName;
-    private String start_date;
-    private String end_date;
+    private String healthProfessionalUsername;
+    private String healthProfessionalName;
+    private String startDate;
+    private String endDate;
     private String notes;
     private List<BiometricDataIssueDTO> issues;
 
-    public PrescriptionDTO(long id, String doctorUsername, String doctorName, String start_date, String end_date, String notes, List<BiometricDataIssueDTO> issues) {
+    public PrescriptionDTO(long id, String healthProfessionalUsername, String healthProfessionalName, String startDate, String endDate, String notes, List<BiometricDataIssueDTO> issues) {
         this.id = id;
-        this.doctorUsername = doctorUsername;
-        this.doctorName = doctorName;
-        this.start_date = start_date;
-        this.end_date = end_date;
+        this.healthProfessionalUsername = healthProfessionalUsername;
+        this.healthProfessionalName = healthProfessionalName;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.notes = notes;
         this.issues = issues;
     }
 
-    public PrescriptionDTO() {
-        id = 0;
-        doctorUsername = "";
-        doctorName = "";
-        start_date = "";
-        end_date = "";
-        notes = "";
+    public PrescriptionDTO(long id, String healthProfessionalName, String startDate, String endDate) {
+        this.id = id;
+        this.healthProfessionalName = healthProfessionalName;
+        this.startDate = startDate;
+        this.endDate = endDate;
         issues = new ArrayList<>();
     }
 
-    public PrescriptionDTO(String doctorName, String start_date, String end_date, String notes) {
-        this.doctorName = doctorName;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.notes = notes;
+    public PrescriptionDTO() {
+        issues = new ArrayList<>();
     }
 
     public long getId() {
@@ -47,36 +42,28 @@ public class PrescriptionDTO {
         this.id = id;
     }
 
-    public String getDoctorUsername() {
-        return doctorUsername;
+    public String getHealthProfessionalUsername() {
+        return healthProfessionalUsername;
     }
 
-    public void setDoctorUsername(String doctorUsername) {
-        this.doctorUsername = doctorUsername;
+    public void setHealthProfessionalUsername(String healthProfessionalUsername) {
+        this.healthProfessionalUsername = healthProfessionalUsername;
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getStart_date() {
-        return start_date;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setStart_date(String start_date) {
-        this.start_date = start_date;
-    }
-
-    public String getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public String getNotes() {
@@ -93,5 +80,13 @@ public class PrescriptionDTO {
 
     public void setIssues(List<BiometricDataIssueDTO> issues) {
         this.issues = issues;
+    }
+
+    public String getHealthProfessionalName() {
+        return healthProfessionalName;
+    }
+
+    public void setHealthProfessionalName(String healthProfessionalName) {
+        this.healthProfessionalName = healthProfessionalName;
     }
 }

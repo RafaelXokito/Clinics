@@ -1,9 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -72,7 +70,7 @@ public class BiometricDataService {
                 biometricDataDTO.getValue(),
                 biometricDataDTO.getNotes(),
                 biometricDataDTO.getPatientUsername(),
-                biometricDataDTO.getCreated_by());
+                biometricDataDTO.getCreatedByUsername());
 
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 

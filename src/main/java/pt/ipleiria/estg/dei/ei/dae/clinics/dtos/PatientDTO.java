@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PatientDTO {
     private String username;
@@ -12,9 +14,12 @@ public class PatientDTO {
     private Date updated_at;
     private Date deleted_at;
     private int healthNo;
-    private String created_by;
+    private String createdByUsername;
+    private String createdByName;
+    private List<BiometricDataDTO> biometricDatas;
+    private List<HealthcareProfessionalDTO> healthcareProfessionals;
 
-    public PatientDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, String created_by) {
+    public PatientDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, String createdByUsername, String createdByName, List<BiometricDataDTO> biometricDatas, List<HealthcareProfessionalDTO> healthcareProfessionals) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -24,7 +29,10 @@ public class PatientDTO {
         this.updated_at = updated_at;
         this.deleted_at = deleted_at;
         this.healthNo = healthNo;
-        this.created_by = created_by;
+        this.createdByUsername = createdByUsername;
+        this.createdByName = createdByName;
+        this.biometricDatas = biometricDatas;
+        this.healthcareProfessionals = healthcareProfessionals;
     }
 
     public PatientDTO(String username, int healthNo, String email, String name, String gender) {
@@ -33,18 +41,19 @@ public class PatientDTO {
         this.name = name;
         this.gender = gender;
         this.healthNo = healthNo;
+        biometricDatas = new ArrayList<>();
     }
 
-    public PatientDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, String created_by) {
+    public PatientDTO(String username, String email, String name, String gender, int healthNo, String createdByUsername, String createdByName, List<BiometricDataDTO> biometricDatas, List<HealthcareProfessionalDTO> healthcareProfessionals) {
         this.username = username;
         this.email = email;
         this.name = name;
         this.gender = gender;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.deleted_at = deleted_at;
         this.healthNo = healthNo;
-        this.created_by = created_by;
+        this.createdByUsername = createdByUsername;
+        this.createdByName = createdByName;
+        this.biometricDatas = biometricDatas;
+        this.healthcareProfessionals = healthcareProfessionals;
     }
 
     public PatientDTO() {
@@ -57,7 +66,7 @@ public class PatientDTO {
         updated_at = new Date();
         deleted_at = new Date();
         healthNo = 0;
-        created_by = "";
+        createdByUsername = "";
     }
 
     public String getUsername() {
@@ -132,11 +141,35 @@ public class PatientDTO {
         this.healthNo = healthNo;
     }
 
-    public String getCreated_by() {
-        return created_by;
+    public String getCreatedByUsername() {
+        return createdByUsername;
     }
 
-    public void setCreated_by(String created_by) {
-        this.created_by = created_by;
+    public void setCreatedByUsername(String createdByUsername) {
+        this.createdByUsername = createdByUsername;
+    }
+
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
+    }
+
+    public List<BiometricDataDTO> getBiometricDatas() {
+        return biometricDatas;
+    }
+
+    public void setBiometricDatas(List<BiometricDataDTO> biometricDatas) {
+        this.biometricDatas = biometricDatas;
+    }
+
+    public List<HealthcareProfessionalDTO> getHealthcareProfessionals() {
+        return healthcareProfessionals;
+    }
+
+    public void setHealthcareProfessionals(List<HealthcareProfessionalDTO> healthcareProfessionals) {
+        this.healthcareProfessionals = healthcareProfessionals;
     }
 }

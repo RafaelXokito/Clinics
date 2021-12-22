@@ -32,7 +32,7 @@ public class PrescriptionService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
-                        "doctorName","start_date","end_date","notes"))
+                        "id", "healthProfessionalName", "startDate", "endDate"))
                 .build();
     }
 
@@ -40,7 +40,7 @@ public class PrescriptionService {
         List<PrescriptionDTO> prescriptionDTOList = new ArrayList<>();
         for (Object[] obj: allPrescriptions) {
             prescriptionDTOList.add(new PrescriptionDTO(
-                    obj[0].toString(),
+                    Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
                     obj[3].toString()
@@ -64,16 +64,16 @@ public class PrescriptionService {
     public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         Prescription createdPrescription = prescriptionBean.create(
-            prescriptionDTO.getDoctorName(),
-            prescriptionDTO.getStart_date(),
-            prescriptionDTO.getEnd_date(),
+            prescriptionDTO.getHealthProfessionalUsername(),
+            prescriptionDTO.getStartDate(),
+            prescriptionDTO.getEndDate(),
             prescriptionDTO.getNotes(),
             issues);
 
         Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
 
         return Response.status(Response.Status.CREATED)
-                .entity(prescription)
+                .entity(toDTO(prescription))
                 .build();
     }
 
@@ -82,15 +82,15 @@ public class PrescriptionService {
     public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         prescriptionBean.update(id,
-            prescriptionDTO.getStart_date(),
-            prescriptionDTO.getEnd_date(),
+            prescriptionDTO.getStartDate(),
+            prescriptionDTO.getEndDate(),
             prescriptionDTO.getNotes(),
             issues);
 
         Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.OK)
-                .entity(prescription)
+                .entity(toDTO(prescription))
                 .build();
     }
 
@@ -118,10 +118,10 @@ public class PrescriptionService {
 
     private PrescriptionDTO toDTO(Prescription prescription) {
         return new PrescriptionDTO(prescription.getId(),
-                prescription.getDoctor().getUsername(),
-                prescription.getDoctor().getName(),
-                prescription.getStart_date().toString(),
-                prescription.getEnd_date().toString(),
+                prescription.getHealthcareProfessional().getUsername(),
+                prescription.getHealthcareProfessional().getName(),
+                prescription.getStartDate().toString(),
+                prescription.getEndDate().toString(),
                 prescription.getNotes(),
                 issuesToDTOs(prescription.getBiometric_data_issue()));
     }

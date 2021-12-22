@@ -69,16 +69,14 @@ public class PatientBean {
      * Update a Patient by given @Id:username
      * @param username @Id to find the proposal update Patient
      * @param email to update Patient
-     * @param password to update Patient
      * @param name to update Patient
      * @param gender to update Patient
      * @param healthNo to update Patient
      */
-    public void update(String username, String email, String password, String name, String gender, int healthNo) throws MyEntityNotFoundException {
+    public void update(String username, String email, String name, String gender, int healthNo) throws MyEntityNotFoundException {
         Patient patient = findPatient(username);
 
         patient.setEmail(email);
-        patient.setPassword(password);
         patient.setName(name);
         patient.setGender(gender);
         patient.setHealthNo(healthNo);

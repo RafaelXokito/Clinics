@@ -1,8 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.HealthcareProfessionalDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -67,12 +71,12 @@ public class PatientService {
             patientDTO.getName(),
             patientDTO.getGender(),
             patientDTO.getHealthNo(),
-            patientDTO.getCreated_by());
+            patientDTO.getCreatedByUsername());
 
         Patient patient = patientBean.findPatient(patientDTO.getUsername());
 
         return Response.status(Response.Status.CREATED)
-                .entity(patient)
+                .entity(toDTO(patient))
                 .build();
     }
 
@@ -81,15 +85,13 @@ public class PatientService {
     public Response updatePatientWS(@PathParam("username") String username, PatientDTO patientDTO) throws MyEntityNotFoundException {
         patientBean.update(username,
             patientDTO.getEmail(),
-            patientDTO.getPassword(),
             patientDTO.getName(),
             patientDTO.getGender(),
             patientDTO.getHealthNo());
 
         Patient patient = patientBean.findPatient(username);
-
         return Response.status(Response.Status.OK)
-                .entity(patient)
+                .entity(toDTO(patient))
                 .build();
     }
 
@@ -112,10 +114,37 @@ public class PatientService {
                 patient.getEmail(),
                 patient.getName(),
                 patient.getGender(),
-                patient.getCreated_at(),
-                patient.getUpdated_at(),
-                patient.getDeleted_at(),
                 patient.getHealthNo(),
-                patient.getCreated_by().getUsername());
+                patient.getCreated_by().getUsername(),
+                patient.getCreated_by().getName(),
+                biometricDataToDTOs(patient.getBiometric_data()),
+                healthcareProfessionalToDTOs(patient.getHealthcareProfessionals()));
+    }
+
+    private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
+        return biometricData.stream().map(this::biometricDataToDTO).collect(Collectors.toList());
+    }
+
+    private BiometricDataDTO biometricDataToDTO(BiometricData biometricData) {
+        return new BiometricDataDTO(biometricData.getValue(),
+                biometricData.getBiometric_data_type().getUnit_name(),
+                biometricData.getBiometric_data_type().getName(),
+                biometricData.getCreated_by().getUsername(),
+                biometricData.getCreated_by().getName(),
+                biometricData.getCreated_at());
+    }
+
+    private HealthcareProfessionalDTO healthcareProfessionalToDTO(HealthcareProfessional healthcareProfessional) {
+        return new HealthcareProfessionalDTO(
+                healthcareProfessional.getUsername(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getSpecialty()
+        );
+    }
+
+    private List<HealthcareProfessionalDTO> healthcareProfessionalToDTOs(List<HealthcareProfessional> healthcareProfessionals) {
+        return healthcareProfessionals.stream().map(this::healthcareProfessionalToDTO).collect(Collectors.toList());
     }
 }
