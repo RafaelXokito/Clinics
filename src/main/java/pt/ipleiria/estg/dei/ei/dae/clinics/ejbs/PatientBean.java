@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Stateless
@@ -33,9 +34,8 @@ public class PatientBean {
     }
 
     public Patient findPatient(String email) {
-        Query query = entityManager.createNativeQuery("SELECT p FROM Persons p WHERE p.email = '"+ email+"'", Patient.class);
-        List<Patient> patientList = (List<Patient>) query.getResultList();
-        return patientList.isEmpty() ? null : patientList.get(0);
+        TypedQuery<Patient> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '"+ email+"'", Patient.class);
+        return query.getResultList().size()>0 ? query.getSingleResult() : null;
     }
     /***
      * Creating a Patient by a Doctor

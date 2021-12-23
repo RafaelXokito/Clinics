@@ -49,6 +49,8 @@ public class ConfigBean {
 
             System.out.println("Creating Some Administrators");
             long aRafaelId = administratorBean.create("2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
+            long aGasparId = administratorBean.create("2191267@my.ipleiria.pt", "1234", "Gaspar Mendes Pererira","Male");
+            long aLeitaoId = administratorBean.create("2191268@my.ipleiria.pt", "1234", "Leitão Mendes Pererira","Male");
 
             System.out.println("Creating Some HealthcareProfessionals");
             long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt","248", "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId);

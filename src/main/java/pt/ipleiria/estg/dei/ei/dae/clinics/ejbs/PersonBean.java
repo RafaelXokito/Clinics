@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Stateless
@@ -19,15 +20,10 @@ public class PersonBean {
     EntityManager em;
 
     public Person findPerson(String email) {
-        Query query = em.createQuery("SELECT p.id as Id, p.email as Email, p.password as Password FROM Person p WHERE p.email = '"+ email+"'");
-        List<Object[]> personList = (List<Object[]>) query.getResultList();
-        for (Object[] person:personList) {
-            Person person1 = em.find(Person.class,Long.valueOf(person[0].toString()));
-            person1.setEmail(person[1].toString());
-            person1.setPassword(person[2].toString());
-            return person1;
-        }
-        return null;
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.email = '"+ email+"'", Person.class);
+        em.flush();
+        return query.getResultList().size() > 0 ? query.getSingleResult() : null;
+
         //System.out.println(em.find(Person.class, personList.get(0)).getEmail());
         //return em.find(Person.class, personList.get(0));
         //for (Object[] person : personList) {

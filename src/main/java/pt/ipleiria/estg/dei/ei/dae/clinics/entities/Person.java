@@ -191,7 +191,11 @@ public abstract class Person {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        try {
+            this.password = generateStrongPasswordHash(password);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getName() {

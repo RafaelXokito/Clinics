@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -10,6 +11,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.lang.reflect.Type;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @Stateless
@@ -46,10 +50,8 @@ public class AdministratorBean {
      * @return founded Administrator or Null if dont
      */
     public Administrator findAdministrator(String email) {
-        Query query = entityManager.createNativeQuery("SELECT a FROM Persons a WHERE a.email = '"+ email+"'", Administrator.class);
-        List<Administrator> administratorList = (List<Administrator>) query.getResultList();
-        System.out.println(administratorList.isEmpty());
-        return administratorList.isEmpty() ? null : administratorList.get(0);
+        TypedQuery<Administrator> query = entityManager.createQuery("SELECT a FROM Person a WHERE a.email = '"+ email+"'", Administrator.class);
+        return query.getResultList().size() > 0 ? query.getSingleResult() : null;
     }
 
     /***
@@ -97,6 +99,13 @@ public class AdministratorBean {
 
         administrator.setEmail(email);
         administrator.setPassword(password);
+        System.out.println(email);
+        System.out.println("Pass: "+ password + " - "+administrator.getPassword());
+        try {
+            System.out.println(Person.validatePassword(password, administrator.getPassword()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         administrator.setName(name);
         administrator.setGender(gender);
     }

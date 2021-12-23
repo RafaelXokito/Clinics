@@ -3,6 +3,11 @@ POST http://localhost:8080/clinics/api/auth/login
 Content-Type: application/json
 
 {"email":"2191182@my.ipleiria.pt","password":"248"}
+### Get JWT token
+POST http://localhost:8080/clinics/api/auth/login
+Content-Type: application/json
+
+{"email":"2191266@my.ipleiria.pt","password":"1234"}
 
 ### Who am I?
 GET http://localhost:8080/clinics/api/auth/user
