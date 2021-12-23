@@ -48,7 +48,7 @@ public class AdministratorBean {
     public Administrator findAdministrator(String email) {
         Query query = entityManager.createNativeQuery("SELECT a FROM Persons a WHERE a.email = '"+ email+"'", Administrator.class);
         List<Administrator> administratorList = (List<Administrator>) query.getResultList();
-        System.out.println(administratorList);
+        System.out.println(administratorList.isEmpty());
         return administratorList.isEmpty() ? null : administratorList.get(0);
     }
 
@@ -77,7 +77,7 @@ public class AdministratorBean {
      * Delete a Administrator by given @Id:id - Change deleted_at field to NOW() date
      * @param id @Id to find the proposal delete Administrator
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
         administrator.remove();
         if (entityManager.find(Administrator.class, id) == null)

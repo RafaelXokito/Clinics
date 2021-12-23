@@ -39,7 +39,7 @@ public class BiometricDataService {
         for (Object[] obj: allBiometricDatas) {
             BiometricDataDTOList.add(new BiometricDataDTO(
                     Long.parseLong(obj[0].toString()), //BioData.id
-                    obj[1].toString(), //bioData.patient.username
+                    Long.parseLong(obj[1].toString()), //bioData.patient.id
                     obj[2].toString(), //bioData.patient.name
                     obj[3].toString(), //bioData.patient.healthNo
                     Long.parseLong(obj[4].toString()), //bioData.biometric_data_type.id
@@ -65,7 +65,6 @@ public class BiometricDataService {
     @POST
     @Path("/")
     public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
-        System.out.println(biometricDataDTO.getPatientUsername());
         BiometricData createdBiometricData = biometricDataBean.create(
                 biometricDataDTO.getBiometricTypeId(),
                 biometricDataDTO.getValue(),
