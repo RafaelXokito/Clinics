@@ -26,7 +26,6 @@ public class PersonBean {
             person1.setEmail(person[1].toString());
             person1.setPassword(person[2].toString());
             return person1;
-
         }
         return null;
         //System.out.println(em.find(Person.class, personList.get(0)).getEmail());

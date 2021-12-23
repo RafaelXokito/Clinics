@@ -51,6 +51,8 @@
           <element id="library" level="project" name="Maven: com.github.java-json-tools:msg-simple:1.2" />
           <element id="library" level="project" name="Maven: com.github.java-json-tools:btf:1.3" />
           <element id="library" level="project" name="Maven: com.github.java-json-tools:jackson-coreutils:2.0" />
+          <element id="library" level="project" name="Maven: com.nimbusds:nimbus-jose-jwt:9.15.2" />
+          <element id="library" level="project" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" />
         </element>
       </element>
       <element id="directory" name="META-INF">
