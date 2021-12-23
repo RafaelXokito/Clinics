@@ -60,6 +60,9 @@ public class AdministratorBean {
      * @param gender of administrator acc
      */
     public long create(String email, String password, String name, String gender) throws MyEntityExistsException {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || gender.isEmpty()) {
+            throw new IllegalArgumentException("Invalid data given.");
+        }
         Administrator administrator = findAdministrator(email);
         if (administrator != null)
             throw new MyEntityExistsException("Administrator \"" + email + "\" already exist");
@@ -71,12 +74,15 @@ public class AdministratorBean {
     }
 
     /***
-     * Delete a Administrator by given @Id:username - Change deleted_at field to NOW() date
+     * Delete a Administrator by given @Id:id - Change deleted_at field to NOW() date
      * @param id @Id to find the proposal delete Administrator
      */
     public void delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
         administrator.remove();
+        if (entityManager.find(Administrator.class, id) == null)
+            return true;
+        return false;
     }
 
     /***

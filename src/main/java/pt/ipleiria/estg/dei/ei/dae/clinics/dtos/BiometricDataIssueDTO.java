@@ -4,12 +4,12 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 public class BiometricDataIssueDTO {
     private long id;
     private String name;
-    private int min;
-    private int max;
+    private double min;
+    private double max;
     private long biometricDataTypeId;
     private String biometricDataTypeName;
 
-    public BiometricDataIssueDTO(long id, String name, int min, int max, long biometricDataTypeId, String biometricDataTypeName) {
+    public BiometricDataIssueDTO(long id, String name, double min, double max, long biometricDataTypeId, String biometricDataTypeName) {
         this.id = id;
         this.name = name;
         this.min = min;
@@ -48,19 +48,19 @@ public class BiometricDataIssueDTO {
         this.name = name;
     }
 
-    public int getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public int getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(int max) {
+    public void setMax(double max) {
         this.max = max;
     }
 

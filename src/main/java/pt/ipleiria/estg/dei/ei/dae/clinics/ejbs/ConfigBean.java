@@ -55,6 +55,9 @@ public class ConfigBean {
 
             System.out.println("Creating Some Patients");
             long pDanielId = patientBean.create("219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789, hBrunaId);
+            long pLeonelId = patientBean.create("219XXX1@my.ipleiria.pt", "1234", "Leonél Brás", "Male", 123456798, hBrunaId);
+            long pAndreiaId = patientBean.create("219XXX2@my.ipleiria.pt", "1234", "Andreia Brás", "Female", 123456799, hBrunaId);
+            long pSilviaId = patientBean.create("219XXX3@my.ipleiria.pt", "1234", "Silvia Brás", "Female", 123456788, hBrunaId);
 
             System.out.println("Creating some Biometric Data Types");
             BiometricDataType temperaturaCorporal = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC", "(Graus Celsius)");
