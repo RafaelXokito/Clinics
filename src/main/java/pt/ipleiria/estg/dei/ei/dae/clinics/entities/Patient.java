@@ -39,11 +39,7 @@ public class Patient extends Person implements Serializable {
         this.healthcareProfessionals = new ArrayList<>();
         this.created_by = created_by;
         this.biometric_data = new ArrayList<>();
-        addHealthcareProfessional(createdBy);
-    }
-
-    public Patient(long id) {
-        super(id);
+        addHealthcareProfessional(created_by);
     }
 
     public Patient() {

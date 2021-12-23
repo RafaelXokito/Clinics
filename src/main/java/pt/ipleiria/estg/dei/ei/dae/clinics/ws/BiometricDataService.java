@@ -65,8 +65,7 @@ public class BiometricDataService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO)
-            throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricData createdBiometricData = biometricDataBean.create(
                 biometricDataDTO.getBiometricTypeId(),
                 biometricDataDTO.getValue(),
@@ -84,9 +83,11 @@ public class BiometricDataService {
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        biometricDataBean.delete(id);
+        if (biometricDataBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 

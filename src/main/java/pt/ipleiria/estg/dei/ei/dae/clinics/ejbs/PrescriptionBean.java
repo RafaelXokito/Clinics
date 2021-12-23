@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Stateless
@@ -19,7 +20,7 @@ public class PrescriptionBean {
 
     public List<Object[]> getAllPrescriptions() {
         Query query = entityManager
-                .createQuery("SELECT p.id, p.healthcareProfessional.name, p.startDate, p.endDate FROM Prescription p");
+                .createQuery("SELECT p.id, p.healthcareProfessional.id, p.healthcareProfessional.name, p.start_date, p.end_date FROM Prescription p");
         List<Object[]> prescriptionList = query.getResultList();
         return prescriptionList;
         // return entityManager.createNamedQuery("getAllPrescriptions",
@@ -41,10 +42,10 @@ public class PrescriptionBean {
     /***
      * Creating a Prescription by a Doctor given some Biometric Data Issues
      * 
-     * @param healthProfessionalUsername Healthcare Professional Username that is
+     * @param healthcareProfessionalId   Healthcare Professional Id that is
      *                                   creating the current Prescription
-     * @param startDate                  that Prescription is starting
-     * @param endDate                    that Prescription is ending
+     * @param start_date                 that Prescription is starting
+     * @param end_date                   that Prescription is ending
      * @param notes                      given by Doctor, the content of
      *                                   Prescription
      * @param biometricDataIssues        Biometric Data Issues that this
@@ -80,9 +81,10 @@ public class PrescriptionBean {
      * 
      * @param id @Id to find the proposal delete Prescription
      */
-    public void delete(long id) {
+    public boolean delete(long id) {
         Prescription prescription = entityManager.find(Prescription.class, id);
         entityManager.remove(prescription);
+        return entityManager.find(Prescription.class, id) == null;
     }
 
     /***
@@ -97,11 +99,11 @@ public class PrescriptionBean {
      * @throw TODO - Acrescentar os throws e a descrição
      */
     public void update(long id, String start_date, String end_date, String notes,
-            List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
+                       List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
         Prescription prescription = findPrescription(id);
 
-        prescription.setStartDate(start_date);
-        prescription.setEndDate(end_date);
+        prescription.setStart_date(start_date);
+        prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {

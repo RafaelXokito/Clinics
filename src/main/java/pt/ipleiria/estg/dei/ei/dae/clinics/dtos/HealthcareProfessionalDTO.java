@@ -27,7 +27,8 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
     }
 
-    public HealthcareProfessionalDTO(String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by) {
+    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -38,7 +39,8 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
     }
 
-    public HealthcareProfessionalDTO(String email, String name, String gender, String specialty) {
+    public HealthcareProfessionalDTO(long id, String email, String name, String gender, String specialty) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -59,6 +61,10 @@ public class HealthcareProfessionalDTO {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEmail() {

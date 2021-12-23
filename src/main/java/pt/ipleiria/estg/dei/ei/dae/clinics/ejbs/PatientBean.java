@@ -18,7 +18,7 @@ public class PatientBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllPatients() {
-        Query query = entityManager.createQuery("SELECT p.id, p.healthNo, p.email, p.name, p.gender  FROM Patient p");
+        Query query = entityManager.createQuery("SELECT p.id, p.email, p.name, p.gender, p.healthNo  FROM Patient p");
         List<Object[]> patientList = query.getResultList();
         return patientList;
         // return entityManager.createNamedQuery("getAllPatients",
@@ -34,8 +34,7 @@ public class PatientBean {
     }
 
     public Patient findPatient(String email) {
-        Query query = entityManager.createNativeQuery("SELECT p FROM Persons p WHERE p.email = '" + email + "'",
-                Patient.class);
+        Query query = entityManager.createNativeQuery("SELECT p FROM Persons p WHERE p.email = '" + email + "'", Patient.class);
         List<Patient> patientList = (List<Patient>) query.getResultList();
         return patientList.isEmpty() ? null : patientList.get(0);
     }
@@ -73,21 +72,21 @@ public class PatientBean {
      * 
      * @param id @Id to find the proposal delete Patient
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
         entityManager.remove(patient);
+        return entityManager.find(Patient.class, id) == null;
     }
 
     /***
      * Update a Patient by given @Id:username
      * 
      * @param email    @Id to find the proposal update Patient
-     * @param password to update Patient
      * @param name     to update Patient
      * @param gender   to update Patient
      * @param healthNo to update Patient
      */
-    public void update(long id, String email, String password, String name, String gender, int healthNo)
+    public void update(long id, String email, String name, String gender, int healthNo)
             throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
 

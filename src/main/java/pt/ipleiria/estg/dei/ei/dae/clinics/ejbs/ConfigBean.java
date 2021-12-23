@@ -81,23 +81,20 @@ public class ConfigBean {
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());
-            biometricDataIssueBean.delete(hipotermia.getId());
 
             System.out.println(febre);
             List<BiometricDataIssue> issues = new ArrayList<BiometricDataIssue>();
             issues.add(febre);
             System.out.println("Creating some Prescriptions");
-            Prescription prescription1 = prescriptionBean.create("bruna.leitao", "2021-12-25 11:30", "2022-01-01 23:30",
+            Prescription prescription1 = prescriptionBean.create(2, "2021-12-25 11:30", "2022-01-01 23:30",
                     "Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
-            Prescription prescription2 = prescriptionBean.create("bruna.leitao", "2021-12-20 11:30", "2022-01-10 23:30",
+            Prescription prescription2 = prescriptionBean.create(2, "2021-12-20 11:30", "2022-01-10 23:30",
                     "Repousem e tomam ben-u-ron", issues);
-            Prescription prescription3 = prescriptionBean.create("bruna.leitao", "2021-12-22 11:30", "2022-01-02 23:30",
+            Prescription prescription3 = prescriptionBean.create(2, "2021-12-22 11:30", "2022-01-02 23:30",
                     "Para todos os doentes com febre", issues);
-            Prescription prescription4 = prescriptionBean.create("bruna.leitao", "2021-12-29 11:30", "2022-01-03 23:30",
+            Prescription prescription4 = prescriptionBean.create(2, "2021-12-29 11:30", "2022-01-03 23:30",
                     "Prescrição 1", issues);
 
-            System.out.println("Updating some Administrators");
-            administratorBean.update(aRafaelId, "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira", "Male");
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }

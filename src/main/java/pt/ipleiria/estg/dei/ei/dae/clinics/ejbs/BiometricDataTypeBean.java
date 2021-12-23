@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -52,9 +53,10 @@ public class BiometricDataTypeBean {
      * @param id @Id to find the proposal delete Biometric Data Type
      * @return Biometric Data Type deleted or null if dont find the Biometric Data Type with @Id:id given
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricDataType biometricDataType = findBiometricDataType(id);
         entityManager.remove(biometricDataType);
+        return entityManager.find(BiometricDataType.class, id) == null;
     }
 
     /***

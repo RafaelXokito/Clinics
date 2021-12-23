@@ -34,7 +34,7 @@ public class PatientService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),
-                        "username", "healthNo", "email", "name", "gender"))
+                        "id", "email", "name", "gender", "healthNo"))
                 .build();
     }
 
@@ -42,10 +42,11 @@ public class PatientService {
         List<PatientDTO> patientDTOList = new ArrayList<>();
         for (Object[] obj : allPatients) {
             patientDTOList.add(new PatientDTO(
-                    (Integer) obj[0],
+                    Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString()));
+                    obj[3].toString(),
+                    Integer.parseInt(obj[4].toString())));
         }
         return patientDTOList;
     }
@@ -69,7 +70,7 @@ public class PatientService {
                 patientDTO.getName(),
                 patientDTO.getGender(),
                 patientDTO.getHealthNo(),
-                patientDTO.getCreatedByUsername());
+                patientDTO.getCreated_by());
 
         Patient patient = patientBean.findPatient(patientDTO.getEmail());
 
@@ -98,9 +99,10 @@ public class PatientService {
     @DELETE
     @Path("{id}")
     public Response deletePatientWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        patientBean.delete(id);
-
-        return Response.status(Response.Status.OK)
+        if (patientBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 
@@ -127,13 +129,13 @@ public class PatientService {
         return new BiometricDataDTO(biometricData.getValue(),
                 biometricData.getBiometric_data_type().getUnit_name(),
                 biometricData.getBiometric_data_type().getName(),
-                patient.getCreated_by().getId(),
+                biometricData.getCreated_by().getId(),
                 biometricData.getCreated_at());
     }
 
     private HealthcareProfessionalDTO healthcareProfessionalToDTO(HealthcareProfessional healthcareProfessional) {
         return new HealthcareProfessionalDTO(
-                healthcareProfessional.getUsername(),
+                healthcareProfessional.getId(),
                 healthcareProfessional.getEmail(),
                 healthcareProfessional.getName(),
                 healthcareProfessional.getGender(),

@@ -33,11 +33,12 @@ public class PrescriptionDTO {
         issues = new ArrayList<>();
     }
 
-    public PrescriptionDTO(String healthcareProfessionalName, String start_date, String end_date, String notes) {
+    public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, String start_date, String end_date) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
         this.healthcareProfessionalName = healthcareProfessionalName;
         this.start_date = start_date;
         this.end_date = end_date;
-        this.notes = notes;
         issues = new ArrayList<>();
     }
 
@@ -65,20 +66,20 @@ public class PrescriptionDTO {
         this.healthcareProfessionalName = healthcareProfessionalName;
     }
 
-    public String getStart_Date() {
-        return startDate;
+    public String getStart_date() {
+        return start_date;
     }
 
-    public void setStart_Date(String startDate) {
-        this.startDate = startDate;
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
     }
 
-    public String getEnd_Date() {
-        return endDate;
+    public String getEnd_date() {
+        return end_date;
     }
 
-    public void setEnd_Date(String endDate) {
-        this.endDate = endDate;
+    public void setEnd_date(String end_date) {
+        this.end_date = end_date;
     }
 
     public String getNotes() {
@@ -95,13 +96,5 @@ public class PrescriptionDTO {
 
     public void setIssues(List<BiometricDataIssueDTO> issues) {
         this.issues = issues;
-    }
-
-    public String getHealthProfessionalName() {
-        return healthProfessionalName;
-    }
-
-    public void setHealthProfessionalName(String healthProfessionalName) {
-        this.healthProfessionalName = healthProfessionalName;
     }
 }

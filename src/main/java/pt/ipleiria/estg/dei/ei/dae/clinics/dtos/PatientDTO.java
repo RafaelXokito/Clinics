@@ -35,13 +35,26 @@ public class PatientDTO {
         this.healthcareProfessionals = healthcareProfessionals;
     }
 
-    public PatientDTO(int healthNo, String email, String name, String gender) {
+    public PatientDTO(long id, String email, String name, String gender, int healthNo) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;
         this.healthNo = healthNo;
         biometricDatas = new ArrayList<>();
         healthcareProfessionals = new ArrayList<>();
+    }
+
+    public PatientDTO(long id, String email, String name, String gender, int healthNo, long created_by,
+                      List<BiometricDataDTO> biometricDatas, List<HealthcareProfessionalDTO> healthcareProfessionals) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.healthNo = healthNo;
+        this.created_by = created_by;
+        this.biometricDatas = biometricDatas;
+        this.healthcareProfessionals = healthcareProfessionals;
     }
 
     public PatientDTO(long id, String email, String name, String gender, Date created_at, Date updated_at,
@@ -51,9 +64,11 @@ public class PatientDTO {
         this.email = email;
         this.name = name;
         this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
         this.healthNo = healthNo;
-        this.createdByUsername = createdByUsername;
-        this.createdByName = createdByName;
+        this.created_by = created_by;
         this.biometricDatas = biometricDatas;
         this.healthcareProfessionals = healthcareProfessionals;
     }
@@ -74,6 +89,10 @@ public class PatientDTO {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEmail() {

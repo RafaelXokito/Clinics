@@ -65,7 +65,7 @@ public class AdministratorBean {
         }
         Administrator administrator = findAdministrator(email);
         if (administrator != null)
-            throw new MyEntityExistsException("Administrator \"" + email + "\" already exist");
+            throw new MyEntityExistsException("Administrator with email of \"" + email + "\" already exist");
 
         Administrator newAdministrator = new Administrator(email, password, name, gender);
         entityManager.persist(newAdministrator);
@@ -80,23 +80,19 @@ public class AdministratorBean {
     public boolean delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
         administrator.remove();
-        if (entityManager.find(Administrator.class, id) == null)
-            return true;
-        return false;
+        return entityManager.find(Administrator.class, id) == null;
     }
 
     /***
      * Update a Administrator by given @Id:username
      * @param email @Id to find the proposal update Administrator
-     * @param password to update Administrator
      * @param name to update Administrator
      * @param gender to update Administrator
      */
-    public void update(long id, String email, String password, String name, String gender) throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
 
         administrator.setEmail(email);
-        administrator.setPassword(password);
         administrator.setName(name);
         administrator.setGender(gender);
     }

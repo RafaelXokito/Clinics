@@ -53,7 +53,8 @@ public class BiometricDataDTO {
         this.created_at = createdAt;
     }
 
-    public BiometricDataDTO(long id,long patientId, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit, String notes) {
+    public BiometricDataDTO(long id, long patientId, String patientName, String healthNo, long biometricDataTypeId,
+                            String biometricDataTypeName, double value, String valueUnit, String notes) {
         this.id = id;
         this.patientId = patientId;
         this.patientName = patientName;
@@ -137,12 +138,12 @@ public class BiometricDataDTO {
         this.patientId = patientId;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
     }
 
     public long getCreated_by() {

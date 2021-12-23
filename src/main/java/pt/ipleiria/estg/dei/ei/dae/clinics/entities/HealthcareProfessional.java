@@ -34,17 +34,13 @@ public class HealthcareProfessional extends Person implements Serializable {
         super(email, password, name, gender);
         this.specialty = specialty;
         this.created_by = created_by;
-        this.patients = new ArrayList<Patient>();
-        this.prescriptions = new ArrayList<Prescription>();
-    }
-
-    public HealthcareProfessional(long id) {
-        super(id);
+        this.patients = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
     public HealthcareProfessional() {
-        this.patients = new ArrayList<Patient>();
-        this.prescriptions = new ArrayList<Prescription>();
+        this.patients = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
     public Patient addPatient(Patient patient) {

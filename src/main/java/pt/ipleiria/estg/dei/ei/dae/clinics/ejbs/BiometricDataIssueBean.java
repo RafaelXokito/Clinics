@@ -59,9 +59,10 @@ public class BiometricDataIssueBean {
      * Delete a Biometric Data Issue by given @Id:id
      * @param id @Id to find the proposal delete Biometric Data Issue
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
         entityManager.remove(biometricDataIssue);
+        return entityManager.find(BiometricDataIssue.class, id) == null;
     }
 
     /***

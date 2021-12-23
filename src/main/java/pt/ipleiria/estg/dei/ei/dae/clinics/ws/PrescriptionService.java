@@ -32,7 +32,7 @@ public class PrescriptionService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
-                        "id", "healthProfessionalName", "startDate", "endDate"))
+                        "id", "healthcareProfessionalId", "healthcareProfessionalName", "start_date", "end_date"))
                 .build();
     }
 
@@ -41,9 +41,10 @@ public class PrescriptionService {
         for (Object[] obj : allPrescriptions) {
             prescriptionDTOList.add(new PrescriptionDTO(
                     Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
+                    Long.parseLong(obj[1].toString()),
                     obj[2].toString(),
-                    obj[3].toString()));
+                    obj[3].toString(),
+                    obj[4].toString()));
         }
         return prescriptionDTOList;
     }
@@ -83,8 +84,8 @@ public class PrescriptionService {
             throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         prescriptionBean.update(id,
-                prescriptionDTO.getStartDate(),
-                prescriptionDTO.getEndDate(),
+                prescriptionDTO.getStart_date(),
+                prescriptionDTO.getEnd_date(),
                 prescriptionDTO.getNotes(),
                 issues);
 
@@ -98,9 +99,11 @@ public class PrescriptionService {
     @DELETE
     @Path("{id}")
     public Response deletePrescriptionWS(@PathParam("id") long id) {
-        prescriptionBean.delete(id);
+        if (prescriptionBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 

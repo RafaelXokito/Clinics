@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Stateless
@@ -17,7 +16,7 @@ public class BiometricDataBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT bioData.id, bioData.patient.username as PatientUsername, bioData.patient.name as Patient, bioData.patient.healthNo as HealthNumber, bioData.biometric_data_type.id, bioData.biometric_data_type.name as BiometricDataTypeName, bioData.value, bioData.biometric_data_type.unit as Unit, bioData.notes FROM BiometricData bioData");
+        Query query = entityManager.createQuery("SELECT bioData.id, bioData.patient.id as PatientId, bioData.patient.name as Patient, bioData.patient.healthNo as HealthNumber, bioData.biometric_data_type.id, bioData.biometric_data_type.name as BiometricDataTypeName, bioData.value, bioData.biometric_data_type.unit as Unit, bioData.notes FROM BiometricData bioData");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
         //return (List<BiometricData>) entityManager.createNamedQuery("getAllBiometricData").getResultList();
@@ -67,14 +66,14 @@ public class BiometricDataBean {
         return newBiometricData;
     }
 
-
     /***
      * Delete a Biometric Data by given @Id:id
      * @param id @Id to find the proposal delete Biometric Data
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = findBiometricData(id);
         entityManager.remove(biometricData);
+        return entityManager.find(BiometricData.class, id) == null;
     }
 
 }

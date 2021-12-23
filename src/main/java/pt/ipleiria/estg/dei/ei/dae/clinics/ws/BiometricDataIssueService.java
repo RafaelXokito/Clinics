@@ -30,7 +30,7 @@ public class BiometricDataIssueService {
     public Response getAllBiometricDataIssuesWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataIssueDTO>(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()),
-                        "name","biometricDataTypeName"))
+                        "id", "name", "biometricDataTypeName"))
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class BiometricDataIssueService {
         BiometricDataIssue biometricDataIssue = biometricDataIssueBean.findBiometricDataIssue(createdBiometricDataIssue.getId());
 
         return Response.status(Response.Status.CREATED)
-                .entity(biometricDataIssue)
+                .entity(toDTO(biometricDataIssue))
                 .build();
     }
 
@@ -87,16 +87,18 @@ public class BiometricDataIssueService {
         BiometricDataIssue biometricDataIssue = biometricDataIssueBean.findBiometricDataIssue(id);
 
         return Response.status(Response.Status.OK)
-                .entity(biometricDataIssue)
+                .entity(toDTO(biometricDataIssue))
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataIssueWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        biometricDataIssueBean.delete(id);
+        if (biometricDataIssueBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 

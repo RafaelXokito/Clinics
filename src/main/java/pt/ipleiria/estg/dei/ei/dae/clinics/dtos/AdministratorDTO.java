@@ -23,7 +23,7 @@ public class AdministratorDTO {
         this.deleted_at = deleted_at;
     }
 
-    public AdministratorDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
+    public AdministratorDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -43,7 +43,8 @@ public class AdministratorDTO {
         deleted_at = new Date();
     }
 
-    public AdministratorDTO(String email, String name, String gender) {
+    public AdministratorDTO(long id, String email, String name, String gender) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;

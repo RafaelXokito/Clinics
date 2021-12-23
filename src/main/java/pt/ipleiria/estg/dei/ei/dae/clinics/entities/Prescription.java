@@ -33,11 +33,11 @@ public class Prescription implements Serializable {
 
     @NotNull
     // @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime startDate;
+    private LocalDateTime start_date;
 
     @NotNull
     // @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime endDate;
+    private LocalDateTime end_date;
 
     @Nullable
     private String notes;
@@ -101,20 +101,20 @@ public class Prescription implements Serializable {
         this.healthcareProfessional = healthcareProfessional;
     }
 
-    public LocalDateTime getStartDate() {
-        return startDate;
+    public LocalDateTime getStart_date() {
+        return start_date;
     }
 
-    public void setStartDate(String start_date) {
-        this.startDate = LocalDateTime.parse(start_date, formatter);
+    public void setStart_date(String start_date) {
+        this.start_date = LocalDateTime.parse(start_date, formatter);
     }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
+    public LocalDateTime getEnd_date() {
+        return end_date;
     }
 
-    public void setEndDate(String end_date) {
-        this.endDate = LocalDateTime.parse(end_date, formatter);
+    public void setEnd_date(String end_date) {
+        this.end_date = LocalDateTime.parse(end_date, formatter);
     }
 
     public String getNotes() {

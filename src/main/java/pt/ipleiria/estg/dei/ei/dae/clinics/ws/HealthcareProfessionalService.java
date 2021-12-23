@@ -21,47 +21,48 @@ import java.util.stream.Collectors;
 
 public class HealthcareProfessionalService {
     @EJB
-    private HealthcareProfessionalBean doctorBean;
+    private HealthcareProfessionalBean healthcareProfessionalBean;
 
     @GET
     @Path("/")
-    public Response getAllDoctorsWS() {
+    public Response getAllHealcareProfessionalsWS() {
         //List<Doctor> doctors = doctorBean.getAllDoctors();
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
-                        "id","email","name","gender","specialty"))
+                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllHealcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()),
+                        "id", "email", "name", "gender", "specialty"))
                 .build();
     }
 
 
-    private List<HealthcareProfessionalDTO> toDTOAllDoctors(List<Object[]> allDoctors) {
-        List<HealthcareProfessionalDTO> doctorDTOList = new ArrayList<>();
-        for (Object[] obj: allDoctors) {
-            doctorDTOList.add(new HealthcareProfessionalDTO(
-                    obj[0].toString(),
+    private List<HealthcareProfessionalDTO> toDTOAllHealcareProfessionals(List<Object[]> allHealthcareProfessionals) {
+        List<HealthcareProfessionalDTO> healthcareProfessionalDTOList = new ArrayList<>();
+        for (Object[] obj: allHealthcareProfessionals) {
+            healthcareProfessionalDTOList.add(new HealthcareProfessionalDTO(
+                    Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString()
+                    obj[3].toString(),
+                    obj[4].toString()
             ));
         }
-        return doctorDTOList;
+        return healthcareProfessionalDTOList;
     }
 
     @GET
     @Path("{id}")
-    public Response getDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
+    public Response getHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
-                .entity(toDTO(doctor))
+                .entity(toDTO(healthcareProfessional))
                 .build();
     }
 
     @POST
     @Path("/")
-    public Response createDoctorWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        doctorBean.create(
+    public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+        healthcareProfessionalBean.create(
             healthcareProfessionalDTO.getEmail(),
             healthcareProfessionalDTO.getPassword(),
             healthcareProfessionalDTO.getName(),
@@ -69,17 +70,17 @@ public class HealthcareProfessionalService {
             healthcareProfessionalDTO.getSpecialty(),
             healthcareProfessionalDTO.getCreated_by());
 
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(healthcareProfessionalDTO.getEmail());
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(healthcareProfessionalDTO.getEmail());
 
         return Response.status(Response.Status.CREATED)
-                .entity(doctor)
+                .entity(toDTO(healthcareProfessional))
                 .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updateDoctorWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
-        doctorBean.update(
+    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
+        healthcareProfessionalBean.update(
             id,
             doctorDTO.getEmail(),
             doctorDTO.getPassword(),
@@ -87,19 +88,21 @@ public class HealthcareProfessionalService {
             doctorDTO.getGender(),
             doctorDTO.getSpecialty());
 
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
-                .entity(doctor)
+                .entity(toDTO(healthcareProfessional))
                 .build();
     }
 
     @DELETE
     @Path("{id}")
-    public Response deleteDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        doctorBean.delete(id);
+    public Response deleteHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        if (healthcareProfessionalBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 
@@ -108,15 +111,16 @@ public class HealthcareProfessionalService {
         return healthcareProfessionals.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    private HealthcareProfessionalDTO toDTO(HealthcareProfessional doctor) {
+    private HealthcareProfessionalDTO toDTO(HealthcareProfessional healthcareProfessional) {
         return new HealthcareProfessionalDTO(
-                doctor.getEmail(),
-                doctor.getName(),
-                doctor.getGender(),
-                doctor.getCreated_at(),
-                doctor.getUpdated_at(),
-                doctor.getDeleted_at(),
-                doctor.getSpecialty(),
-                doctor.getCreated_by().getId());
+                healthcareProfessional.getId(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getCreated_at(),
+                healthcareProfessional.getUpdated_at(),
+                healthcareProfessional.getDeleted_at(),
+                healthcareProfessional.getSpecialty(),
+                healthcareProfessional.getCreated_by().getId());
     }
 }
