@@ -31,9 +31,8 @@ public class HealthcareProfessionalBean {
     }
 
     public HealthcareProfessional findHealthcareProfessional(String email) {
-        Query query = entityManager.createNativeQuery("SELECT p FROM Persons p WHERE p.email = '"+ email+"'", HealthcareProfessional.class);
-        List<HealthcareProfessional> healthcareProfessionalList = (List<HealthcareProfessional>) query.getResultList();
-        return healthcareProfessionalList.isEmpty() ? null : healthcareProfessionalList.get(0);
+        TypedQuery<HealthcareProfessional> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '"+ email+"'", HealthcareProfessional.class);
+        return query.getResultList().size() > 0 ? query.getSingleResult() : null;
     }
 
     /***

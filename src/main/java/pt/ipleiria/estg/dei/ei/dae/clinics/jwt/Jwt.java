@@ -1,8 +1,10 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.jwt;
 
 public class Jwt {
+    private String type;
     private String token;
-    public Jwt(String token) {
+    public Jwt(String type, String token) {
+        this.type = type;
         this.token = token;
     }
     public void setToken(String token) {
@@ -10,5 +12,13 @@ public class Jwt {
     }
     public String getToken() {
         return token;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

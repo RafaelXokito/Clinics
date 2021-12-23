@@ -40,7 +40,7 @@ public class LoginService {
                 }
                 String token = jwtBean.createJwt(String.valueOf(user.getId()), new
                         String[]{user.getClass().getSimpleName()});
-                return Response.ok(new Jwt(token)).build();
+                return Response.ok(new Jwt("Bearer",token)).build();
             }
         } catch (Exception e) {
             log.info(e.getMessage());
