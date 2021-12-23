@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("healthcareprofessional") // relative url web path for this service
+@Path("healthcareprofessionals") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
@@ -62,7 +62,7 @@ public class HealthcareProfessionalService {
     @POST
     @Path("/")
     public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        healthcareProfessionalBean.create(
+        long id = healthcareProfessionalBean.create(
             healthcareProfessionalDTO.getEmail(),
             healthcareProfessionalDTO.getPassword(),
             healthcareProfessionalDTO.getName(),
@@ -70,7 +70,7 @@ public class HealthcareProfessionalService {
             healthcareProfessionalDTO.getSpecialty(),
             healthcareProfessionalDTO.getCreated_by());
 
-        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(healthcareProfessionalDTO.getEmail());
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(healthcareProfessional))
@@ -83,7 +83,6 @@ public class HealthcareProfessionalService {
         healthcareProfessionalBean.update(
             id,
             doctorDTO.getEmail(),
-            doctorDTO.getPassword(),
             doctorDTO.getName(),
             doctorDTO.getGender(),
             doctorDTO.getSpecialty());

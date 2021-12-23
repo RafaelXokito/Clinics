@@ -73,16 +73,14 @@ public class HealthcareProfessionalBean {
     /***
      * Update a Doctor by given @Id:username
      * @param email @Id to find the proposal update Doctor
-     * @param password to update Doctor
      * @param name to update Doctor
      * @param gender to update Doctor
      * @param specialty to update Doctor
      */
-    public void update(long id, String email, String password, String name, String gender, String specialty) throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender, String specialty) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 
         healthcareProfessional.setEmail(email);
-        healthcareProfessional.setPassword(password);
         healthcareProfessional.setName(name);
         healthcareProfessional.setGender(gender);
         healthcareProfessional.setSpecialty(specialty);

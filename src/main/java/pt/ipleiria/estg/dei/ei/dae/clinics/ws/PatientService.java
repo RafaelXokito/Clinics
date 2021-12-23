@@ -64,7 +64,7 @@ public class PatientService {
     @POST
     @Path("/")
     public Response createPatientWS(PatientDTO patientDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        patientBean.create(
+        long id = patientBean.create(
                 patientDTO.getEmail(),
                 patientDTO.getPassword(),
                 patientDTO.getName(),
@@ -72,7 +72,7 @@ public class PatientService {
                 patientDTO.getHealthNo(),
                 patientDTO.getCreated_by());
 
-        Patient patient = patientBean.findPatient(patientDTO.getEmail());
+        Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(patient))
