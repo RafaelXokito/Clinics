@@ -45,7 +45,7 @@ public class BiometricDataDTO {
         created_by = "";
     }
 
-    public BiometricDataDTO(long id,String patientUsername, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit) {
+    public BiometricDataDTO(long id,String patientUsername, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit, String notes) {
         this.id = id;
         this.patientUsername = patientUsername;
         this.patientName = patientName;
@@ -54,6 +54,7 @@ public class BiometricDataDTO {
         this.BiometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.valueUnit = valueUnit;
+        this.notes = notes;
     }
 
     public String getPatientName() {

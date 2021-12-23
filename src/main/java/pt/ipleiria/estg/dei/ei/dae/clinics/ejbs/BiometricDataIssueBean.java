@@ -16,7 +16,7 @@ public class BiometricDataIssueBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricDataIssues() {
-        Query query = entityManager.createQuery("SELECT bioData.name, bioData.biometric_data_type.name as BiometricDataType FROM BiometricDataIssue bioData");
+        Query query = entityManager.createQuery("SELECT bioData.id, bioData.name, bioData.biometric_data_type.name as BiometricDataType, bioData.biometric_data_type.id as BiometricDataTypeId, bioData.min, bioData.max FROM BiometricDataIssue bioData");
         List<Object[]> biometricDataIssueList = query.getResultList();
         return biometricDataIssueList;
         //return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).getResultList();
@@ -39,7 +39,7 @@ public class BiometricDataIssueBean {
      *         null if not found Biometric_Data_Type
      *         null if min or max out of bouds for limits in Biometric_Data_Type
      */
-    public BiometricDataIssue create(String name, int min, int max, long biometric_data_type) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public BiometricDataIssue create(String name, double min, double max, long biometric_data_type) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometric_data_type);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometric_data_type + "\" does not exist");
@@ -74,7 +74,7 @@ public class BiometricDataIssueBean {
      * @return Biometric Data
      * @throw TODO - Acrescentar os throws e a descrição
      */
-    public void update(long id, String name, int min, int max, long biometricDataTypeId) throws MyEntityNotFoundException {
+    public void update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);

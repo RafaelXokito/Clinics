@@ -47,7 +47,8 @@ public class BiometricDataService {
                     Long.parseLong(obj[4].toString()), //bioData.biometric_data_type.id
                     obj[5].toString(), //bioData.biometric_data_type.name
                     Double.parseDouble(obj[6].toString()), //bioData.value
-                    obj[6].toString() + " " + obj[7].toString() //bioData.value + bioData.biometric_data_type.unit
+                    obj[6].toString() + " " + obj[7].toString(), //bioData.value + bioData.biometric_data_type.unit
+                    obj[8].toString() //bioData.biometric_data_type.name
             ));
         }
         return BiometricDataDTOList;
