@@ -31,9 +31,9 @@ public class Prescription implements Serializable {
     private List<BiometricDataIssue> biometric_data_issues;
 
     @ManyToOne
-    @JoinColumn(name = "DOCTOR_USERNAME")
+    @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
     @NotNull
-    private HealthcareProfessional doctor;
+    private HealthcareProfessional healthcareProfessional;
 
     @NotNull
     //@Temporal(TemporalType.TIMESTAMP)
@@ -48,8 +48,8 @@ public class Prescription implements Serializable {
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes) throws ParseException {
-        this.doctor = doctor;
+    public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes) throws ParseException {
+        this.healthcareProfessional = healthcareProfessional;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
 
@@ -62,8 +62,8 @@ public class Prescription implements Serializable {
         this.biometric_data_issues = new ArrayList<>();
     }
 
-    public Prescription(HealthcareProfessional doctor, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException {
-        this.doctor = doctor;
+    public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException {
+        this.healthcareProfessional = healthcareProfessional;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
         this.notes = notes;
@@ -96,12 +96,12 @@ public class Prescription implements Serializable {
         this.id = id;
     }
 
-    public HealthcareProfessional getDoctor() {
-        return doctor;
+    public HealthcareProfessional getHealthcareProfessional() {
+        return healthcareProfessional;
     }
 
-    public void setDoctor(HealthcareProfessional doctor) {
-        this.doctor = doctor;
+    public void setHealthcareProfessional(HealthcareProfessional healthcareProfessional) {
+        this.healthcareProfessional = healthcareProfessional;
     }
 
     public LocalDateTime getStart_date() {

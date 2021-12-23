@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "DOCTORS")
+@Table(name = "HEALTHCAREPROFESSIONAL")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllDoctors",
-                query = "SELECT d FROM HealthcareProfessional d ORDER BY d.username"
+                query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id"
         )
 })
 public class HealthcareProfessional extends Person implements Serializable {
@@ -21,10 +21,10 @@ public class HealthcareProfessional extends Person implements Serializable {
     private String specialty;
 
     @ManyToMany
-    @JoinTable(name = "DOCTORS_PATIENTS",
-            joinColumns = @JoinColumn(name = "DOCTOR_USERNAME", referencedColumnName = "USERNAME"),
-            inverseJoinColumns = @JoinColumn(name = "PATIENT_USERNAME", referencedColumnName =
-                    "USERNAME"))
+    @JoinTable(name = "HEALTHCAREPROFESSIONAL_PATIENTS",
+            joinColumns = @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "PATIENT_ID", referencedColumnName =
+                    "ID"))
     private List<Patient> patients;
 
     @ManyToOne
@@ -33,15 +33,19 @@ public class HealthcareProfessional extends Person implements Serializable {
     private Administrator created_by;
 
     @NotNull
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
-    public HealthcareProfessional(String username, String email, String password, String name, String gender, String specialty, Administrator created_by) {
-        super(username, email, password, name, gender);
+    public HealthcareProfessional(String email, String password, String name, String gender, String specialty, Administrator created_by) {
+        super(email, password, name, gender);
         this.specialty = specialty;
         this.created_by = created_by;
         this.patients = new ArrayList<Patient>();
         this.prescriptions = new ArrayList<Prescription>();
+    }
+
+    public HealthcareProfessional(long id) {
+        super(id);
     }
 
     public HealthcareProfessional() {

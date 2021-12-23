@@ -38,20 +38,19 @@ public class PatientService {
         List<PatientDTO> patientDTOList = new ArrayList<>();
         for (Object[] obj: allPatients) {
             patientDTOList.add(new PatientDTO(
-                    obj[0].toString(),
-                    (Integer) obj[1],
+                    (Integer) obj[0],
+                    obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString(),
-                    obj[4].toString()
+                    obj[3].toString()
             ));
         }
         return patientDTOList;
     }
 
     @GET
-    @Path("{username}")
-    public Response getPatientWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        Patient patient = patientBean.findPatient(username);
+    @Path("{id}")
+    public Response getPatientWS(@PathParam("id") int id) throws MyEntityNotFoundException {
+        Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(patient))
@@ -61,7 +60,7 @@ public class PatientService {
     @POST
     @Path("/")
     public Response createPatientWS(PatientDTO patientDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        patientBean.create(patientDTO.getUsername(),
+        patientBean.create(
             patientDTO.getEmail(),
             patientDTO.getPassword(),
             patientDTO.getName(),
@@ -69,7 +68,7 @@ public class PatientService {
             patientDTO.getHealthNo(),
             patientDTO.getCreated_by());
 
-        Patient patient = patientBean.findPatient(patientDTO.getUsername());
+        Patient patient = patientBean.findPatient(patientDTO.getEmail());
 
         return Response.status(Response.Status.CREATED)
                 .entity(patient)
@@ -77,16 +76,17 @@ public class PatientService {
     }
 
     @PUT
-    @Path("{username}")
-    public Response updatePatientWS(@PathParam("username") String username, PatientDTO patientDTO) throws MyEntityNotFoundException {
-        patientBean.update(username,
+    @Path("{id}")
+    public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO) throws MyEntityNotFoundException {
+        patientBean.update(
+            id,
             patientDTO.getEmail(),
             patientDTO.getPassword(),
             patientDTO.getName(),
             patientDTO.getGender(),
             patientDTO.getHealthNo());
 
-        Patient patient = patientBean.findPatient(username);
+        Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
                 .entity(patient)
@@ -94,9 +94,9 @@ public class PatientService {
     }
 
     @DELETE
-    @Path("{username}")
-    public Response deletePatientWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        patientBean.delete(username);
+    @Path("{id}")
+    public Response deletePatientWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        patientBean.delete(id);
 
         return Response.status(Response.Status.OK)
                 .build();
@@ -108,7 +108,7 @@ public class PatientService {
     }
 
     private PatientDTO toDTO(Patient patient) {
-        return new PatientDTO(patient.getUsername(),
+        return new PatientDTO(patient.getId(),
                 patient.getEmail(),
                 patient.getName(),
                 patient.getGender(),
@@ -116,6 +116,6 @@ public class PatientService {
                 patient.getUpdated_at(),
                 patient.getDeleted_at(),
                 patient.getHealthNo(),
-                patient.getCreated_by().getUsername());
+                patient.getCreated_by().getId());
     }
 }

@@ -3,7 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 import java.util.Date;
 
 public class HealthcareProfessionalDTO {
-    private String username;
+    private long id;
     private String email;
     private String password;
     private String name;
@@ -12,10 +12,10 @@ public class HealthcareProfessionalDTO {
     private Date updated_at;
     private Date deleted_at;
     private String specialty;
-    private String created_by;
+    private long created_by;
 
-    public HealthcareProfessionalDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
-        this.username = username;
+    public HealthcareProfessionalDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -27,8 +27,7 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
     }
 
-    public HealthcareProfessionalDTO(String username, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, String created_by) {
-        this.username = username;
+    public HealthcareProfessionalDTO(String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -39,8 +38,7 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
     }
 
-    public HealthcareProfessionalDTO(String username, String email, String name, String gender, String specialty) {
-        this.username = username;
+    public HealthcareProfessionalDTO(String email, String name, String gender, String specialty) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -48,7 +46,6 @@ public class HealthcareProfessionalDTO {
     }
 
     public HealthcareProfessionalDTO() {
-        username = "";
         email = "";
         password = "";
         name = "";
@@ -57,15 +54,11 @@ public class HealthcareProfessionalDTO {
         updated_at = new Date();
         deleted_at = new Date();
         specialty = "";
-        created_by = "";
+        created_by = -1;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public long getId() {
+        return id;
     }
 
     public String getEmail() {
@@ -132,11 +125,11 @@ public class HealthcareProfessionalDTO {
         this.specialty = specialty;
     }
 
-    public String getCreated_by() {
+    public long getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(String created_by) {
+    public void setCreated_by(long created_by) {
         this.created_by = created_by;
     }
 }

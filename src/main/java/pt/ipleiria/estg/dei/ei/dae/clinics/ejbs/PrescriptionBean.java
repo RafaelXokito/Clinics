@@ -47,11 +47,11 @@ public class PrescriptionBean {
      *         null if Not a found Doctor with this username
      *         null if Not found Biometric Data Issue with this id (bio_data_issues_id)
      */
-    public Prescription create(String doctor_username, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
-        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, doctor_username);
+    public Prescription create(long healthcareProfessionalId, String start_date, String end_date, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
+        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         
         if (doctor == null)
-            throw new MyEntityNotFoundException("Doctor \"" + doctor_username + "\" does not exist");
+            throw new MyEntityNotFoundException("Doctor \"" + healthcareProfessionalId + "\" does not exist");
 
         Prescription prescription = new Prescription(doctor, start_date, end_date, notes, biometricDataIssues);
         entityManager.persist(prescription);

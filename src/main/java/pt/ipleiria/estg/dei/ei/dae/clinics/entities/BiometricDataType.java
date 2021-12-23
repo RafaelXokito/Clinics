@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class BiometricDataType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     @NotNull
     private String name;
     @NotNull
@@ -39,7 +39,7 @@ public class BiometricDataType implements Serializable {
     public BiometricDataType() {
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

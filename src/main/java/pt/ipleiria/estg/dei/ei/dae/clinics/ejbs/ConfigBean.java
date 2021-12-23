@@ -48,13 +48,13 @@ public class ConfigBean {
             System.out.println("Config Bean - Here we are setting things up to test");
 
             System.out.println("Creating Some Administrators");
-            administratorBean.create("rafael.pereira", "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
+            long aRafaelId = administratorBean.create("2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
 
             System.out.println("Creating Some HealthcareProfessionals");
-            healthcareProfessionalBean.create("bruna.leitao", "2191182@my.ipleiria.pt","248", "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", "rafael.pereira");
+            long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt","248", "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId);
 
             System.out.println("Creating Some Patients");
-            patientBean.create("daniel.carreira", "219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789, "bruna.leitao");
+            long pDanielId = patientBean.create("219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789, hBrunaId);
 
             System.out.println("Creating some Biometric Data Types");
             BiometricDataType temperaturaCorporal = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC", "(Graus Celsius)");
@@ -64,8 +64,8 @@ public class ConfigBean {
             BiometricDataIssue febre = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporal.getId());
 
             System.out.println("Creating some Biometric Data");
-            BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(),39.5,"Paciente com dores no peito.","daniel.carreira", "bruna.leitao");
-            BiometricData biometricData2 = biometricDataBean.create(altura.getId(),1.75,"Paciente pálido e alto.","daniel.carreira", "daniel.carreira");
+            BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(),39.5,"Paciente com dores no peito.",pDanielId, hBrunaId);
+            BiometricData biometricData2 = biometricDataBean.create(altura.getId(),1.75,"Paciente pálido e alto.",pDanielId, pDanielId);
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35, temperaturaCorporal.getId());
             biometricDataIssueBean.delete(hipotermia.getId());
@@ -74,10 +74,10 @@ public class ConfigBean {
             List<BiometricDataIssue> issues = new ArrayList<BiometricDataIssue>();
             issues.add(febre);
             System.out.println("Creating some Prescriptions");
-            Prescription prescription1 = prescriptionBean.create("bruna.leitao","2021-12-25 11:30", "2022-01-01 23:30","Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
+            Prescription prescription1 = prescriptionBean.create(hBrunaId,"2021-12-25 11:30", "2022-01-01 23:30","Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
 
             System.out.println("Updating some Administrators");
-            administratorBean.update("rafael.pereira", "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
+            administratorBean.update(aRafaelId, "2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
         }catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
         }

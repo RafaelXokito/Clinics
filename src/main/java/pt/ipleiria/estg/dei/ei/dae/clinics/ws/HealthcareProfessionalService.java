@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("doctors") // relative url web path for this service
+@Path("healthcareprofessional") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
@@ -30,7 +30,7 @@ public class HealthcareProfessionalService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
-                        "username","email","name","gender","specialty"))
+                        "id","email","name","gender","specialty"))
                 .build();
     }
 
@@ -42,17 +42,16 @@ public class HealthcareProfessionalService {
                     obj[0].toString(),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString(),
-                    obj[4].toString()
+                    obj[3].toString()
             ));
         }
         return doctorDTOList;
     }
 
     @GET
-    @Path("{username}")
-    public Response getDoctorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        HealthcareProfessional doctor = doctorBean.findDoctor(username);
+    @Path("{id}")
+    public Response getDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(doctor))
@@ -61,16 +60,16 @@ public class HealthcareProfessionalService {
 
     @POST
     @Path("/")
-    public Response createDoctorWS(HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        doctorBean.create(doctorDTO.getUsername(),
-            doctorDTO.getEmail(),
-            doctorDTO.getPassword(),
-            doctorDTO.getName(),
-            doctorDTO.getGender(),
-            doctorDTO.getSpecialty(),
-            doctorDTO.getCreated_by());
+    public Response createDoctorWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+        doctorBean.create(
+            healthcareProfessionalDTO.getEmail(),
+            healthcareProfessionalDTO.getPassword(),
+            healthcareProfessionalDTO.getName(),
+            healthcareProfessionalDTO.getGender(),
+            healthcareProfessionalDTO.getSpecialty(),
+            healthcareProfessionalDTO.getCreated_by());
 
-        HealthcareProfessional doctor = doctorBean.findDoctor(doctorDTO.getUsername());
+        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(healthcareProfessionalDTO.getEmail());
 
         return Response.status(Response.Status.CREATED)
                 .entity(doctor)
@@ -78,16 +77,17 @@ public class HealthcareProfessionalService {
     }
 
     @PUT
-    @Path("{username}")
-    public Response updateDoctorWS(@PathParam("username") String username, HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
-        doctorBean.update(username,
+    @Path("{id}")
+    public Response updateDoctorWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
+        doctorBean.update(
+            id,
             doctorDTO.getEmail(),
             doctorDTO.getPassword(),
             doctorDTO.getName(),
             doctorDTO.getGender(),
             doctorDTO.getSpecialty());
 
-        HealthcareProfessional doctor = doctorBean.findDoctor(username);
+        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
                 .entity(doctor)
@@ -95,21 +95,21 @@ public class HealthcareProfessionalService {
     }
 
     @DELETE
-    @Path("{username}")
-    public Response deleteDoctorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        doctorBean.delete(username);
+    @Path("{id}")
+    public Response deleteDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        doctorBean.delete(id);
 
         return Response.status(Response.Status.OK)
                 .build();
     }
 
 
-    private List<HealthcareProfessionalDTO> toDTOs(List<HealthcareProfessional> doctors) {
-        return doctors.stream().map(this::toDTO).collect(Collectors.toList());
+    private List<HealthcareProfessionalDTO> toDTOs(List<HealthcareProfessional> healthcareProfessionals) {
+        return healthcareProfessionals.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     private HealthcareProfessionalDTO toDTO(HealthcareProfessional doctor) {
-        return new HealthcareProfessionalDTO(doctor.getUsername(),
+        return new HealthcareProfessionalDTO(
                 doctor.getEmail(),
                 doctor.getName(),
                 doctor.getGender(),
@@ -117,6 +117,6 @@ public class HealthcareProfessionalService {
                 doctor.getUpdated_at(),
                 doctor.getDeleted_at(),
                 doctor.getSpecialty(),
-                doctor.getCreated_by().getUsername());
+                doctor.getCreated_by().getId());
     }
 }

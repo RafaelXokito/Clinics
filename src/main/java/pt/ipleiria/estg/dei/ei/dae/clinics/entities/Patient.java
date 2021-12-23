@@ -13,7 +13,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPatients",
-                query = "SELECT p FROM Patient p ORDER BY p.username"
+                query = "SELECT p FROM Patient p ORDER BY p.id"
         )
 })
 public class Patient extends Person implements Serializable {
@@ -24,7 +24,7 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToMany(mappedBy = "patients")
-    private List<HealthcareProfessional> doctors;
+    private List<HealthcareProfessional> healthcareProfessionals;
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
@@ -32,16 +32,20 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "DOCTOR_USERNAME")
+    @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
     private HealthcareProfessional created_by;
 
-    public Patient(String username, String email, String password, String name, String gender, int healthNo, HealthcareProfessional created_by) {
-        super(username, email, password, name, gender);
+    public Patient(String email, String password, String name, String gender, int healthNo, HealthcareProfessional created_by) {
+        super(email, password, name, gender);
         this.healthNo = healthNo;
-        this.doctors = new ArrayList<>();
+        this.healthcareProfessionals = new ArrayList<>();
         this.created_by = created_by;
         this.biometric_data = new ArrayList<>();
         addDoctor(created_by);
+    }
+
+    public Patient(long id) {
+        super(id);
     }
 
     public Patient() {
@@ -49,15 +53,15 @@ public class Patient extends Person implements Serializable {
     }
 
     public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
-        if (doctor != null && !this.doctors.contains(doctor)) {
-            doctors.add(doctor);
+        if (doctor != null && !this.healthcareProfessionals.contains(doctor)) {
+            healthcareProfessionals.add(doctor);
             return doctor;
         }
         return null;
     }
 
     public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
-        return doctor != null && doctors.remove(doctor) ? doctor : null;
+        return doctor != null && healthcareProfessionals.remove(doctor) ? doctor : null;
     }
 
     public BiometricData addBiometricData(BiometricData biometric_data){
@@ -81,11 +85,11 @@ public class Patient extends Person implements Serializable {
     }
 
     public List<HealthcareProfessional> getDoctors() {
-        return doctors;
+        return healthcareProfessionals;
     }
 
     public void setDoctors(List<HealthcareProfessional> doctors) {
-        this.doctors = doctors;
+        this.healthcareProfessionals = doctors;
     }
 
     public List<BiometricData> getBiometric_data() {

@@ -28,12 +28,12 @@ public class AdministratorService {
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<AdministratorDTO>(toDTOAllAdministrators(administratorBean.getAllAdministrators()),
-                        "username","email","name","gender"))
+                        "id","email","name","gender"))
                 .build();
     }
     /*
     {
-    columns: ["username", "name", "email", "gender"],
+    columns: ["id", "name", "email", "gender"],
     data: [
         {
             username: "rafael.pereira",
@@ -51,17 +51,16 @@ public class AdministratorService {
             administratorDTOList.add(new AdministratorDTO(
                 obj[0].toString(),
                 obj[1].toString(),
-                obj[2].toString(),
-                obj[3].toString()
+                obj[2].toString()
             ));
         }
         return administratorDTOList;
     }
 
     @GET
-    @Path("{username}")
-    public Response getAdministratorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        Administrator administrator = administratorBean.findAdministrator(username);
+    @Path("{id}")
+    public Response getAdministratorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        Administrator administrator = administratorBean.findAdministrator(id);
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(administrator))
@@ -72,13 +71,12 @@ public class AdministratorService {
     @Path("/")
     public Response createAdministratorWS(AdministratorDTO administratorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
         administratorBean.create(
-            administratorDTO.getUsername(),
             administratorDTO.getEmail(),
             administratorDTO.getPassword(),
             administratorDTO.getName(),
             administratorDTO.getGender());
 
-        Administrator administrator = administratorBean.findAdministrator(administratorDTO.getUsername());
+        Administrator administrator = administratorBean.findAdministrator(administratorDTO.getEmail());
 
         return Response.status(Response.Status.CREATED)
                 .entity(administrator)
@@ -86,16 +84,16 @@ public class AdministratorService {
     }
 
     @PUT
-    @Path("{username}")
-    public Response updateAdministratorWS(@PathParam("username") String username, AdministratorDTO administratorDTO) throws MyEntityNotFoundException {
+    @Path("{id}")
+    public Response updateAdministratorWS(@PathParam("id") long id,AdministratorDTO administratorDTO) throws MyEntityNotFoundException {
         administratorBean.update(
-                administratorDTO.getUsername(),
+                id,
                 administratorDTO.getEmail(),
                 administratorDTO.getPassword(),
                 administratorDTO.getName(),
                 administratorDTO.getGender());
 
-        Administrator administrator = administratorBean.findAdministrator(username);
+        Administrator administrator = administratorBean.findAdministrator(id);
 
         return Response.status(Response.Status.OK)
                 .entity(administrator)
@@ -103,9 +101,9 @@ public class AdministratorService {
     }
 
     @DELETE
-    @Path("{username}")
-    public Response deleteAdministratorWS(@PathParam("username") String username) throws MyEntityNotFoundException {
-        administratorBean.delete(username);
+    @Path("{id}")
+    public Response deleteAdministratorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        administratorBean.delete(id);
 
         return Response.status(Response.Status.OK)
                 .build();
@@ -118,7 +116,7 @@ public class AdministratorService {
     }
 
     private AdministratorDTO toDTO(Administrator administrator) {
-        return new AdministratorDTO(administrator.getUsername(),
+        return new AdministratorDTO(administrator.getId(),
                 administrator.getEmail(),
                 administrator.getName(),
                 administrator.getGender(),
