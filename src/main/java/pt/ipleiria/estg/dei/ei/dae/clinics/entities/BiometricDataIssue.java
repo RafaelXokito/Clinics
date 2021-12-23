@@ -25,10 +25,10 @@ public class BiometricDataIssue implements Serializable {
     private String name;
 
     @NotNull
-    private int min;
+    private double min;
 
     @NotNull
-    private int max;
+    private double max;
 
     @NotNull
     @ManyToOne
@@ -42,7 +42,7 @@ public class BiometricDataIssue implements Serializable {
                     "ID"))
     private List<Prescription> prescriptions;
 
-    public BiometricDataIssue(String name, int min, int max, BiometricDataType biometric_data_type) {
+    public BiometricDataIssue(String name, double min, double max, BiometricDataType biometric_data_type) {
         this.name = name;
         this.min = min;
         this.max = max;
@@ -86,19 +86,19 @@ public class BiometricDataIssue implements Serializable {
         this.name = name;
     }
 
-    public int getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public int getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(int max) {
+    public void setMax(double max) {
         this.max = max;
     }
 

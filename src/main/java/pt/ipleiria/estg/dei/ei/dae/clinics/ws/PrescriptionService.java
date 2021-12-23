@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("prescriptions")
-@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
-@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
+@Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
+@Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class PrescriptionService {
     @EJB
@@ -28,7 +28,7 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS() {
-        //List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
+        // List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
@@ -38,13 +38,12 @@ public class PrescriptionService {
 
     private List<PrescriptionDTO> toDTOAllPrescriptions(List<Object[]> allPrescriptions) {
         List<PrescriptionDTO> prescriptionDTOList = new ArrayList<>();
-        for (Object[] obj: allPrescriptions) {
+        for (Object[] obj : allPrescriptions) {
             prescriptionDTOList.add(new PrescriptionDTO(
                     Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString()
-            ));
+                    obj[3].toString()));
         }
         return prescriptionDTOList;
     }
@@ -61,14 +60,15 @@ public class PrescriptionService {
 
     @POST
     @Path("/")
-    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
+    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO)
+            throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         Prescription createdPrescription = prescriptionBean.create(
-            prescriptionDTO.getHealthProfessionalUsername(),
-            prescriptionDTO.getStartDate(),
-            prescriptionDTO.getEndDate(),
-            prescriptionDTO.getNotes(),
-            issues);
+                prescriptionDTO.getHealthcareProfessionalId(),
+                prescriptionDTO.getStart_date(),
+                prescriptionDTO.getEnd_date(),
+                prescriptionDTO.getNotes(),
+                issues);
 
         Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
 
@@ -79,13 +79,14 @@ public class PrescriptionService {
 
     @PUT
     @Path("{id}")
-    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
+    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO)
+            throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         prescriptionBean.update(id,
-            prescriptionDTO.getStartDate(),
-            prescriptionDTO.getEndDate(),
-            prescriptionDTO.getNotes(),
-            issues);
+                prescriptionDTO.getStartDate(),
+                prescriptionDTO.getEndDate(),
+                prescriptionDTO.getNotes(),
+                issues);
 
         Prescription prescription = prescriptionBean.findPrescription(id);
 
@@ -117,11 +118,12 @@ public class PrescriptionService {
     }
 
     private PrescriptionDTO toDTO(Prescription prescription) {
-        return new PrescriptionDTO(prescription.getId(),
-                prescription.getHealthcareProfessional().getUsername(),
+        return new PrescriptionDTO(
+                prescription.getId(),
+                prescription.getHealthcareProfessional().getId(),
                 prescription.getHealthcareProfessional().getName(),
-                prescription.getStartDate().toString(),
-                prescription.getEndDate().toString(),
+                prescription.getStart_date().toString(),
+                prescription.getEnd_date().toString(),
                 prescription.getNotes(),
                 issuesToDTOs(prescription.getBiometric_data_issue()));
     }

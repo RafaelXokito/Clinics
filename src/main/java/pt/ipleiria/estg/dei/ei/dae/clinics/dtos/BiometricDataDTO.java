@@ -7,63 +7,62 @@ public class BiometricDataDTO {
     private long biometricTypeId;
     private double value;
     private String notes;
-    private String patientUsername;
-    private Date createdAt;
-    private String createdByUsername;
-    private String createdByName;
+    private long patientId;
+    private Date created_at;
+    private long created_by; //Person that created this entity
     private String patientName;
     private String healthNo;
     private String biometricDataTypeName;
     private String valueUnit;
     //Origem- exame, equipamento, consulta
 
-    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, String patientUsername, Date createdAt, String createdByUsername) {
+    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
         this.id = id;
         this.biometricTypeId = biometricTypeId;
         this.value = value;
         this.notes = notes;
-        this.patientUsername = patientUsername;
-        this.createdAt = createdAt;
-        this.createdByUsername = createdByUsername;
+        this.patientId = patientId;
+        this.created_at = created_at;
+        this.created_by = created_by;
     }
 
-    public BiometricDataDTO(long biometricTypeId, double value, String notes, String patientUsername, Date createdAt, String createdByUsername) {
+    public BiometricDataDTO(long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
         this.biometricTypeId = biometricTypeId;
         this.value = value;
         this.notes = notes;
-        this.patientUsername = patientUsername;
-        this.createdAt = createdAt;
-        this.createdByUsername = createdByUsername;
+        this.patientId = patientId;
+        this.created_at = created_at;
+        this.created_by = created_by;
     }
 
     public BiometricDataDTO() {
-        id = 0;
-        biometricTypeId = 0;
+        id = -1;
+        biometricTypeId = -1;
         value = 0;
         notes = "";
-        patientUsername = "";
-        createdAt = null;
-        createdByUsername = "";
+        patientId = -1;
+        created_at = null;
+        created_by = -1;
     }
 
-    public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, String createdByUsername, String createdByName, Date createdAt) {
+    public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, long createdBy, Date createdAt) {
         this.value = value;
         this.valueUnit = valueUnit;
         this.biometricDataTypeName = biometricDataTypeName;
-        this.createdByUsername = createdByUsername;
-        this.createdByName = createdByName;
-        this.createdAt = createdAt;
+        this.created_by = createdBy;
+        this.created_at = createdAt;
     }
 
-    public BiometricDataDTO(long id,String patientUsername, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit) {
+    public BiometricDataDTO(long id,long patientId, String patientName, String healthNo,long biometricDataTypeId, String biometricDataTypeName,double value, String valueUnit, String notes) {
         this.id = id;
-        this.patientUsername = patientUsername;
+        this.patientId = patientId;
         this.patientName = patientName;
         this.healthNo = healthNo;
         this.biometricTypeId = biometricDataTypeId;
         this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.valueUnit = valueUnit;
+        this.notes = notes;
     }
 
     public String getPatientName() {
@@ -130,12 +129,12 @@ public class BiometricDataDTO {
         this.notes = notes;
     }
 
-    public String getPatientUsername() {
-        return patientUsername;
+    public long getPatientId() {
+        return patientId;
     }
 
-    public void setPatientUsername(String patientUsername) {
-        this.patientUsername = patientUsername;
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
     }
 
     public Date getCreatedAt() {
@@ -146,11 +145,11 @@ public class BiometricDataDTO {
         this.createdAt = createdAt;
     }
 
-    public String getCreatedByUsername() {
-        return createdByUsername;
+    public long getCreated_by() {
+        return created_by;
     }
 
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
+    public void setCreated_by(long created_by) {
+        this.created_by = created_by;
     }
 }

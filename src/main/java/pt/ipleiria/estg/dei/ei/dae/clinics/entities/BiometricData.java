@@ -31,7 +31,7 @@ public class BiometricData implements Serializable {
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "PATIENT_USERNAME")
+    @JoinColumn(name = "PATIENT_ID")
     @NotNull
     private Patient patient;
 

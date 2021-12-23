@@ -38,8 +38,12 @@ public class BiometricDataIssueService {
         List<BiometricDataIssueDTO> BiometricDataIssueDTOList = new ArrayList<>();
         for (Object[] obj: allBiometricDataIssues) {
             BiometricDataIssueDTOList.add(new BiometricDataIssueDTO(
-                    obj[0].toString(),
-                    obj[1].toString()
+                    Integer.parseInt(obj[0].toString()), //id
+                    obj[1].toString(), //name
+                    Double.parseDouble(obj[4].toString()), //min
+                    Double.parseDouble(obj[5].toString()),  //max
+                    Integer.parseInt(obj[3].toString()), //id
+                    obj[2].toString() //biometric_data_type.name
             ));
         }
         return BiometricDataIssueDTOList;

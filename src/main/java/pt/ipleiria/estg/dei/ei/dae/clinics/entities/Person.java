@@ -1,25 +1,18 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
-import io.smallrye.common.constraint.Nullable;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Entity
 @Table(
@@ -30,21 +23,25 @@ import java.util.logging.Logger;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPersons",
-                query = "SELECT p FROM Person p WHERE p.deleted_at != NULL ORDER BY p.username"
+                query = "SELECT p FROM Person p WHERE p.deleted_at != NULL ORDER BY p.id"
+        ),
+        @NamedQuery(
+                name = "getPersonByEmail",
+                query = "SELECT p FROM Person p WHERE p.deleted_at != NULL and p.email = :email"
         )
 })
 
 @NamedNativeQuery(
-        name="getAllPersons2",
-        query = "SELECT p.username,p.email, p.name, p.gender FROM Person",
+        name = "getAllPersons2",
+        query = "SELECT p.id, p.email, p.name, p.gender FROM Person",
         resultClass = Person.class
 )
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
     @Id
-    private String username;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     @Email
-    @Nullable
     private String email;
     @NotNull
     private String password; //This should be hashed before input, in or out of the server
@@ -62,11 +59,10 @@ public abstract class Person {
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<BiometricData> biometricDatasCreated;
 
-    public Person(String username, String email, String password, String name, String gender) {
-        this.username = username;
+    public Person(String email, String password, String name, String gender) {
         this.email = email;
         try {
-            this.password = generateStorngPasswordHash(password);
+            this.password = generateStrongPasswordHash(password);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
@@ -74,15 +70,30 @@ public abstract class Person {
         this.gender = gender;
     }
 
+    public Person(long id, String email, String password, String name, String gender) {
+        this.id = id;
+        this.email = email;
+        try {
+            this.password = generateStrongPasswordHash(password);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        this.name = name;
+        this.gender = gender;
+    }
+
+    public Person(long id) {
+        this.id = id;
+        this.email = "";
+        this.password = "";
+        this.name = "";
+        this.gender = "";
+    }
+
     public Person() {
     }
 
-    public Person(String username) {
-        this.name = username;
-    }
-
-    public static String generateStorngPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException
-    {
+    public static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 1000;
         char[] chars = password.toCharArray();
         byte[] salt = getSalt();
@@ -93,28 +104,57 @@ public abstract class Person {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
-    private static byte[] getSalt() throws NoSuchAlgorithmException
-    {
+    private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
         return salt;
     }
 
-    private static String toHex(byte[] array) throws NoSuchAlgorithmException
-    {
+    private static String toHex(byte[] array) throws NoSuchAlgorithmException {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
         int paddingLength = (array.length * 2) - hex.length();
-        if(paddingLength > 0)
-        {
-            return String.format("%0"  +paddingLength + "d", 0) + hex;
-        }else{
+        if (paddingLength > 0) {
+            return String.format("%0" + paddingLength + "d", 0) + hex;
+        } else {
             return hex;
         }
     }
 
-    public BiometricData addBiometricData(BiometricData biometricData){
+    public static boolean validatePassword(String originalPassword, String storedPassword)
+            throws NoSuchAlgorithmException, InvalidKeySpecException
+    {
+        String[] parts = storedPassword.split(":");
+        int iterations = Integer.parseInt(parts[0]);
+
+        byte[] salt = fromHex(parts[1]);
+        byte[] hash = fromHex(parts[2]);
+
+        PBEKeySpec spec = new PBEKeySpec(originalPassword.toCharArray(),
+                salt, iterations, hash.length * 8);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] testHash = skf.generateSecret(spec).getEncoded();
+
+        int diff = hash.length ^ testHash.length;
+        for(int i = 0; i < hash.length && i < testHash.length; i++)
+        {
+            diff |= hash[i] ^ testHash[i];
+        }
+        return diff == 0;
+    }
+
+    private static byte[] fromHex(String hex) throws NoSuchAlgorithmException
+    {
+        byte[] bytes = new byte[hex.length() / 2];
+        for(int i = 0; i < bytes.length ;i++)
+        {
+            bytes[i] = (byte)Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+        }
+        return bytes;
+    }
+
+    public BiometricData addBiometricData(BiometricData biometricData) {
         if (biometricData != null && !this.biometricDatasCreated.contains(biometricData)) {
             biometricDatasCreated.add(biometricData);
             return biometricData;
@@ -122,7 +162,7 @@ public abstract class Person {
         return null;
     }
 
-    public BiometricData removeBiometricData(BiometricData biometricData){
+    public BiometricData removeBiometricData(BiometricData biometricData) {
         return biometricData != null && biometricDatasCreated.remove(biometricData) ? biometricData : null;
     }
 
@@ -134,8 +174,8 @@ public abstract class Person {
         this.biometricDatasCreated = biometricDataCreated;
     }
 
-    public String getUsername() {
-        return username;
+    public long getId() {
+        return id;
     }
 
     public String getEmail() {
@@ -196,7 +236,7 @@ public abstract class Person {
         this.updated_at = new Date();
     }
 
-    public void remove(){
+    public void remove() {
         this.deleted_at = new Date();
     }
 
@@ -205,11 +245,11 @@ public abstract class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return username.equals(person.username) && email.equals(person.email) && password.equals(person.password) && name.equals(person.name) && gender.equals(person.gender);
+        return this.id == person.id && this.email.equals(person.email) && this.password.equals(person.password) && this.name.equals(person.name) && this.gender.equals(person.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, email, password, name, gender);
+        return Objects.hash(id, email, password, name, gender);
     }
 }

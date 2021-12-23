@@ -14,10 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "prescriptions")
 @NamedQueries({
-        @NamedQuery(
-                name = "getAllPrescriptions",
-                query = "SELECT p FROM Prescription p ORDER BY p.id"
-        )
+        @NamedQuery(name = "getAllPrescriptions", query = "SELECT p FROM Prescription p ORDER BY p.id")
 })
 public class Prescription implements Serializable {
     @Id
@@ -25,20 +22,21 @@ public class Prescription implements Serializable {
     private long id;
 
     @NotNull
-    @ManyToMany(mappedBy = "prescriptions") //Precisa ser alterado para ManyToMany uma prescrição pode ter vários tipos biométricos
+    @ManyToMany(mappedBy = "prescriptions") // Precisa ser alterado para ManyToMany uma prescrição pode ter vários tipos
+                                            // biométricos
     private List<BiometricDataIssue> biometricDataIssues;
 
     @ManyToOne
-    @JoinColumn(name = "HEALTHCARE_PROFESSIONAL_USERNAME")
+    @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
     @NotNull
     private HealthcareProfessional healthcareProfessional;
 
     @NotNull
-    //@Temporal(TemporalType.TIMESTAMP)
+    // @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDate;
 
     @NotNull
-    //@Temporal(TemporalType.TIMESTAMP)
+    // @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime endDate;
 
     @Nullable
@@ -46,10 +44,11 @@ public class Prescription implements Serializable {
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public Prescription(HealthcareProfessional healthcareProfessional, String startDate, String endDate, String notes) throws ParseException {
+    public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes)
+            throws ParseException {
         this.healthcareProfessional = healthcareProfessional;
-        this.startDate = LocalDateTime.parse(startDate, formatter);
-        this.endDate = LocalDateTime.parse(endDate, formatter);
+        this.start_date = LocalDateTime.parse(start_date, formatter);
+        this.end_date = LocalDateTime.parse(end_date, formatter);
 
         this.notes = notes;
 
@@ -60,21 +59,21 @@ public class Prescription implements Serializable {
         this.biometricDataIssues = new ArrayList<>();
     }
 
-    public Prescription(HealthcareProfessional healthcareProfessional, String startDate, String endDate, String notes, List<BiometricDataIssue> biometricDataIssues) throws ParseException {
+    public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes,
+            List<BiometricDataIssue> biometricDataIssues) throws ParseException {
         this.healthcareProfessional = healthcareProfessional;
-        this.startDate = LocalDateTime.parse(startDate, formatter);
-        this.endDate = LocalDateTime.parse(endDate, formatter);
+        this.start_date = LocalDateTime.parse(start_date, formatter);
+        this.end_date = LocalDateTime.parse(end_date, formatter);
         this.notes = notes;
 
         this.biometricDataIssues = new ArrayList<>();
 
-        for (BiometricDataIssue biometricDataIssue :
-                biometricDataIssues) {
+        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             addBiometricDataIssue(biometricDataIssue);
         }
     }
 
-    public BiometricDataIssue addBiometricDataIssue(BiometricDataIssue biometricDataIssue){
+    public BiometricDataIssue addBiometricDataIssue(BiometricDataIssue biometricDataIssue) {
         if (biometricDataIssue != null && !this.biometricDataIssues.contains(biometricDataIssue)) {
             biometricDataIssues.add(biometricDataIssue);
             return biometricDataIssue;
@@ -82,7 +81,7 @@ public class Prescription implements Serializable {
         return null;
     }
 
-    public BiometricDataIssue removeBiometricDataIssue(BiometricDataIssue biometricDataIssue){
+    public BiometricDataIssue removeBiometricDataIssue(BiometricDataIssue biometricDataIssue) {
         return biometricDataIssue != null && biometricDataIssues.remove(biometricDataIssue) ? biometricDataIssue : null;
     }
 
@@ -98,8 +97,8 @@ public class Prescription implements Serializable {
         return healthcareProfessional;
     }
 
-    public void setHealthcareProfessional(HealthcareProfessional doctor) {
-        this.healthcareProfessional = doctor;
+    public void setHealthcareProfessional(HealthcareProfessional healthcareProfessional) {
+        this.healthcareProfessional = healthcareProfessional;
     }
 
     public LocalDateTime getStartDate() {

@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
 import java.util.Date;
 
-public class AdministratorDTO {
+public class PersonDTO {
     private long id;
     private String email;
     private String password;
@@ -12,7 +12,8 @@ public class AdministratorDTO {
     private Date updated_at;
     private Date deleted_at;
 
-    public AdministratorDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
+
+    public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -23,7 +24,7 @@ public class AdministratorDTO {
         this.deleted_at = deleted_at;
     }
 
-    public AdministratorDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
+    public PersonDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -33,7 +34,7 @@ public class AdministratorDTO {
         this.deleted_at = deleted_at;
     }
 
-    public AdministratorDTO() {
+    public PersonDTO() {
         email = "";
         password = "";
         name = "";
@@ -43,7 +44,7 @@ public class AdministratorDTO {
         deleted_at = new Date();
     }
 
-    public AdministratorDTO(String email, String name, String gender) {
+    public PersonDTO(String email, String name, String gender) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -51,6 +52,10 @@ public class AdministratorDTO {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEmail() {

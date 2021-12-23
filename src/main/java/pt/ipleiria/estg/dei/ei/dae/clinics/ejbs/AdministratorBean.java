@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -21,67 +22,78 @@ public class AdministratorBean {
      * @return a list of All Administrators
      */
     public List<Object[]> getAllAdministrators() {
-        Query query = entityManager.createQuery("SELECT a.username, a.email, a.name, a.gender  FROM Administrator a");
+        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender  FROM Administrator a");
         List<Object[]> administratorList = query.getResultList();
         return administratorList;
         //return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
     }
 
     /***
-     * Find Administrator by given @Id:username
-     * @param username @Id to find Administrator
+     * Find Administrator by given @Id:id
+     * @param id @Id to find Administrator
      * @return founded Administrator or Null if dont
      */
-    public Administrator findAdministrator(String username) throws MyEntityNotFoundException {
-        Administrator administrator = entityManager.find(Administrator.class, username);
+    public Administrator findAdministrator(long id) throws MyEntityNotFoundException {
+        Administrator administrator = entityManager.find(Administrator.class, id);
         if (administrator == null)
-            throw new MyEntityNotFoundException("Administrator \"" + username + "\" does not exist");
+            throw new MyEntityNotFoundException("Administrator \"" + id + "\" does not exist");
         return administrator;
     }
 
     /***
+     * Find Administrator by given @Id:username
+     * @param email @Id to find Administrator
+     * @return founded Administrator or Null if dont
+     */
+    public Administrator findAdministrator(String email) {
+        Query query = entityManager.createNativeQuery("SELECT a FROM Persons a WHERE a.email = '"+ email+"'", Administrator.class);
+        List<Administrator> administratorList = (List<Administrator>) query.getResultList();
+        System.out.println(administratorList.isEmpty());
+        return administratorList.isEmpty() ? null : administratorList.get(0);
+    }
+
+    /***
      * Creating a Administrator Account
-     * @param username of administrator acc
      * @param email of administrator acc
      * @param password of administrator acc
      * @param name of administrator acc
      * @param gender of administrator acc
      */
-    public void create(String username, String email, String password, String name, String gender) throws MyEntityExistsException {
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || name.isEmpty() || gender.isEmpty()) {
+    public long create(String email, String password, String name, String gender) throws MyEntityExistsException {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || gender.isEmpty()) {
             throw new IllegalArgumentException("Invalid data given.");
         }
-        Administrator administrator = entityManager.find(Administrator.class, username);
+        Administrator administrator = findAdministrator(email);
         if (administrator != null)
-            throw new MyEntityExistsException("Administrator \"" + username + "\" already exist");
+            throw new MyEntityExistsException("Administrator \"" + email + "\" already exist");
 
-        Administrator newAdministrator = new Administrator(username, email, password, name, gender);
+        Administrator newAdministrator = new Administrator(email, password, name, gender);
         entityManager.persist(newAdministrator);
+        entityManager.flush();
+        return newAdministrator.getId();
     }
 
     /***
-     * Delete a Administrator by given @Id:username - Change deleted_at field to NOW() date
-     * @param username @Id to find the proposal delete Administrator
-     * @return deleted Administrator or Null if dont
+     * Delete a Administrator by given @Id:id - Change deleted_at field to NOW() date
+     * @param id @Id to find the proposal delete Administrator
      */
-    public boolean delete(String username) throws MyEntityNotFoundException {
-        Administrator administrator = findAdministrator(username);
-        entityManager.remove(administrator);
-        if (entityManager.find(Administrator.class, username) == null)
+    public boolean delete(long id) throws MyEntityNotFoundException {
+        Administrator administrator = findAdministrator(id);
+        administrator.remove();
+        if (entityManager.find(Administrator.class, id) == null)
             return true;
         return false;
     }
 
     /***
      * Update a Administrator by given @Id:username
-     * @param username @Id to find the proposal update Administrator
-     * @param email to update Administrator
+     * @param email @Id to find the proposal update Administrator
      * @param password to update Administrator
      * @param name to update Administrator
      * @param gender to update Administrator
      */
-    public void update(String username, String email, String password, String name, String gender) throws MyEntityNotFoundException {
-        Administrator administrator = findAdministrator(username);
+    public void update(long id, String email, String password, String name, String gender) throws MyEntityNotFoundException {
+        Administrator administrator = findAdministrator(id);
 
         administrator.setEmail(email);
         administrator.setPassword(password);

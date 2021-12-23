@@ -30,7 +30,7 @@ public class BiometricDataTypeService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataTypeDTO>(toDTOAllBiometricDataTypes(biometricDataTypeBean.getAllBiometricDataTypes()),
-                        "name", "unit_name"))
+                        "name","unit", "unit_name"))
                 .build();
     }
 
@@ -38,11 +38,12 @@ public class BiometricDataTypeService {
         List<BiometricDataTypeDTO> BiometricDataTypeDTOList = new ArrayList<>();
         for (Object[] obj: allBiometricDataTypes) {
             BiometricDataTypeDTOList.add(new BiometricDataTypeDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString() + " " + obj[3].toString(),
-                    Integer.parseInt(obj[4].toString()),
-                    Integer.parseInt(obj[5].toString())
+                    Long.parseLong(obj[0].toString()), //Id
+                    obj[1].toString(), //Name
+                    obj[2].toString(), //Unit
+                    obj[3].toString(), //Unit_Name
+                    Integer.parseInt(obj[4].toString()), //Min
+                    Integer.parseInt(obj[5].toString()) //Max
             ));
         }
         return BiometricDataTypeDTOList;

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public class PatientDTO {
-    private String username;
+    private long id;
     private String email;
     private String password;
     private String name;
@@ -14,13 +14,14 @@ public class PatientDTO {
     private Date updated_at;
     private Date deleted_at;
     private int healthNo;
-    private String createdByUsername;
-    private String createdByName;
+    private long created_by;
     private List<BiometricDataDTO> biometricDatas;
     private List<HealthcareProfessionalDTO> healthcareProfessionals;
 
-    public PatientDTO(String username, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, String createdByUsername, String createdByName, List<BiometricDataDTO> biometricDatas, List<HealthcareProfessionalDTO> healthcareProfessionals) {
-        this.username = username;
+    public PatientDTO(long id, String email, String password, String name, String gender, Date created_at,
+            Date updated_at, Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,
+            List<HealthcareProfessionalDTO> healthcareProfessionals) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -29,23 +30,24 @@ public class PatientDTO {
         this.updated_at = updated_at;
         this.deleted_at = deleted_at;
         this.healthNo = healthNo;
-        this.createdByUsername = createdByUsername;
-        this.createdByName = createdByName;
+        this.created_by = created_by;
         this.biometricDatas = biometricDatas;
         this.healthcareProfessionals = healthcareProfessionals;
     }
 
-    public PatientDTO(String username, int healthNo, String email, String name, String gender) {
-        this.username = username;
+    public PatientDTO(int healthNo, String email, String name, String gender) {
         this.email = email;
         this.name = name;
         this.gender = gender;
         this.healthNo = healthNo;
         biometricDatas = new ArrayList<>();
+        healthcareProfessionals = new ArrayList<>();
     }
 
-    public PatientDTO(String username, String email, String name, String gender, int healthNo, String createdByUsername, String createdByName, List<BiometricDataDTO> biometricDatas, List<HealthcareProfessionalDTO> healthcareProfessionals) {
-        this.username = username;
+    public PatientDTO(long id, String email, String name, String gender, Date created_at, Date updated_at,
+            Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,
+            List<HealthcareProfessionalDTO> healthcareProfessionals) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -57,7 +59,6 @@ public class PatientDTO {
     }
 
     public PatientDTO() {
-        username = "";
         email = "";
         password = "";
         name = "";
@@ -66,15 +67,13 @@ public class PatientDTO {
         updated_at = new Date();
         deleted_at = new Date();
         healthNo = 0;
-        createdByUsername = "";
+        created_by = -1;
+        biometricDatas = new ArrayList<>();
+        healthcareProfessionals = new ArrayList<>();
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public long getId() {
+        return id;
     }
 
     public String getEmail() {
@@ -141,22 +140,6 @@ public class PatientDTO {
         this.healthNo = healthNo;
     }
 
-    public String getCreatedByUsername() {
-        return createdByUsername;
-    }
-
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
-    }
-
-    public String getCreatedByName() {
-        return createdByName;
-    }
-
-    public void setCreatedByName(String createdByName) {
-        this.createdByName = createdByName;
-    }
-
     public List<BiometricDataDTO> getBiometricDatas() {
         return biometricDatas;
     }
@@ -171,5 +154,13 @@ public class PatientDTO {
 
     public void setHealthcareProfessionals(List<HealthcareProfessionalDTO> healthcareProfessionals) {
         this.healthcareProfessionals = healthcareProfessionals;
+    }
+
+    public long getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(long created_by) {
+        this.created_by = created_by;
     }
 }
