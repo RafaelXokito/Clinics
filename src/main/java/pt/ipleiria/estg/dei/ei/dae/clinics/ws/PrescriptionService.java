@@ -61,17 +61,16 @@ public class PrescriptionService {
 
     @POST
     @Path("/")
-    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO)
-            throws ParseException, MyEntityNotFoundException {
+    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
-        Prescription createdPrescription = prescriptionBean.create(
+        long id = prescriptionBean.create(
                 prescriptionDTO.getHealthcareProfessionalId(),
                 prescriptionDTO.getStart_date(),
                 prescriptionDTO.getEnd_date(),
                 prescriptionDTO.getNotes(),
                 issues);
 
-        Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
+        Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(prescription))
@@ -121,6 +120,20 @@ public class PrescriptionService {
     }
 
     private PrescriptionDTO toDTO(Prescription prescription) {
+        boolean hasPatient = prescription.getPatient() != null;
+
+        if (hasPatient) {
+            return new PrescriptionDTO(
+                    prescription.getId(),
+                    prescription.getHealthcareProfessional().getId(),
+                    prescription.getHealthcareProfessional().getName(),
+                    prescription.getPatient().getId(),
+                    prescription.getPatient().getName(),
+                    prescription.getStart_date().toString(),
+                    prescription.getEnd_date().toString(),
+                    prescription.getNotes());
+        }
+
         return new PrescriptionDTO(
                 prescription.getId(),
                 prescription.getHealthcareProfessional().getId(),

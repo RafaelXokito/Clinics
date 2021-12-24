@@ -57,13 +57,12 @@ public class PatientBean {
         if (patient != null)
             throw new MyEntityExistsException("Patient \"" + email + "\" already exist");
 
-        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, created_byId);
-        if (doctor == null)
-            throw new MyEntityNotFoundException("Doctor \"" + created_byId + "\" already exist");
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, created_byId);
+        if (healthcareProfessional == null)
+            throw new MyEntityNotFoundException("Healthcare Professional \"" + created_byId + "\" already exist");
 
-        Patient newPatient = new Patient(email, password, name, gender, healthNo, doctor);
+        Patient newPatient = new Patient(email, password, name, gender, healthNo, healthcareProfessional);
         entityManager.persist(newPatient);
-        doctor.addPatient(newPatient);
         entityManager.flush();
         return newPatient.getId();
     }
@@ -76,7 +75,7 @@ public class PatientBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
-        entityManager.remove(patient);
+        entityManager.remove(patient); //TODO soft delete
         return entityManager.find(Patient.class, id) == null;
     }
 

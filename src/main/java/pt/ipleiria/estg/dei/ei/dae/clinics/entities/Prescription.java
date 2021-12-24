@@ -22,14 +22,17 @@ public class Prescription implements Serializable {
     private long id;
 
     @NotNull
-    @ManyToMany(mappedBy = "prescriptions") // Precisa ser alterado para ManyToMany uma prescrição pode ter vários tipos
-                                            // biométricos
+    @ManyToMany(mappedBy = "prescriptions")
     private List<BiometricDataIssue> biometricDataIssues;
 
     @ManyToOne
     @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
     @NotNull
     private HealthcareProfessional healthcareProfessional;
+
+    @ManyToOne
+    @JoinColumn(name = "PATIENT_ID")
+    private Patient patient;
 
     @NotNull
     // @Temporal(TemporalType.TIMESTAMP)
@@ -44,9 +47,9 @@ public class Prescription implements Serializable {
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes)
-            throws ParseException {
+    public Prescription(HealthcareProfessional healthcareProfessional, Patient patient, String start_date, String end_date, String notes) {
         this.healthcareProfessional = healthcareProfessional;
+        this.patient = patient;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
 
@@ -60,7 +63,7 @@ public class Prescription implements Serializable {
     }
 
     public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes,
-            List<BiometricDataIssue> biometricDataIssues) throws ParseException {
+            List<BiometricDataIssue> biometricDataIssues) {
         this.healthcareProfessional = healthcareProfessional;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
@@ -85,11 +88,11 @@ public class Prescription implements Serializable {
         return biometricDataIssue != null && biometricDataIssues.remove(biometricDataIssue) ? biometricDataIssue : null;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -131,5 +134,13 @@ public class Prescription implements Serializable {
 
     public void setBiometricDataIssues(List<BiometricDataIssue> biometric_data_issue) {
         this.biometricDataIssues = biometric_data_issue;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 }

@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -55,25 +56,25 @@ public class PrescriptionBean {
      *         null if Not found Biometric Data Issue with this id
      *         (bio_data_issues_id)
      */
-    public Prescription create(long healthcareProfessionalId, String start_date, String end_date, String notes,
+    public long create(long healthcareProfessionalId, String start_date, String end_date, String notes,
             List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
-        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class,
-                healthcareProfessionalId);
 
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         if (healthcareProfessional == null)
-            throw new MyEntityNotFoundException(
-                    "Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
+            throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
-        Prescription prescription = new Prescription(healthcareProfessional, start_date, end_date, notes,
-                biometricDataIssues);
-        entityManager.persist(prescription);
-        entityManager.flush();
+        Prescription prescription;
+
+        prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.addPrescription(prescription);
         }
 
-        return prescription;
+        entityManager.persist(prescription);
+        entityManager.flush();
+
+        return prescription.getId();
     }
 
     /***
@@ -105,6 +106,9 @@ public class PrescriptionBean {
         prescription.setStart_date(start_date);
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
+
+        if (prescription.getPatient() != null)
+            return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {
             // Se as Issues antigas ainda estiverem presentes nesta, a prescrição não é

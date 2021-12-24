@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
 import java.util.Date;
+import java.util.List;
 
 public class HealthcareProfessionalDTO {
     private long id;

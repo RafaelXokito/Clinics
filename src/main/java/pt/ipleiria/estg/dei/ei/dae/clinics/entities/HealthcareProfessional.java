@@ -16,10 +16,6 @@ public class HealthcareProfessional extends Person implements Serializable {
     @NotNull
     private String specialty;
 
-    @ManyToMany
-    @JoinTable(name = "HEALTHCAREPROFESSIONAL_PATIENTS", joinColumns = @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "PATIENT_ID", referencedColumnName = "ID"))
-    private List<Patient> patients;
-
     @ManyToOne
     @JoinColumn(name = "created_by") // Código do Administrador
     @NotNull
@@ -29,30 +25,22 @@ public class HealthcareProfessional extends Person implements Serializable {
     @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
+    @NotNull
+    @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
+    private List<Observation> observations;
+
     public HealthcareProfessional(String email, String password, String name, String gender, String specialty,
             Administrator created_by) {
         super(email, password, name, gender);
         this.specialty = specialty;
         this.created_by = created_by;
-        this.patients = new ArrayList<>();
+        this.observations = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
     }
 
     public HealthcareProfessional() {
-        this.patients = new ArrayList<>();
+        this.observations = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
-    }
-
-    public Patient addPatient(Patient patient) {
-        if (patient != null && !this.patients.contains(patient)) {
-            patients.add(patient);
-            return patient;
-        }
-        return null;
-    }
-
-    public Patient removePatient(Patient patient) {
-        return patient != null && patients.remove(patient) ? patient : null;
     }
 
     public Prescription addPrescription(Prescription prescription) {
@@ -75,14 +63,6 @@ public class HealthcareProfessional extends Person implements Serializable {
         this.specialty = specialty;
     }
 
-    public List<Patient> getPatients() {
-        return patients;
-    }
-
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
-    }
-
     public Administrator getCreated_by() {
         return created_by;
     }
@@ -97,5 +77,27 @@ public class HealthcareProfessional extends Person implements Serializable {
 
     public void setPrescriptions(List<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<Observation> observations) {
+        this.observations = observations;
+    }
+
+    public void addObservation(Observation observation) {
+        if (observation == null || observations.contains(observation))
+            return;
+
+        observations.add(observation);
+    }
+
+    public void removeObservation(Observation observation) {
+        if (observation == null)
+            return;
+
+        observations.remove(observation);
     }
 }

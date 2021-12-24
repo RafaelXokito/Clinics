@@ -2,9 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -128,7 +126,20 @@ public class PatientService {
                 patient.getHealthNo(),
                 patient.getCreated_by().getId(),
                 biometricDataToDTOs(patient.getBiometric_data()),
-                healthcareProfessionalToDTOs(patient.getHealthcareProfessionals()));
+                observationToDTOs(patient.getObservations()));
+    }
+
+    private List<ObservationDTO> observationToDTOs(List<Observation> observations) {
+        return observations.stream().map(this::observationToDTO).collect(Collectors.toList());
+    }
+
+    private ObservationDTO observationToDTO(Observation observation) {
+        return new ObservationDTO(observation.getId(),
+                observation.getHealthcareProfessional().getId(),
+                observation.getHealthcareProfessional().getName(),
+                observation.getPatient().getId(),
+                observation.getPatient().getName(),
+                observation.getCreated_at());
     }
 
     private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
@@ -143,17 +154,16 @@ public class PatientService {
                 biometricData.getCreated_at());
     }
 
-    private HealthcareProfessionalDTO healthcareProfessionalToDTO(HealthcareProfessional healthcareProfessional) {
-        return new HealthcareProfessionalDTO(
-                healthcareProfessional.getId(),
-                healthcareProfessional.getEmail(),
-                healthcareProfessional.getName(),
-                healthcareProfessional.getGender(),
-                healthcareProfessional.getSpecialty());
+    private List<BiometricDataIssueDTO> issuesToDTOs(List<BiometricDataIssue> biometricDataIssues) {
+        return biometricDataIssues.stream().map(this::issueToDTO).collect(Collectors.toList());
     }
 
-    private List<HealthcareProfessionalDTO> healthcareProfessionalToDTOs(
-            List<HealthcareProfessional> healthcareProfessionals) {
-        return healthcareProfessionals.stream().map(this::healthcareProfessionalToDTO).collect(Collectors.toList());
+    private BiometricDataIssueDTO issueToDTO(BiometricDataIssue biometricDataIssue) {
+        return new BiometricDataIssueDTO(biometricDataIssue.getId(),
+                biometricDataIssue.getName(),
+                biometricDataIssue.getMin(),
+                biometricDataIssue.getMax(),
+                biometricDataIssue.getBiometric_data_type().getId(),
+                biometricDataIssue.getBiometric_data_type().getName());
     }
 }

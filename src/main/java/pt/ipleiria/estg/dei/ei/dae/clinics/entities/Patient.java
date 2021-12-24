@@ -20,8 +20,8 @@ public class Patient extends Person implements Serializable {
     private int healthNo;
 
     @NotNull
-    @ManyToMany(mappedBy = "patients")
-    private List<HealthcareProfessional> healthcareProfessionals;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.PERSIST)
+    private List<Observation> observations;
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
@@ -29,35 +29,21 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
+    @JoinColumn(name = "CREATED_BY")
     private HealthcareProfessional created_by;
 
     public Patient(String email, String password, String name, String gender, int healthNo,
             HealthcareProfessional created_by) {
         super(email, password, name, gender);
         this.healthNo = healthNo;
-        this.healthcareProfessionals = new ArrayList<>();
+        this.observations = new ArrayList<>();
         this.created_by = created_by;
         this.biometric_data = new ArrayList<>();
-        addHealthcareProfessional(created_by);
     }
 
     public Patient() {
+        this.observations = new ArrayList<>();
         this.biometric_data = new ArrayList<>();
-    }
-
-    public HealthcareProfessional addHealthcareProfessional(HealthcareProfessional healthcareProfessional) {
-        if (healthcareProfessional != null && !this.healthcareProfessionals.contains(healthcareProfessional)) {
-            healthcareProfessionals.add(healthcareProfessional);
-            return healthcareProfessional;
-        }
-        return null;
-    }
-
-    public HealthcareProfessional removeHealthcareProfessional(HealthcareProfessional healthcareProfessional) {
-        return healthcareProfessional != null && healthcareProfessionals.remove(healthcareProfessional)
-                ? healthcareProfessional
-                : null;
     }
 
     public BiometricData addBiometricData(BiometricData biometricData) {
@@ -80,14 +66,6 @@ public class Patient extends Person implements Serializable {
         this.healthNo = healthNo;
     }
 
-    public List<HealthcareProfessional> getHealthcareProfessionals() {
-        return healthcareProfessionals;
-    }
-
-    public void setHealthcareProfessionals(List<HealthcareProfessional> healthcareProfessionals) {
-        this.healthcareProfessionals = healthcareProfessionals;
-    }
-
     public List<BiometricData> getBiometric_data() {
         return biometric_data;
     }
@@ -102,5 +80,27 @@ public class Patient extends Person implements Serializable {
 
     public void setCreated_by(HealthcareProfessional createdBy) {
         this.created_by = createdBy;
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<Observation> observations) {
+        this.observations = observations;
+    }
+
+    public void addObservation(Observation observation) {
+        if (observation == null || observations.contains(observation))
+            return;
+
+        observations.add(observation);
+    }
+
+    public void removeObservation(Observation observation) {
+        if (observation == null)
+            return;
+
+        observations.remove(observation);
     }
 }
