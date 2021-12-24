@@ -57,6 +57,14 @@ public class PrescriptionDTO {
         issues = new ArrayList<>();
     }
 
+    public PrescriptionDTO(long id, String healthcareProfessionalName, String start_date, String end_date) {
+        this.id = id;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        issues = new ArrayList<>();
+    }
+
     public long getId() {
         return id;
     }

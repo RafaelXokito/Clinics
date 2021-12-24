@@ -1,10 +1,10 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.HealthcareProfessionalDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.NewPasswordDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -134,6 +134,47 @@ public class HealthcareProfessionalService {
                 healthcareProfessional.getUpdated_at(),
                 healthcareProfessional.getDeleted_at(),
                 healthcareProfessional.getSpecialty(),
-                healthcareProfessional.getCreated_by().getId());
+                healthcareProfessional.getCreated_by().getId(),
+                prescriptionToDTOs(healthcareProfessional.getPrescriptions()),
+                observationToDTOs(healthcareProfessional.getObservations()));
+    }
+
+    private List<PrescriptionDTO> prescriptionToDTOs(List<Prescription> prescriptions) {
+        return prescriptions.stream().map(this::prescriptionToDTO).collect(Collectors.toList());
+    }
+
+    private PrescriptionDTO prescriptionToDTO(Prescription prescription) {
+        boolean hasPatient = prescription.getPatient() != null;
+
+        if (hasPatient) {
+            return new PrescriptionDTO(
+                    prescription.getId(),
+                    prescription.getHealthcareProfessional().getId(),
+                    prescription.getHealthcareProfessional().getName(),
+                    prescription.getPatient().getId(),
+                    prescription.getPatient().getName(),
+                    prescription.getStart_date().toString(),
+                    prescription.getEnd_date().toString(),
+                    prescription.getNotes());
+        }
+
+        return new PrescriptionDTO(
+                prescription.getId(),
+                prescription.getHealthcareProfessional().getName(),
+                prescription.getStart_date().toString(),
+                prescription.getEnd_date().toString());
+    }
+
+    private List<ObservationDTO> observationToDTOs(List<Observation> observations) {
+        return observations.stream().map(this::observationToDTO).collect(Collectors.toList());
+    }
+
+    private ObservationDTO observationToDTO(Observation observation) {
+        return new ObservationDTO(observation.getId(),
+                observation.getHealthcareProfessional().getId(),
+                observation.getHealthcareProfessional().getName(),
+                observation.getPatient().getId(),
+                observation.getPatient().getName(),
+                observation.getCreated_at());
     }
 }

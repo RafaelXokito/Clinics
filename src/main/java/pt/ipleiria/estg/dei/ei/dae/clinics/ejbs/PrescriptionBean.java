@@ -63,9 +63,9 @@ public class PrescriptionBean {
         if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
-        Prescription prescription;
+        Prescription prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
 
-        prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
+        healthcareProfessional.addPrescription(prescription);
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.addPrescription(prescription);
