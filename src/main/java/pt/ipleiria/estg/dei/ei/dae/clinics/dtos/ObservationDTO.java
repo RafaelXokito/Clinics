@@ -19,6 +19,7 @@ public class ObservationDTO {
         this.patientId = patientId;
         this.patientName = patientName;
         this.notes = notes;
+        this.created_at = created_at;
         this.prescription = prescription;
     }
 

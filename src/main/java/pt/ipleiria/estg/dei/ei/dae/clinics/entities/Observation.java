@@ -5,15 +5,8 @@ import io.smallrye.common.constraint.NotNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@NamedQueries({
-        @NamedQuery(
-                name = "getAllObservations",
-                query = "SELECT o.id, o.healthcareProfessional.id, o.healthcareProfessional.name, o.patient.id, o.patient.name, o.created_at FROM Observation o ORDER BY o.id DESC"
-        )
-})
 public class Observation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

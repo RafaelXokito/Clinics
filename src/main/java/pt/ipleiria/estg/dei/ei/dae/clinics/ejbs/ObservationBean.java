@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,9 @@ public class ObservationBean {
         return observation;
     }
 
-    public List<Observation> getAllObservations() {
-        return entityManager.createNamedQuery("getAllObservations", Observation.class).getResultList();
+    public List<Object[]> getAllObservations() {
+        Query query = entityManager.createQuery("SELECT o.id, o.healthcareProfessional.id, o.healthcareProfessional.name, o.patient.id, o.patient.name, o.created_at FROM Observation o");
+        return query.getResultList();
     }
 
     public long create(long healthcareProfessionalId, long patientId, String notes, String start_date, String end_date, String notesPrescription) throws MyEntityNotFoundException, MyEntityExistsException {
