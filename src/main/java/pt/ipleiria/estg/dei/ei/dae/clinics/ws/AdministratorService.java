@@ -2,10 +2,12 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.NewPasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.AdministratorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -97,6 +99,18 @@ public class AdministratorService {
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(administrator))
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}")
+    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        administratorBean.updatePassword(
+                id,
+                newPasswordDTO.getOldPassword(),
+                newPasswordDTO.getNewPassword());
+
+        return Response.status(Response.Status.OK)
                 .build();
     }
 

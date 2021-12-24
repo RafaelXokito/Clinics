@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -97,5 +98,17 @@ public class AdministratorBean {
         administrator.setEmail(email);
         administrator.setName(name);
         administrator.setGender(gender);
+    }
+
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        Administrator administrator = findAdministrator(id);
+
+        Administrator administratorOldPassword = new Administrator();
+        administratorOldPassword.setPassword(oldPassword);
+
+        if (!administrator.getPassword().equals(administratorOldPassword.getPassword()))
+            throw new MyIllegalArgumentException("Password does not match with the old one");
+
+        administrator.setPassword(newPassword);
     }
 }

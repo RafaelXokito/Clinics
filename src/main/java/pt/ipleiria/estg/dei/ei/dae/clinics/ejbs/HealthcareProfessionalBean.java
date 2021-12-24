@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
@@ -83,5 +84,17 @@ public class HealthcareProfessionalBean {
         healthcareProfessional.setName(name);
         healthcareProfessional.setGender(gender);
         healthcareProfessional.setSpecialty(specialty);
+    }
+
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+
+        Administrator administratorOldPassword = new Administrator();
+        administratorOldPassword.setPassword(oldPassword);
+
+        if (!healthcareProfessional.getPassword().equals(administratorOldPassword.getPassword()))
+            throw new MyIllegalArgumentException("Password does not match with the old one");
+
+        healthcareProfessional.setPassword(newPassword);
     }
 }

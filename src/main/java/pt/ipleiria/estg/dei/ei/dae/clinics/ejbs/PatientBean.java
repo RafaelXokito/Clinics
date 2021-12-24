@@ -1,9 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -86,13 +88,24 @@ public class PatientBean {
      * @param gender   to update Patient
      * @param healthNo to update Patient
      */
-    public void update(long id, String email, String name, String gender, int healthNo)
-            throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender, int healthNo) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
 
         patient.setEmail(email);
         patient.setName(name);
         patient.setGender(gender);
         patient.setHealthNo(healthNo);
+    }
+
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        Patient patient = findPatient(id);
+
+        Administrator administratorOldPassword = new Administrator();
+        administratorOldPassword.setPassword(oldPassword);
+
+        if (!patient.getPassword().equals(administratorOldPassword.getPassword()))
+            throw new MyIllegalArgumentException("Password does not match with the old one");
+
+        patient.setPassword(newPassword);
     }
 }
