@@ -70,26 +70,6 @@ public abstract class Person {
         this.gender = gender;
     }
 
-    public Person(long id, String email, String password, String name, String gender) {
-        this.id = id;
-        this.email = email;
-        try {
-            this.password = generateStrongPasswordHash(password);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-        this.name = name;
-        this.gender = gender;
-    }
-
-    public Person(long id) {
-        this.id = id;
-        this.email = "";
-        this.password = "";
-        this.name = "";
-        this.gender = "";
-    }
-
     public Person() {
     }
 
@@ -111,7 +91,7 @@ public abstract class Person {
         return salt;
     }
 
-    private static String toHex(byte[] array) throws NoSuchAlgorithmException {
+    private static String toHex(byte[] array) {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
         int paddingLength = (array.length * 2) - hex.length();
@@ -144,8 +124,7 @@ public abstract class Person {
         return diff == 0;
     }
 
-    private static byte[] fromHex(String hex) throws NoSuchAlgorithmException
-    {
+    private static byte[] fromHex(String hex) {
         byte[] bytes = new byte[hex.length() / 2];
         for(int i = 0; i < bytes.length ;i++)
         {

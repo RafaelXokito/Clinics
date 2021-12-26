@@ -11,10 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "PATIENTS")
 @NamedQueries({
-        @NamedQuery(
-                name = "getAllPatients",
-                query = "SELECT p FROM Patient p ORDER BY p.id"
-        )
+        @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p ORDER BY p.id")
 })
 public class Patient extends Person implements Serializable {
 
@@ -23,8 +20,8 @@ public class Patient extends Person implements Serializable {
     private int healthNo;
 
     @NotNull
-    @ManyToMany(mappedBy = "patients")
-    private List<HealthcareProfessional> healthcareProfessionals;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.PERSIST)
+    private List<Observation> observations;
 
     @NotNull
     @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
@@ -32,48 +29,33 @@ public class Patient extends Person implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
+    @JoinColumn(name = "CREATED_BY")
     private HealthcareProfessional created_by;
 
-    public Patient(String email, String password, String name, String gender, int healthNo, HealthcareProfessional created_by) {
+    public Patient(String email, String password, String name, String gender, int healthNo,
+            HealthcareProfessional created_by) {
         super(email, password, name, gender);
         this.healthNo = healthNo;
-        this.healthcareProfessionals = new ArrayList<>();
+        this.observations = new ArrayList<>();
         this.created_by = created_by;
         this.biometric_data = new ArrayList<>();
-        addDoctor(created_by);
-    }
-
-    public Patient(long id) {
-        super(id);
     }
 
     public Patient() {
+        this.observations = new ArrayList<>();
         this.biometric_data = new ArrayList<>();
     }
 
-    public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
-        if (doctor != null && !this.healthcareProfessionals.contains(doctor)) {
-            healthcareProfessionals.add(doctor);
-            return doctor;
+    public BiometricData addBiometricData(BiometricData biometricData) {
+        if (biometricData != null && !this.biometric_data.contains(biometricData)) {
+            this.biometric_data.add(biometricData);
+            return biometricData;
         }
         return null;
     }
 
-    public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
-        return doctor != null && healthcareProfessionals.remove(doctor) ? doctor : null;
-    }
-
-    public BiometricData addBiometricData(BiometricData biometric_data){
-        if (biometric_data != null && !this.biometric_data.contains(biometric_data)) {
-            this.biometric_data.add(biometric_data);
-            return biometric_data;
-        }
-        return null;
-    }
-
-    public BiometricData removeBiometricData(BiometricData biometric_data){
-        return biometric_data != null && this.biometric_data.remove(biometric_data) ? biometric_data : null;
+    public BiometricData removeBiometricData(BiometricData biometricData) {
+        return biometricData != null && this.biometric_data.remove(biometricData) ? biometricData : null;
     }
 
     public int getHealthNo() {
@@ -84,27 +66,41 @@ public class Patient extends Person implements Serializable {
         this.healthNo = healthNo;
     }
 
-    public List<HealthcareProfessional> getDoctors() {
-        return healthcareProfessionals;
-    }
-
-    public void setDoctors(List<HealthcareProfessional> doctors) {
-        this.healthcareProfessionals = doctors;
-    }
-
     public List<BiometricData> getBiometric_data() {
         return biometric_data;
     }
 
-    public void setBiometric_data(List<BiometricData> biometric_data) {
-        this.biometric_data = biometric_data;
+    public void setBiometric_data(List<BiometricData> biometricData) {
+        this.biometric_data = biometricData;
     }
 
     public HealthcareProfessional getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(HealthcareProfessional created_by) {
-        this.created_by = created_by;
+    public void setCreated_by(HealthcareProfessional createdBy) {
+        this.created_by = createdBy;
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<Observation> observations) {
+        this.observations = observations;
+    }
+
+    public void addObservation(Observation observation) {
+        if (observation == null || observations.contains(observation))
+            return;
+
+        observations.add(observation);
+    }
+
+    public void removeObservation(Observation observation) {
+        if (observation == null)
+            return;
+
+        observations.remove(observation);
     }
 }

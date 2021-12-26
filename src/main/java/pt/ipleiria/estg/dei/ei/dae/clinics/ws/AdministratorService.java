@@ -2,10 +2,12 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.NewPasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.AdministratorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -28,7 +30,7 @@ public class AdministratorService {
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<AdministratorDTO>(toDTOAllAdministrators(administratorBean.getAllAdministrators()),
-                        "id","email","name","gender"))
+                        "id", "email", "name", "gender"))
                 .build();
     }
     /*
@@ -49,9 +51,10 @@ public class AdministratorService {
         List<AdministratorDTO> administratorDTOList = new ArrayList<>();
         for (Object[] obj: allAdministrators) {
             administratorDTOList.add(new AdministratorDTO(
-                obj[0].toString(),
+                Long.parseLong(obj[0].toString()),
                 obj[1].toString(),
-                obj[2].toString()
+                obj[2].toString(),
+                obj[3].toString()
             ));
         }
         return administratorDTOList;
@@ -69,7 +72,7 @@ public class AdministratorService {
 
     @POST
     @Path("/")
-    public Response createAdministratorWS(AdministratorDTO administratorDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+    public Response createAdministratorWS(AdministratorDTO administratorDTO) throws MyEntityExistsException {
         administratorBean.create(
             administratorDTO.getEmail(),
             administratorDTO.getPassword(),
@@ -79,7 +82,7 @@ public class AdministratorService {
         Administrator administrator = administratorBean.findAdministrator(administratorDTO.getEmail());
 
         return Response.status(Response.Status.CREATED)
-                .entity(administrator)
+                .entity(toDTO(administrator))
                 .build();
     }
 
@@ -89,14 +92,25 @@ public class AdministratorService {
         administratorBean.update(
                 id,
                 administratorDTO.getEmail(),
-                administratorDTO.getPassword(),
                 administratorDTO.getName(),
                 administratorDTO.getGender());
 
         Administrator administrator = administratorBean.findAdministrator(id);
 
         return Response.status(Response.Status.OK)
-                .entity(administrator)
+                .entity(toDTO(administrator))
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}")
+    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        administratorBean.updatePassword(
+                id,
+                newPasswordDTO.getOldPassword(),
+                newPasswordDTO.getNewPassword());
+
+        return Response.status(Response.Status.OK)
                 .build();
     }
 
@@ -104,8 +118,11 @@ public class AdministratorService {
     @Path("{id}")
     public Response deleteAdministratorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         if (administratorBean.delete(id))
-            return Response.status(Response.Status.OK).build();
-        return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
     }
 
 

@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PatientDTO {
     private long id;
@@ -13,8 +15,12 @@ public class PatientDTO {
     private Date deleted_at;
     private int healthNo;
     private long created_by;
+    private List<BiometricDataDTO> biometricDatas;
+    private List<ObservationDTO> observations;
 
-    public PatientDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, long created_by) {
+    public PatientDTO(long id, String email, String password, String name, String gender, Date created_at,
+            Date updated_at, Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,
+            List<ObservationDTO> observations) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -25,24 +31,34 @@ public class PatientDTO {
         this.deleted_at = deleted_at;
         this.healthNo = healthNo;
         this.created_by = created_by;
+        this.biometricDatas = biometricDatas;
     }
 
-    public PatientDTO(int healthNo, String email, String name, String gender) {
-        this.email = email;
-        this.name = name;
-        this.gender = gender;
-        this.healthNo = healthNo;
-    }
-
-    public PatientDTO(long id, int healthNo, String email, String name, String gender) {
+    public PatientDTO(long id, String email, String name, String gender, int healthNo) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.gender = gender;
         this.healthNo = healthNo;
+        biometricDatas = new ArrayList<>();
+        observations = new ArrayList<>();
     }
 
-    public PatientDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, long created_by) {
+    public PatientDTO(long id, String email, String name, String gender, int healthNo, long created_by,
+                      List<BiometricDataDTO> biometricDatas, List<ObservationDTO> observations) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.healthNo = healthNo;
+        this.created_by = created_by;
+        this.biometricDatas = biometricDatas;
+        this.observations = observations;
+    }
+
+    public PatientDTO(long id, String email, String name, String gender, Date created_at, Date updated_at,
+            Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,
+            List<ObservationDTO> observations) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -52,6 +68,8 @@ public class PatientDTO {
         this.deleted_at = deleted_at;
         this.healthNo = healthNo;
         this.created_by = created_by;
+        this.biometricDatas = biometricDatas;
+        this.observations = observations;
     }
 
     public PatientDTO() {
@@ -64,10 +82,16 @@ public class PatientDTO {
         deleted_at = new Date();
         healthNo = 0;
         created_by = -1;
+        biometricDatas = new ArrayList<>();
+        observations = new ArrayList<>();
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -132,6 +156,22 @@ public class PatientDTO {
 
     public void setHealthNo(int healthNo) {
         this.healthNo = healthNo;
+    }
+
+    public List<BiometricDataDTO> getBiometricDatas() {
+        return biometricDatas;
+    }
+
+    public void setBiometricDatas(List<BiometricDataDTO> biometricDatas) {
+        this.biometricDatas = biometricDatas;
+    }
+
+    public List<ObservationDTO> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<ObservationDTO> observations) {
+        this.observations = observations;
     }
 
     public long getCreated_by() {

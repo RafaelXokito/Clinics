@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("prescriptions")
-@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
-@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
+@Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
+@Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class PrescriptionService {
     @EJB
@@ -28,23 +28,23 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS() {
-        //List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
+        // List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
-                        "doctorName","start_date","end_date","notes"))
+                        "id", "healthcareProfessionalId", "healthcareProfessionalName", "start_date", "end_date"))
                 .build();
     }
 
     private List<PrescriptionDTO> toDTOAllPrescriptions(List<Object[]> allPrescriptions) {
         List<PrescriptionDTO> prescriptionDTOList = new ArrayList<>();
-        for (Object[] obj: allPrescriptions) {
+        for (Object[] obj : allPrescriptions) {
             prescriptionDTOList.add(new PrescriptionDTO(
-                    obj[0].toString(),
-                    obj[1].toString(),
+                    Long.parseLong(obj[0].toString()),
+                    Long.parseLong(obj[1].toString()),
                     obj[2].toString(),
-                    obj[3].toString()
-            ));
+                    obj[3].toString(),
+                    obj[4].toString()));
         }
         return prescriptionDTOList;
     }
@@ -63,43 +63,46 @@ public class PrescriptionService {
     @Path("/")
     public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
-        Prescription createdPrescription = prescriptionBean.create(
-            prescriptionDTO.getHealthcareProfessionalId(),
-            prescriptionDTO.getStart_date(),
-            prescriptionDTO.getEnd_date(),
-            prescriptionDTO.getNotes(),
-            issues);
+        long id = prescriptionBean.create(
+                prescriptionDTO.getHealthcareProfessionalId(),
+                prescriptionDTO.getStart_date(),
+                prescriptionDTO.getEnd_date(),
+                prescriptionDTO.getNotes(),
+                issues);
 
-        Prescription prescription = prescriptionBean.findPrescription(createdPrescription.getId());
+        Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.CREATED)
-                .entity(prescription)
+                .entity(toDTO(prescription))
                 .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
+    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO)
+            throws ParseException, MyEntityNotFoundException {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         prescriptionBean.update(id,
-            prescriptionDTO.getStart_date(),
-            prescriptionDTO.getEnd_date(),
-            prescriptionDTO.getNotes(),
-            issues);
+                prescriptionDTO.getStart_date(),
+                prescriptionDTO.getEnd_date(),
+                prescriptionDTO.getNotes(),
+                issues);
 
         Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.OK)
-                .entity(prescription)
+                .entity(toDTO(prescription))
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deletePrescriptionWS(@PathParam("id") long id) {
-        prescriptionBean.delete(id);
+        if (prescriptionBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 
@@ -117,6 +120,20 @@ public class PrescriptionService {
     }
 
     private PrescriptionDTO toDTO(Prescription prescription) {
+        boolean hasPatient = prescription.getPatient() != null;
+
+        if (hasPatient) {
+            return new PrescriptionDTO(
+                    prescription.getId(),
+                    prescription.getHealthcareProfessional().getId(),
+                    prescription.getHealthcareProfessional().getName(),
+                    prescription.getPatient().getId(),
+                    prescription.getPatient().getName(),
+                    prescription.getStart_date().toString(),
+                    prescription.getEnd_date().toString(),
+                    prescription.getNotes());
+        }
+
         return new PrescriptionDTO(
                 prescription.getId(),
                 prescription.getHealthcareProfessional().getId(),

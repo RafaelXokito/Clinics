@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="Biometric_Data_Issue")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataIssues",
@@ -37,8 +38,7 @@ public class BiometricDataIssue implements Serializable {
     @ManyToMany
     @JoinTable(name = "BIOMETRIC_DATA_ISSUES_PRESCRIPTIONS",
             joinColumns = @JoinColumn(name = "BIOMETRIC_DATA_ISSUE_ID", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "PRESCRIPTION_ID", referencedColumnName =
-                    "ID"))
+            inverseJoinColumns = @JoinColumn(name = "PRESCRIPTION_ID", referencedColumnName = "ID"))
     private List<Prescription> prescriptions;
 
     public BiometricDataIssue(String name, double min, double max, BiometricDataType biometric_data_type) {

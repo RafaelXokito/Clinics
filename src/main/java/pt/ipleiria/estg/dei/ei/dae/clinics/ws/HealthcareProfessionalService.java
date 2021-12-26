@@ -1,11 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.HealthcareProfessionalDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -15,53 +17,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("healthcareprofessional") // relative url web path for this service
+@Path("healthcareprofessionals") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
 public class HealthcareProfessionalService {
     @EJB
-    private HealthcareProfessionalBean doctorBean;
+    private HealthcareProfessionalBean healthcareProfessionalBean;
 
     @GET
     @Path("/")
-    public Response getAllDoctorsWS() {
+    public Response getAllHealcareProfessionalsWS() {
         //List<Doctor> doctors = doctorBean.getAllDoctors();
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllDoctors(doctorBean.getAllDoctors()),
-                        "id","email","name","gender","specialty"))
+                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllHealcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()),
+                        "id", "email", "name", "gender", "specialty"))
                 .build();
     }
 
 
-    private List<HealthcareProfessionalDTO> toDTOAllDoctors(List<Object[]> allDoctors) {
-        List<HealthcareProfessionalDTO> doctorDTOList = new ArrayList<>();
-        for (Object[] obj: allDoctors) {
-            doctorDTOList.add(new HealthcareProfessionalDTO(
-                    obj[0].toString(),
+    private List<HealthcareProfessionalDTO> toDTOAllHealcareProfessionals(List<Object[]> allHealthcareProfessionals) {
+        List<HealthcareProfessionalDTO> healthcareProfessionalDTOList = new ArrayList<>();
+        for (Object[] obj: allHealthcareProfessionals) {
+            healthcareProfessionalDTOList.add(new HealthcareProfessionalDTO(
+                    Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString()
+                    obj[3].toString(),
+                    obj[4].toString()
             ));
         }
-        return doctorDTOList;
+        return healthcareProfessionalDTOList;
     }
 
     @GET
     @Path("{id}")
-    public Response getDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
+    public Response getHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
-                .entity(toDTO(doctor))
+                .entity(toDTO(healthcareProfessional))
                 .build();
     }
 
     @POST
     @Path("/")
-    public Response createDoctorWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        doctorBean.create(
+    public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+        long id = healthcareProfessionalBean.create(
             healthcareProfessionalDTO.getEmail(),
             healthcareProfessionalDTO.getPassword(),
             healthcareProfessionalDTO.getName(),
@@ -69,37 +72,50 @@ public class HealthcareProfessionalService {
             healthcareProfessionalDTO.getSpecialty(),
             healthcareProfessionalDTO.getCreated_by());
 
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(healthcareProfessionalDTO.getEmail());
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.CREATED)
-                .entity(doctor)
+                .entity(toDTO(healthcareProfessional))
                 .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updateDoctorWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
-        doctorBean.update(
+    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
+        healthcareProfessionalBean.update(
             id,
             doctorDTO.getEmail(),
-            doctorDTO.getPassword(),
             doctorDTO.getName(),
             doctorDTO.getGender(),
             doctorDTO.getSpecialty());
 
-        HealthcareProfessional doctor = doctorBean.findHealthcareProfessional(id);
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
-                .entity(doctor)
+                .entity(toDTO(healthcareProfessional))
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}")
+    public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        healthcareProfessionalBean.updatePassword(
+                id,
+                newPasswordDTO.getOldPassword(),
+                newPasswordDTO.getNewPassword());
+
+        return Response.status(Response.Status.OK)
                 .build();
     }
 
     @DELETE
     @Path("{id}")
-    public Response deleteDoctorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        doctorBean.delete(id);
+    public Response deleteHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        if (healthcareProfessionalBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 
@@ -108,15 +124,57 @@ public class HealthcareProfessionalService {
         return healthcareProfessionals.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    private HealthcareProfessionalDTO toDTO(HealthcareProfessional doctor) {
+    private HealthcareProfessionalDTO toDTO(HealthcareProfessional healthcareProfessional) {
         return new HealthcareProfessionalDTO(
-                doctor.getEmail(),
-                doctor.getName(),
-                doctor.getGender(),
-                doctor.getCreated_at(),
-                doctor.getUpdated_at(),
-                doctor.getDeleted_at(),
-                doctor.getSpecialty(),
-                doctor.getCreated_by().getId());
+                healthcareProfessional.getId(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getCreated_at(),
+                healthcareProfessional.getUpdated_at(),
+                healthcareProfessional.getDeleted_at(),
+                healthcareProfessional.getSpecialty(),
+                healthcareProfessional.getCreated_by().getId(),
+                prescriptionToDTOs(healthcareProfessional.getPrescriptions()),
+                observationToDTOs(healthcareProfessional.getObservations()));
+    }
+
+    private List<PrescriptionDTO> prescriptionToDTOs(List<Prescription> prescriptions) {
+        return prescriptions.stream().map(this::prescriptionToDTO).collect(Collectors.toList());
+    }
+
+    private PrescriptionDTO prescriptionToDTO(Prescription prescription) {
+        boolean hasPatient = prescription.getPatient() != null;
+
+        if (hasPatient) {
+            return new PrescriptionDTO(
+                    prescription.getId(),
+                    prescription.getHealthcareProfessional().getId(),
+                    prescription.getHealthcareProfessional().getName(),
+                    prescription.getPatient().getId(),
+                    prescription.getPatient().getName(),
+                    prescription.getStart_date().toString(),
+                    prescription.getEnd_date().toString(),
+                    prescription.getNotes());
+        }
+
+        return new PrescriptionDTO(
+                prescription.getId(),
+                prescription.getHealthcareProfessional().getName(),
+                prescription.getStart_date().toString(),
+                prescription.getEnd_date().toString());
+    }
+
+    private List<ObservationDTO> observationToDTOs(List<Observation> observations) {
+        return observations.stream().map(this::observationToDTO).collect(Collectors.toList());
+    }
+
+    private ObservationDTO observationToDTO(Observation observation) {
+        return new ObservationDTO(observation.getId(),
+                observation.getHealthcareProfessional().getId(),
+                observation.getHealthcareProfessional().getName(),
+                observation.getPatient().getId(),
+                observation.getPatient().getName(),
+                observation.getCreated_at());
     }
 }

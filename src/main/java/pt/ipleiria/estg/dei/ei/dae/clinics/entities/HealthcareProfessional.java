@@ -3,7 +3,6 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
-import javax.print.Doc;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,24 +10,14 @@ import java.util.List;
 @Entity
 @Table(name = "HEALTHCAREPROFESSIONAL")
 @NamedQueries({
-        @NamedQuery(
-                name = "getAllDoctors",
-                query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id"
-        )
+        @NamedQuery(name = "getAllDoctors", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
 })
 public class HealthcareProfessional extends Person implements Serializable {
     @NotNull
     private String specialty;
 
-    @ManyToMany
-    @JoinTable(name = "HEALTHCAREPROFESSIONAL_PATIENTS",
-            joinColumns = @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "PATIENT_ID", referencedColumnName =
-                    "ID"))
-    private List<Patient> patients;
-
     @ManyToOne
-    @JoinColumn(name = "created_by") //Código do Administrador
+    @JoinColumn(name = "created_by") // Código do Administrador
     @NotNull
     private Administrator created_by;
 
@@ -36,36 +25,25 @@ public class HealthcareProfessional extends Person implements Serializable {
     @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
-    public HealthcareProfessional(String email, String password, String name, String gender, String specialty, Administrator created_by) {
+    @NotNull
+    @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
+    private List<Observation> observations;
+
+    public HealthcareProfessional(String email, String password, String name, String gender, String specialty,
+            Administrator created_by) {
         super(email, password, name, gender);
         this.specialty = specialty;
         this.created_by = created_by;
-        this.patients = new ArrayList<Patient>();
-        this.prescriptions = new ArrayList<Prescription>();
-    }
-
-    public HealthcareProfessional(long id) {
-        super(id);
+        this.observations = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
     public HealthcareProfessional() {
-        this.patients = new ArrayList<Patient>();
-        this.prescriptions = new ArrayList<Prescription>();
+        this.observations = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
-    public Patient addPatient(Patient patient){
-        if (patient != null && !this.patients.contains(patient)) {
-            patients.add(patient);
-            return patient;
-        }
-        return null;
-    }
-
-    public Patient removePatient(Patient patient){
-        return patient != null && patients.remove(patient) ? patient : null;
-    }
-
-    public Prescription addPrescription(Prescription prescription){
+    public Prescription addPrescription(Prescription prescription) {
         if (prescription != null && !this.prescriptions.contains(prescription)) {
             prescriptions.add(prescription);
             return prescription;
@@ -73,7 +51,7 @@ public class HealthcareProfessional extends Person implements Serializable {
         return null;
     }
 
-    public Prescription removePrescription(Prescription prescription){
+    public Prescription removePrescription(Prescription prescription) {
         return prescription != null && prescriptions.remove(prescription) ? prescription : null;
     }
 
@@ -83,14 +61,6 @@ public class HealthcareProfessional extends Person implements Serializable {
 
     public void setSpecialty(String specialty) {
         this.specialty = specialty;
-    }
-
-    public List<Patient> getPatients() {
-        return patients;
-    }
-
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
     }
 
     public Administrator getCreated_by() {
@@ -107,5 +77,27 @@ public class HealthcareProfessional extends Person implements Serializable {
 
     public void setPrescriptions(List<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<Observation> observations) {
+        this.observations = observations;
+    }
+
+    public void addObservation(Observation observation) {
+        if (observation == null || observations.contains(observation))
+            return;
+
+        observations.add(observation);
+    }
+
+    public void removeObservation(Observation observation) {
+        if (observation == null)
+            return;
+
+        observations.remove(observation);
     }
 }

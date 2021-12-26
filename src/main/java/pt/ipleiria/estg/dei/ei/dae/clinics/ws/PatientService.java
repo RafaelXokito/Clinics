@@ -1,11 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PatientDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("patients") // relative url web path for this service
-@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
-@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
+@Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
+@Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class PatientService {
     @EJB
@@ -26,24 +26,23 @@ public class PatientService {
     @GET
     @Path("/")
     public Response getAllPatientsWS() {
-        //List<Patient> patients = patientBean.getAllPatients();
+        // List<Patient> patients = patientBean.getAllPatients();
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),
-                        "username","healthNo","email","name","gender"))
+                        "id", "email", "name", "gender", "healthNo"))
                 .build();
     }
 
     private List<PatientDTO> toDTOAllPatients(List<Object[]> allPatients) {
         List<PatientDTO> patientDTOList = new ArrayList<>();
-        for (Object[] obj: allPatients) {
+        for (Object[] obj : allPatients) {
             patientDTOList.add(new PatientDTO(
                     Long.parseLong(obj[0].toString()),
-                    Integer.parseInt(obj[1].toString()),
+                    obj[1].toString(),
                     obj[2].toString(),
                     obj[3].toString(),
-                    obj[4].toString()
-            ));
+                    Integer.parseInt(obj[4].toString())));
         }
         return patientDTOList;
     }
@@ -61,18 +60,18 @@ public class PatientService {
     @POST
     @Path("/")
     public Response createPatientWS(PatientDTO patientDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        patientBean.create(
-            patientDTO.getEmail(),
-            patientDTO.getPassword(),
-            patientDTO.getName(),
-            patientDTO.getGender(),
-            patientDTO.getHealthNo(),
-            patientDTO.getCreated_by());
+        long id = patientBean.create(
+                patientDTO.getEmail(),
+                patientDTO.getPassword(),
+                patientDTO.getName(),
+                patientDTO.getGender(),
+                patientDTO.getHealthNo(),
+                patientDTO.getCreated_by());
 
-        Patient patient = patientBean.findPatient(patientDTO.getEmail());
+        Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.CREATED)
-                .entity(patient)
+                .entity(toDTO(patient))
                 .build();
     }
 
@@ -80,29 +79,40 @@ public class PatientService {
     @Path("{id}")
     public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO) throws MyEntityNotFoundException {
         patientBean.update(
-            id,
-            patientDTO.getEmail(),
-            patientDTO.getPassword(),
-            patientDTO.getName(),
-            patientDTO.getGender(),
-            patientDTO.getHealthNo());
+                id,
+                patientDTO.getEmail(),
+                patientDTO.getName(),
+                patientDTO.getGender(),
+                patientDTO.getHealthNo());
 
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
-                .entity(patient)
+                .entity(toDTO(patient))
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}")
+    public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        patientBean.updatePassword(
+                id,
+                newPasswordDTO.getOldPassword(),
+                newPasswordDTO.getNewPassword());
+
+        return Response.status(Response.Status.OK)
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deletePatientWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        patientBean.delete(id);
-
-        return Response.status(Response.Status.OK)
+        if (patientBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
-
 
     private List<PatientDTO> toDTOs(List<Patient> patients) {
         return patients.stream().map(this::toDTO).collect(Collectors.toList());
@@ -113,10 +123,47 @@ public class PatientService {
                 patient.getEmail(),
                 patient.getName(),
                 patient.getGender(),
-                patient.getCreated_at(),
-                patient.getUpdated_at(),
-                patient.getDeleted_at(),
                 patient.getHealthNo(),
-                patient.getCreated_by().getId());
+                patient.getCreated_by().getId(),
+                biometricDataToDTOs(patient.getBiometric_data()),
+                observationToDTOs(patient.getObservations()));
+    }
+
+    private List<ObservationDTO> observationToDTOs(List<Observation> observations) {
+        return observations.stream().map(this::observationToDTO).collect(Collectors.toList());
+    }
+
+    private ObservationDTO observationToDTO(Observation observation) {
+        return new ObservationDTO(observation.getId(),
+                observation.getHealthcareProfessional().getId(),
+                observation.getHealthcareProfessional().getName(),
+                observation.getPatient().getId(),
+                observation.getPatient().getName(),
+                observation.getCreated_at());
+    }
+
+    private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
+        return biometricData.stream().map(this::biometricDataToDTO).collect(Collectors.toList());
+    }
+
+    private BiometricDataDTO biometricDataToDTO(BiometricData biometricData) {
+        return new BiometricDataDTO(biometricData.getValue(),
+                biometricData.getBiometric_data_type().getUnit_name(),
+                biometricData.getBiometric_data_type().getName(),
+                biometricData.getCreated_by().getId(),
+                biometricData.getCreated_at());
+    }
+
+    private List<BiometricDataIssueDTO> issuesToDTOs(List<BiometricDataIssue> biometricDataIssues) {
+        return biometricDataIssues.stream().map(this::issueToDTO).collect(Collectors.toList());
+    }
+
+    private BiometricDataIssueDTO issueToDTO(BiometricDataIssue biometricDataIssue) {
+        return new BiometricDataIssueDTO(biometricDataIssue.getId(),
+                biometricDataIssue.getName(),
+                biometricDataIssue.getMin(),
+                biometricDataIssue.getMax(),
+                biometricDataIssue.getBiometric_data_type().getId(),
+                biometricDataIssue.getBiometric_data_type().getName());
     }
 }

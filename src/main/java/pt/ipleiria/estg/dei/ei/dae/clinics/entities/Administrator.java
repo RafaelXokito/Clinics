@@ -26,32 +26,27 @@ public class Administrator extends Person implements Serializable {
         this.healthcareProfessionals = new ArrayList<>();
     }
 
-    public Administrator(long id) {
-        super(id);
-        this.healthcareProfessionals = new ArrayList<>();
-    }
-
     public Administrator() {
         this.healthcareProfessionals = new ArrayList<>();
     }
 
-    public HealthcareProfessional addDoctor(HealthcareProfessional doctor){
-        if (doctor != null && !this.healthcareProfessionals.contains(doctor)) {
-            healthcareProfessionals.add(doctor);
-            return doctor;
+    public HealthcareProfessional addHealthcareProfessional(HealthcareProfessional healthcareProfessional){
+        if (healthcareProfessional != null && !this.healthcareProfessionals.contains(healthcareProfessional)) {
+            healthcareProfessionals.add(healthcareProfessional);
+            return healthcareProfessional;
         }
         return null;
     }
 
-    public HealthcareProfessional removeDoctor(HealthcareProfessional doctor){
-        return doctor != null && healthcareProfessionals.remove(doctor) ? doctor : null;
+    public HealthcareProfessional removeHealthcareProfessional(HealthcareProfessional healthcareProfessional){
+        return healthcareProfessional != null && healthcareProfessionals.remove(healthcareProfessional) ? healthcareProfessional : null;
     }
 
     public List<HealthcareProfessional> getCreated_who() {
         return healthcareProfessionals;
     }
 
-    public void setCreated_who(List<HealthcareProfessional> doctors) {
-        this.healthcareProfessionals = doctors;
+    public void setCreated_who(List<HealthcareProfessional> healthcareProfessionals) {
+        this.healthcareProfessionals = healthcareProfessionals;
     }
 }

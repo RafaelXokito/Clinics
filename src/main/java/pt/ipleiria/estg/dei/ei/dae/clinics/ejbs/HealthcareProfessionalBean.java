@@ -1,9 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
@@ -14,19 +16,19 @@ public class HealthcareProfessionalBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Object[]> getAllDoctors() {
+    public List<Object[]> getAllHealthcareProfessionals() {
         Query query = entityManager.createQuery("SELECT d.id, d.email, d.name, d.gender, d.specialty  FROM HealthcareProfessional d");
-        List<Object[]> doctorList = query.getResultList();
-        return doctorList;
+        List<Object[]> healthcareProfessionalList = query.getResultList();
+        return healthcareProfessionalList;
         //return entityManager.createNamedQuery("getAllDoctors", Doctor.class).getResultList();
     }
 
     public HealthcareProfessional findHealthcareProfessional(long id) throws MyEntityNotFoundException {
-        HealthcareProfessional doctor = entityManager.find(HealthcareProfessional.class, id);
-        if (doctor == null)
-            throw new MyEntityNotFoundException("Doctor \"" + id + "\" does not exist");
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
+        if (healthcareProfessional == null)
+            throw new MyEntityNotFoundException("Healthcare Professional \"" + id + "\" does not exist");
 
-        return doctor;
+        return healthcareProfessional;
     }
 
     public HealthcareProfessional findHealthcareProfessional(String email) {
@@ -44,44 +46,55 @@ public class HealthcareProfessionalBean {
      * @param created_ById Administrator Username that is creating the current Doctor
      */
     public long create(String email, String password, String name, String gender, String specialty,long created_ById) throws MyEntityNotFoundException, MyEntityExistsException {
-        HealthcareProfessional doctor = findHealthcareProfessional(email);
-        if (doctor != null)
-            throw new MyEntityExistsException("Doctor \"" + email + "\" already exist");
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(email);
+        if (healthcareProfessional != null)
+            throw new MyEntityExistsException("Healthcare Professional with an email of \"" + email + "\" already exist");
 
         Administrator created_by = entityManager.find(Administrator.class, created_ById);
         if (created_by == null)
             throw new MyEntityNotFoundException("Administrator \"" + email + "\" does not exist");
 
-        HealthcareProfessional newDoctor = new HealthcareProfessional(email, password, name, gender, specialty, created_by);
-        entityManager.persist(newDoctor);
+        HealthcareProfessional newHealthcareProfessional = new HealthcareProfessional(email, password, name, gender, specialty, created_by);
+        entityManager.persist(newHealthcareProfessional);
         entityManager.flush();
-        return newDoctor.getId();
+        return newHealthcareProfessional.getId();
     }
 
     /***
      * Delete a Doctor by given @Id:username - Change deleted_at field to NOW() date
      * @param id @Id to find the proposal delete Doctor
      */
-    public void delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
         entityManager.remove(healthcareProfessional);
+        return entityManager.find(HealthcareProfessional.class, id) == null;
     }
 
     /***
      * Update a Doctor by given @Id:username
      * @param email @Id to find the proposal update Doctor
-     * @param password to update Doctor
      * @param name to update Doctor
      * @param gender to update Doctor
      * @param specialty to update Doctor
      */
-    public void update(long id, String email, String password, String name, String gender, String specialty) throws MyEntityNotFoundException {
-        HealthcareProfessional doctor = findHealthcareProfessional(id);
+    public void update(long id, String email, String name, String gender, String specialty) throws MyEntityNotFoundException {
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 
-        doctor.setEmail(email);
-        doctor.setPassword(password);
-        doctor.setName(name);
-        doctor.setGender(gender);
-        doctor.setSpecialty(specialty);
+        healthcareProfessional.setEmail(email);
+        healthcareProfessional.setName(name);
+        healthcareProfessional.setGender(gender);
+        healthcareProfessional.setSpecialty(specialty);
+    }
+
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+
+        Administrator administratorOldPassword = new Administrator();
+        administratorOldPassword.setPassword(oldPassword);
+
+        if (!healthcareProfessional.getPassword().equals(administratorOldPassword.getPassword()))
+            throw new MyIllegalArgumentException("Password does not match with the old one");
+
+        healthcareProfessional.setPassword(newPassword);
     }
 }

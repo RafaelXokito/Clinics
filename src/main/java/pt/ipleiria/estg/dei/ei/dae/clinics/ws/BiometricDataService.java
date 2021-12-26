@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("biometricdata") // relative url web path for this service
-@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
-@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
+@Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
+@Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class BiometricDataService {
     @EJB
@@ -26,27 +26,28 @@ public class BiometricDataService {
     @GET
     @Path("/")
     public Response getAllBiometricDataWS() {
-        //List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
+        // List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<BiometricDataDTO>(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),
+                .entity(new EntitiesDTO<BiometricDataDTO>(
+                        toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),
                         "patientName", "healthNo", "biometricDataTypeName", "valueUnit"))
                 .build();
     }
 
     private List<BiometricDataDTO> toDTOAllBiometricDatas(List<Object[]> allBiometricDatas) {
         List<BiometricDataDTO> BiometricDataDTOList = new ArrayList<>();
-        for (Object[] obj: allBiometricDatas) {
+        for (Object[] obj : allBiometricDatas) {
             BiometricDataDTOList.add(new BiometricDataDTO(
-                    Long.parseLong(obj[0].toString()), //BioData.id
-                    Long.parseLong(obj[1].toString()), //bioData.patient.id
-                    obj[2].toString(), //bioData.patient.name
-                    obj[3].toString(), //bioData.patient.healthNo
-                    Long.parseLong(obj[4].toString()), //bioData.biometric_data_type.id
-                    obj[5].toString(), //bioData.biometric_data_type.name
-                    Double.parseDouble(obj[6].toString()), //bioData.value
-                    obj[6].toString() + " " + obj[7].toString(), //bioData.value + bioData.biometric_data_type.unit
-                    obj[8].toString() //bioData.biometric_data_type.name
+                    Long.parseLong(obj[0].toString()), // BioData.id
+                    Long.parseLong(obj[1].toString()), // bioData.patient.id
+                    obj[2].toString(), // bioData.patient.name
+                    obj[3].toString(), // bioData.patient.healthNo
+                    Long.parseLong(obj[4].toString()), // bioData.biometric_data_type.id
+                    obj[5].toString(), // bioData.biometric_data_type.name
+                    Double.parseDouble(obj[6].toString()), // bioData.value
+                    obj[6].toString() + " " + obj[7].toString(), // bioData.value + bioData.biometric_data_type.unit
+                    obj[8].toString() // bioData.biometric_data_type.name
             ));
         }
         return BiometricDataDTOList;
@@ -75,19 +76,20 @@ public class BiometricDataService {
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
         return Response.status(Response.Status.CREATED)
-                .entity(biometricData)
+                .entity(toDTO(biometricData))
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        biometricDataBean.delete(id);
+        if (biometricDataBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
-
 
     private List<BiometricDataDTO> toDTOs(List<BiometricData> biometricData) {
         return biometricData.stream().map(this::toDTO).collect(Collectors.toList());

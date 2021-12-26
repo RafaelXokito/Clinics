@@ -30,7 +30,7 @@ public class BiometricDataTypeService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataTypeDTO>(toDTOAllBiometricDataTypes(biometricDataTypeBean.getAllBiometricDataTypes()),
-                        "name","unit", "unit_name"))
+                        "name", "unit", "unit_name"))
                 .build();
     }
 
@@ -72,7 +72,7 @@ public class BiometricDataTypeService {
         BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(createdBiometricDataType.getId());
 
         return Response.status(Response.Status.CREATED)
-                .entity(createdBiometricDataType)
+                .entity(toDTO(biometricDataType))
                 .build();
     }
 
@@ -90,16 +90,18 @@ public class BiometricDataTypeService {
         BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(id);
 
         return Response.status(Response.Status.OK)
-                .entity(biometricDataType)
+                .entity(toDTO(biometricDataType))
                 .build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataTypeWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        biometricDataTypeBean.delete(id);
+        if (biometricDataTypeBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
 
-        return Response.status(Response.Status.OK)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
 
