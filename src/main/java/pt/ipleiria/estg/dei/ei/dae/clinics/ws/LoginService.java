@@ -47,6 +47,7 @@ public class LoginService {
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+
     @GET
     @Path("/user")
     public Response demonstrateClaims(@HeaderParam("Authorization") String auth) {
@@ -75,6 +76,7 @@ public class LoginService {
                 person.getGender(),
                 person.getCreated_at(),
                 person.getUpdated_at(),
-                person.getDeleted_at());
+                person.getDeleted_at(),
+                person.getClass().getSimpleName());
     }
 }

@@ -34,6 +34,14 @@ public class PatientDTO {
         this.healthNo = healthNo;
     }
 
+    public PatientDTO(long id, int healthNo, String email, String name, String gender) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.healthNo = healthNo;
+    }
+
     public PatientDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, int healthNo, long created_by) {
         this.id = id;
         this.email = email;

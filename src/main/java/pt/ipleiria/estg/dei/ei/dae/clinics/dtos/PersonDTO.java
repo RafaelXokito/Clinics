@@ -11,6 +11,7 @@ public class PersonDTO {
     private Date created_at;
     private Date updated_at;
     private Date deleted_at;
+    private String role;
 
 
     public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
@@ -24,7 +25,7 @@ public class PersonDTO {
         this.deleted_at = deleted_at;
     }
 
-    public PersonDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
+    public PersonDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String role) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -32,6 +33,7 @@ public class PersonDTO {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.deleted_at = deleted_at;
+        this.role = role;
     }
 
     public PersonDTO() {
@@ -39,6 +41,7 @@ public class PersonDTO {
         password = "";
         name = "";
         gender = "";
+        role = "";
         created_at = new Date();
         updated_at = new Date();
         deleted_at = new Date();
@@ -48,6 +51,14 @@ public class PersonDTO {
         this.email = email;
         this.name = name;
         this.gender = gender;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public long getId() {

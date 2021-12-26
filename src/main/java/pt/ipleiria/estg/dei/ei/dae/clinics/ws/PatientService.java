@@ -38,10 +38,11 @@ public class PatientService {
         List<PatientDTO> patientDTOList = new ArrayList<>();
         for (Object[] obj: allPatients) {
             patientDTOList.add(new PatientDTO(
-                    (Integer) obj[0],
-                    obj[1].toString(),
+                    Long.parseLong(obj[0].toString()),
+                    Integer.parseInt(obj[1].toString()),
                     obj[2].toString(),
-                    obj[3].toString()
+                    obj[3].toString(),
+                    obj[4].toString()
             ));
         }
         return patientDTOList;
