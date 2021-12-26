@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
@@ -12,6 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.Response;
+import java.text.ParseException;
 import java.util.List;
 
 @Stateless
@@ -56,5 +61,23 @@ public class PersonBean {
             return person;
         }
         throw new Exception("Failed logging in with Person email '" + email + "':unknown Person email or wrong password");
+    }
+
+
+    public Person getPersonByAuthToken(String auth) {
+        if (auth != null && auth.startsWith("Bearer ")) {
+            try {
+                JWT j = JWTParser.parse(auth.substring(7));
+                j.getJWTClaimsSet().getClaims();
+                Person person = findPerson(Long.valueOf(j.getJWTClaimsSet().getClaims().get("sub").toString()));
+                return person;
+                //return personBean.findPerson(j.getJWTClaimsSet().getClaims().get("sub");
+                //return Response.ok(j.getJWTClaimsSet().getClaims()).build();
+                //Note: nimbusds converts token expiration time to milliseconds
+            } catch (ParseException e) {
+                return null;
+            }
+        }
+        return null;
     }
 }

@@ -1,15 +1,20 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.Response;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
