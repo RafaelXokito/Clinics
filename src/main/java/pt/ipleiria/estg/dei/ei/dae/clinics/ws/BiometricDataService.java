@@ -70,24 +70,19 @@ public class BiometricDataService {
     @POST
     @Path("/")
     public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
-        try {
-            BiometricData createdBiometricData = biometricDataBean.create(
-                    biometricDataDTO.getBiometricTypeId(),
-                    biometricDataDTO.getValue(),
-                    biometricDataDTO.getNotes(),
-                    biometricDataDTO.getPatientId(),
-                    personBean.getPersonByAuthToken(auth).getId(),
-                    biometricDataDTO.getSource());
+        BiometricData createdBiometricData = biometricDataBean.create(
+                biometricDataDTO.getBiometricTypeId(),
+                biometricDataDTO.getValue(),
+                biometricDataDTO.getNotes(),
+                biometricDataDTO.getPatientId(),
+                personBean.getPersonByAuthToken(auth).getId(),
+                biometricDataDTO.getSource());
 
-            BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
+        BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(toDTO(biometricData))
-                    .build();
-        } catch (Exception e) {
-            log.warning(e.toString());
-            return Response.status(400).build();
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(toDTO(biometricData))
+                .build();
     }
 
     @PUT
