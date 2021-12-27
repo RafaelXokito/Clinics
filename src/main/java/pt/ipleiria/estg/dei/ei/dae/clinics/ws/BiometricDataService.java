@@ -12,6 +12,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -75,7 +76,8 @@ public class BiometricDataService {
                     biometricDataDTO.getValue(),
                     biometricDataDTO.getNotes(),
                     biometricDataDTO.getPatientId(),
-                    personBean.getPersonByAuthToken(auth).getId());
+                    personBean.getPersonByAuthToken(auth).getId(),
+                    biometricDataDTO.getSource());
 
             BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
@@ -91,7 +93,7 @@ public class BiometricDataService {
     @PUT
     @Path("{id}")
     public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO,
-            @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException {
+            @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException, ParseException {
         BiometricData createdBiometricData = biometricDataBean.update(
                 id,
                 biometricDataDTO.getBiometricTypeId(),

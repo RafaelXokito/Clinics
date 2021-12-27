@@ -98,7 +98,12 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId)  throws MyEntityNotFoundException, MyIllegalArgumentException{
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, long personId, String source)  throws MyEntityNotFoundException, MyIllegalArgumentException{
+        BiometricData biometricData = entityManager.find(BiometricData.class, id);
+
+        if (personId != biometricData.getCreated_by().getId())
+            throw new MyIllegalArgumentException("BiometricData " + id + " was not created by you");
+
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
@@ -110,12 +115,18 @@ public class BiometricDataBean {
         if (value < biometricDataType.getMin() || value > biometricDataType.getMax())
             throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
 
-        BiometricData biometricData = entityManager.find(BiometricData.class, id);
-
         biometricData.setBiometric_data_type(biometricDataType);
         biometricData.setValue(value);
         biometricData.setPatient(patient);
         biometricData.setNotes(notes);
+        biometricData.setSource(source);
+
+        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+            if (value >= issue.getMin() && value <= issue.getMax()) {
+                biometricData.setBiometricDataIssue(issue);
+                break;
+            }
+        }
 
         return biometricData;
     }
