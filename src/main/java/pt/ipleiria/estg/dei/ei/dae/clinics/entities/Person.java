@@ -1,20 +1,15 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
 import io.smallrye.common.constraint.NotNull;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.Response;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +19,6 @@ import java.util.Objects;
         name = "Persons",
         uniqueConstraints = @UniqueConstraint(columnNames = {"email"})
 )
-
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPersons",
@@ -35,7 +29,6 @@ import java.util.Objects;
                 query = "SELECT p FROM Person p WHERE p.deleted_at != NULL and p.email = :email"
         )
 })
-
 @NamedNativeQuery(
         name = "getAllPersons2",
         query = "SELECT p.id, p.email, p.name, p.gender FROM Person",
@@ -46,20 +39,28 @@ public abstract class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Email
     private String email;
+
     @NotNull
     private String password; //This should be hashed before input, in or out of the server
+
     @NotNull
     private String name;
+
     @NotNull
     private String gender;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated_at;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleted_at;
+
     @NotNull
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<BiometricData> biometricDatasCreated;

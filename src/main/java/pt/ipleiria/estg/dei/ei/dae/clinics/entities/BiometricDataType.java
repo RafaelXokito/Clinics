@@ -4,6 +4,8 @@ import io.smallrye.common.constraint.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Biometric_Data_Types")
@@ -17,26 +19,36 @@ public class BiometricDataType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @NotNull
     private String name;
+
     @NotNull
-    private int min;
+    private double min;
+
     @NotNull
-    private int max;
+    private double max;
+
     @NotNull
     private String unit; //Measure Unit Short
+
     @NotNull
     private String unit_name; //Measure Unit Extended
 
-    public BiometricDataType(String name, int min, int max, String unit, String unit_name) {
+    @OneToMany(mappedBy = "biometric_data_type")
+    private List<BiometricDataIssue> issues;
+
+    public BiometricDataType(String name, double min, double max, String unit, String unit_name) {
         this.name = name;
         this.min = min;
         this.max = max;
         this.unit = unit;
         this.unit_name = unit_name;
+        issues = new ArrayList<>();
     }
 
     public BiometricDataType() {
+        issues = new ArrayList<>();
     }
 
     public long getId() {
@@ -51,19 +63,19 @@ public class BiometricDataType implements Serializable {
         this.name = name;
     }
 
-    public int getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public int getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(int max) {
+    public void setMax(double max) {
         this.max = max;
     }
 
@@ -81,5 +93,27 @@ public class BiometricDataType implements Serializable {
 
     public void setUnit_name(String unit_name) {
         this.unit_name = unit_name;
+    }
+
+    public List<BiometricDataIssue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<BiometricDataIssue> issues) {
+        this.issues = issues;
+    }
+
+    public void addIssue(BiometricDataIssue biometricDataIssue) {
+        if (biometricDataIssue == null || issues.contains(biometricDataIssue))
+            return;
+
+        issues.add(biometricDataIssue);
+    }
+
+    public void removeIssue(BiometricDataIssue biometricDataIssue) {
+        if (biometricDataIssue == null)
+            return;
+
+        issues.remove(biometricDataIssue);
     }
 }

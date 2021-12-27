@@ -17,7 +17,7 @@ public class BiometricDataTypeBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricDataTypes() {
-        Query query = entityManager.createQuery("SELECT bioData.id, bioData.name, bioData.unit, bioData.unit_name, bioData.min, bioData.max FROM BiometricDataType bioData");
+        Query query = entityManager.createQuery("SELECT b.name, b.unit, b.unit_name FROM BiometricDataType b");
         List<Object[]> biometricDataTypeList = query.getResultList();
         return biometricDataTypeList;
         //return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();
@@ -40,7 +40,7 @@ public class BiometricDataTypeBean {
      * @param unit_name (Graus Celsius)
      * @return BiometricDataType created
      */
-    public BiometricDataType create(String name, int min, int max, String unit, String unit_name){
+    public BiometricDataType create(String name, double min, double max, String unit, String unit_name){
         BiometricDataType newBiometricDataType = new BiometricDataType(name, min, max, unit, unit_name);
         entityManager.persist(newBiometricDataType);
         entityManager.flush();
@@ -70,7 +70,7 @@ public class BiometricDataTypeBean {
      * @return Biometric Data
      * @throw TODO - Acrescentar os throws e a descrição
      */
-    public void update(long id, String name, int min, int max, String unit, String unit_name) throws MyEntityNotFoundException {
+    public void update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException {
         BiometricDataType biometricDataType = findBiometricDataType(id);
 
         biometricDataType.setName(name);

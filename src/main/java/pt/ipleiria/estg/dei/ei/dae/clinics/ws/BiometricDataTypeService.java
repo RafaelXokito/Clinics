@@ -38,12 +38,9 @@ public class BiometricDataTypeService {
         List<BiometricDataTypeDTO> BiometricDataTypeDTOList = new ArrayList<>();
         for (Object[] obj: allBiometricDataTypes) {
             BiometricDataTypeDTOList.add(new BiometricDataTypeDTO(
-                    Long.parseLong(obj[0].toString()), //Id
-                    obj[1].toString(), //Name
-                    obj[2].toString(), //Unit
-                    obj[3].toString(), //Unit_Name
-                    Integer.parseInt(obj[4].toString()), //Min
-                    Integer.parseInt(obj[5].toString()) //Max
+                    obj[0].toString(),
+                    obj[1].toString(),
+                    obj[2].toString()
             ));
         }
         return BiometricDataTypeDTOList;

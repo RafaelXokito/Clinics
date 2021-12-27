@@ -9,12 +9,14 @@ public class BiometricDataDTO {
     private String notes;
     private long patientId;
     private Date created_at;
-    private long created_by; //Person that created this entity
+    private long created_by;
     private String patientName;
     private String healthNo;
     private String biometricDataTypeName;
     private String valueUnit;
-    //Origem- exame, equipamento, consulta
+    private String source;
+    private long biometricDataIssueId;
+    private String biometricDataIssueName;
 
     public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
         this.id = id;
@@ -26,18 +28,21 @@ public class BiometricDataDTO {
         this.created_by = created_by;
     }
 
-    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by, String patientName, String healthNo, String biometricDataTypeName, String valueUnit) {
+    public BiometricDataDTO(long id, long biometricTypeId, String biometricDataTypeName, double value, String notes, long patientId, String patientName, Date created_at, long created_by, String healthNo, String valueUnit, String source, long biometricDataIssueId, String biometricDataIssueName) {
         this.id = id;
         this.biometricTypeId = biometricTypeId;
+        this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.notes = notes;
         this.patientId = patientId;
+        this.patientName = patientName;
         this.created_at = created_at;
         this.created_by = created_by;
-        this.patientName = patientName;
         this.healthNo = healthNo;
-        this.biometricDataTypeName = biometricDataTypeName;
         this.valueUnit = valueUnit;
+        this.source = source;
+        this.biometricDataIssueId = biometricDataIssueId;
+        this.biometricDataIssueName = biometricDataIssueName;
     }
 
     public BiometricDataDTO(long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
@@ -59,6 +64,14 @@ public class BiometricDataDTO {
         created_by = -1;
     }
 
+    public BiometricDataDTO(String patientName, String healthNo, String biometricDataTypeName, double value, String valueUnit) {
+        this.patientName = patientName;
+        this.healthNo = healthNo;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.value = value;
+        this.valueUnit = valueUnit;
+    }
+
     public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, long createdBy, Date createdAt) {
         this.value = value;
         this.valueUnit = valueUnit;
@@ -68,7 +81,7 @@ public class BiometricDataDTO {
     }
 
     public BiometricDataDTO(long id, long patientId, String patientName, String healthNo, long biometricDataTypeId,
-                            String biometricDataTypeName, double value, String valueUnit, String notes) {
+                            String biometricDataTypeName, double value, String valueUnit, String notes, String source, long biometricDataIssueId, String biometricDataIssueName) {
         this.id = id;
         this.patientId = patientId;
         this.patientName = patientName;
@@ -78,6 +91,9 @@ public class BiometricDataDTO {
         this.value = value;
         this.valueUnit = valueUnit;
         this.notes = notes;
+        this.source = source;
+        this.biometricDataIssueId = biometricDataIssueId;
+        this.biometricDataIssueName = biometricDataIssueName;
     }
 
     public String getPatientName() {
@@ -166,5 +182,29 @@ public class BiometricDataDTO {
 
     public void setCreated_by(long created_by) {
         this.created_by = created_by;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public long getBiometricDataIssueId() {
+        return biometricDataIssueId;
+    }
+
+    public void setBiometricDataIssueId(long biometricDataIssueId) {
+        this.biometricDataIssueId = biometricDataIssueId;
+    }
+
+    public String getBiometricDataIssueName() {
+        return biometricDataIssueName;
+    }
+
+    public void setBiometricDataIssueName(String biometricDataIssueName) {
+        this.biometricDataIssueName = biometricDataIssueName;
     }
 }

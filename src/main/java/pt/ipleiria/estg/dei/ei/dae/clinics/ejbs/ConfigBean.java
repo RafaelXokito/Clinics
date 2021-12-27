@@ -56,7 +56,7 @@ public class ConfigBean {
             long aLeitaoId = administratorBean.create("2191268@my.ipleiria.pt", "1234", "Leitão Mendes Pererira","Male");
 
             System.out.println("Creating Some HealthcareProfessionals");
-            long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt", "248",
+            long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt", "1234",
                     "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId);
 
             System.out.println("Creating Some Patients");
@@ -79,9 +79,9 @@ public class ConfigBean {
 
             System.out.println("Creating some Biometric Data");
             BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId);
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exame");
             BiometricData biometricData2 = biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
-                    pDanielId, pDanielId);
+                    pDanielId, pDanielId, "Sensor");
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());
