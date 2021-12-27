@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;

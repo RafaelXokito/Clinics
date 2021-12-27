@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -26,6 +27,9 @@ public class BiometricDataService {
 
     @EJB
     private BiometricDataBean biometricDataBean;
+
+    @EJB
+    private PersonBean personBean;
 
     @GET
     @Path("/")
