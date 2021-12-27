@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("biometricdata") // relative url web path for this service
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class BiometricDataService {
+    private static final Logger log =
+            Logger.getLogger(AuthService.class.getName());
+
     @EJB
     private BiometricDataBean biometricDataBean;
 
@@ -70,18 +74,23 @@ public class BiometricDataService {
     @POST
     @Path("/")
     public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException {
-        BiometricData createdBiometricData = biometricDataBean.create(
-                biometricDataDTO.getBiometricTypeId(),
-                biometricDataDTO.getValue(),
-                biometricDataDTO.getNotes(),
-                biometricDataDTO.getPatientId(),
-                personBean.getPersonByAuthToken(auth).getId());
+        try {
+            BiometricData createdBiometricData = biometricDataBean.create(
+                    biometricDataDTO.getBiometricTypeId(),
+                    biometricDataDTO.getValue(),
+                    biometricDataDTO.getNotes(),
+                    biometricDataDTO.getPatientId(),
+                    personBean.getPersonByAuthToken(auth).getId());
 
-        BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
+            BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
-        return Response.status(Response.Status.CREATED)
-                .entity(toDTO(biometricData))
-                .build();
+            return Response.status(Response.Status.CREATED)
+                    .entity(toDTO(biometricData))
+                    .build();
+        }catch(Exception e){
+            log.warning(e.toString());
+            return Response.status(400).build();
+        }
     }
 
     @PUT

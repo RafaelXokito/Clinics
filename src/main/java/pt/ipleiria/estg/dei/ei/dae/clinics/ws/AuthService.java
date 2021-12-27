@@ -56,9 +56,7 @@ public class AuthService {
     public Response demonstrateClaims(@HeaderParam("Authorization") String auth) {
         if (auth != null && auth.startsWith("Bearer ")) {
             try {
-                JWT j = JWTParser.parse(auth.substring(7));
-                j.getJWTClaimsSet().getClaims();
-                Person person = personBean.findPerson(Long.valueOf(j.getJWTClaimsSet().getClaims().get("sub").toString()));
+                Person person = personBean.getPersonByAuthToken(auth);
                 return Response.ok(toDTO(person)).build();
                 //return personBean.findPerson(j.getJWTClaimsSet().getClaims().get("sub");
                 //return Response.ok(j.getJWTClaimsSet().getClaims()).build();

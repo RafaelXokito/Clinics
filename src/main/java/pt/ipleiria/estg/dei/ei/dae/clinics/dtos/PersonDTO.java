@@ -13,6 +13,17 @@ public class PersonDTO {
     private Date deleted_at;
     private String scope;
 
+    public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String scope) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.scope = scope;
+    }
 
     public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;

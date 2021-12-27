@@ -71,7 +71,7 @@ public class PersonBean {
     }
 
 
-    public Person getPersonByAuthToken(String auth) {
+    public Person getPersonByAuthToken(String auth) throws ParseException {
         if (auth != null && auth.startsWith("Bearer ")) {
             try {
                 JWT j = JWTParser.parse(auth.substring(7));
@@ -82,7 +82,7 @@ public class PersonBean {
                 //return Response.ok(j.getJWTClaimsSet().getClaims()).build();
                 //Note: nimbusds converts token expiration time to milliseconds
             } catch (ParseException e) {
-                return null;
+                throw e;
             }
         }
         return null;
