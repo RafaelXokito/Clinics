@@ -85,4 +85,38 @@ public class BiometricDataBean {
         return entityManager.find(BiometricData.class, id) == null;
     }
 
+    /***
+     * Creating a Biometric Data of a Biometric_Data_Type for a Patient
+     * @param id @Id of Biometric_Data to be updated
+     * @param biometricTypeId @Id of Biometric_Data_Type
+     * @param value that Patient got in this Biometric_Data_Type
+     * @param notes given by doctor about this specific Biometric Data
+     * @param patientId @Id of Patient
+     * @return BiometricData created
+     *         null if Not found Biometric_Data_Type with this id
+     *         null if Not found Patient with this username
+     *         null if Not found Person with this username (Who is trying to create this biometric data)
+     *         null if Value out of bounds for limits in Biometric_Data_Type
+     */
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId)  throws MyEntityNotFoundException, MyIllegalArgumentException{
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
+        if (biometricDataType == null)
+            throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
+
+        Patient patient = entityManager.find(Patient.class, patientId);
+        if (patient == null)
+            throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
+
+        if (value < biometricDataType.getMin() || value > biometricDataType.getMax())
+            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
+
+        BiometricData biometricData = entityManager.find(BiometricData.class, id);
+
+        biometricData.setBiometric_data_type(biometricDataType);
+        biometricData.setValue(value);
+        biometricData.setPatient(patient);
+        biometricData.setNotes(notes);
+
+        return biometricData;
+    }
 }

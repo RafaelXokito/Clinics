@@ -11,8 +11,19 @@ public class PersonDTO {
     private Date created_at;
     private Date updated_at;
     private Date deleted_at;
-    private String role;
+    private String scope;
 
+    public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String scope) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.scope = scope;
+    }
 
     public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;
@@ -33,7 +44,7 @@ public class PersonDTO {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.deleted_at = deleted_at;
-        this.role = role;
+        this.scope = role;
     }
 
     public PersonDTO() {
@@ -41,7 +52,7 @@ public class PersonDTO {
         password = "";
         name = "";
         gender = "";
-        role = "";
+        scope = "";
         created_at = new Date();
         updated_at = new Date();
         deleted_at = new Date();
@@ -53,12 +64,12 @@ public class PersonDTO {
         this.gender = gender;
     }
 
-    public String getRole() {
-        return role;
+    public String getScope() {
+        return scope;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public long getId() {
