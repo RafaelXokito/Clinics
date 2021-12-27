@@ -30,10 +30,10 @@ public class Patient extends Person implements Serializable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "CREATED_BY")
-    private HealthcareProfessional created_by;
+    private Employee created_by;
 
     public Patient(String email, String password, String name, String gender, int healthNo,
-            HealthcareProfessional created_by) {
+            Employee created_by) {
         super(email, password, name, gender);
         this.healthNo = healthNo;
         this.observations = new ArrayList<>();
@@ -74,11 +74,11 @@ public class Patient extends Person implements Serializable {
         this.biometric_data = biometricData;
     }
 
-    public HealthcareProfessional getCreated_by() {
+    public Employee getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(HealthcareProfessional createdBy) {
+    public void setCreated_by(Employee createdBy) {
         this.created_by = createdBy;
     }
 

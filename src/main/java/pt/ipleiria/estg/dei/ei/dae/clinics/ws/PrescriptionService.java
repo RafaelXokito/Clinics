@@ -51,7 +51,7 @@ public class PrescriptionService {
 
     @GET
     @Path("{id}")
-    public Response getPrescriptionWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getPrescriptionWS(@PathParam("id") long id) throws Exception {
         Prescription prescription = prescriptionBean.findPrescription(id);
 
         return Response.status(Response.Status.OK)
@@ -61,7 +61,7 @@ public class PrescriptionService {
 
     @POST
     @Path("/")
-    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws ParseException, MyEntityNotFoundException {
+    public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
         long id = prescriptionBean.create(
                 prescriptionDTO.getHealthcareProfessionalId(),

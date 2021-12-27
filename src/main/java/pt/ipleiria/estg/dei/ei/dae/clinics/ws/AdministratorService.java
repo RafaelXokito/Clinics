@@ -62,7 +62,7 @@ public class AdministratorService {
 
     @GET
     @Path("{id}")
-    public Response getAdministratorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getAdministratorWS(@PathParam("id") long id) throws Exception {
         Administrator administrator = administratorBean.findAdministrator(id);
 
         return Response.status(Response.Status.OK)
@@ -72,7 +72,7 @@ public class AdministratorService {
 
     @POST
     @Path("/")
-    public Response createAdministratorWS(AdministratorDTO administratorDTO) throws MyEntityExistsException {
+    public Response createAdministratorWS(AdministratorDTO administratorDTO) throws Exception {
         administratorBean.create(
             administratorDTO.getEmail(),
             administratorDTO.getPassword(),
@@ -88,7 +88,7 @@ public class AdministratorService {
 
     @PUT
     @Path("{id}")
-    public Response updateAdministratorWS(@PathParam("id") long id,AdministratorDTO administratorDTO) throws MyEntityNotFoundException {
+    public Response updateAdministratorWS(@PathParam("id") long id,AdministratorDTO administratorDTO) throws Exception {
         administratorBean.update(
                 id,
                 administratorDTO.getEmail(),
@@ -104,7 +104,7 @@ public class AdministratorService {
 
     @PATCH
     @Path("{id}")
-    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
         administratorBean.updatePassword(
                 id,
                 newPasswordDTO.getOldPassword(),
@@ -116,7 +116,7 @@ public class AdministratorService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteAdministratorWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteAdministratorWS(@PathParam("id") long id) throws Exception {
         if (administratorBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

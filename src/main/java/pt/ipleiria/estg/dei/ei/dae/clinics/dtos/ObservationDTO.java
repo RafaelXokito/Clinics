@@ -33,6 +33,14 @@ public class ObservationDTO {
     }
 
     public ObservationDTO() {
+        this.id = -1;
+        this.healthcareProfessionalId = -1;
+        this.healthcareProfessionalName = "";
+        this.patientId = -1;
+        this.patientName = "";
+        this.notes = "";
+        this.created_at = null;
+        this.prescription = new PrescriptionDTO();
     }
 
     public long getId() {

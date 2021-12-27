@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class BiometricDataService {
     private static final Logger log =
-            Logger.getLogger(AuthService.class.getName());
+            Logger.getLogger(BiometricDataService.class.getName());
 
     @EJB
     private BiometricDataBean biometricDataBean;
@@ -63,7 +63,7 @@ public class BiometricDataService {
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getBiometricDataWS(@PathParam("id") long id) throws Exception {
         BiometricData biometricData = biometricDataBean.findBiometricData(id);
 
         return Response.status(Response.Status.OK)
@@ -73,7 +73,7 @@ public class BiometricDataService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
         try {
             BiometricData createdBiometricData = biometricDataBean.create(
                     biometricDataDTO.getBiometricTypeId(),
@@ -95,7 +95,7 @@ public class BiometricDataService {
 
     @PUT
     @Path("{id}")
-    public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
         BiometricData createdBiometricData = biometricDataBean.update(
                 id,
                 biometricDataDTO.getBiometricTypeId(),
@@ -112,7 +112,7 @@ public class BiometricDataService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteBiometricDataWS(@PathParam("id") long id) throws Exception {
         if (biometricDataBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

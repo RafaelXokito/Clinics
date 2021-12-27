@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("patients") // relative url web path for this service
@@ -20,8 +22,14 @@ import java.util.stream.Collectors;
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class PatientService {
+    private static final Logger log =
+            Logger.getLogger(HealthcareProfessionalService.class.getName());
+
     @EJB
     private PatientBean patientBean;
+
+    @EJB
+    private PersonBean personBean;
 
     @GET
     @Path("/")
@@ -49,7 +57,7 @@ public class PatientService {
 
     @GET
     @Path("{id}")
-    public Response getPatientWS(@PathParam("id") int id) throws MyEntityNotFoundException {
+    public Response getPatientWS(@PathParam("id") int id) throws Exception {
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
@@ -59,25 +67,33 @@ public class PatientService {
 
     @POST
     @Path("/")
-    public Response createPatientWS(PatientDTO patientDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        long id = patientBean.create(
-                patientDTO.getEmail(),
-                patientDTO.getPassword(),
-                patientDTO.getName(),
-                patientDTO.getGender(),
-                patientDTO.getHealthNo(),
-                patientDTO.getCreated_by());
+    public Response createPatientWS(PatientDTO patientDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        try {
 
-        Patient patient = patientBean.findPatient(id);
+            long id = patientBean.create(
+                    patientDTO.getEmail(),
+                    patientDTO.getPassword(),
+                    patientDTO.getName(),
+                    patientDTO.getGender(),
+                    patientDTO.getHealthNo(),
+                    personBean.getPersonByAuthToken(auth).getId());
 
-        return Response.status(Response.Status.CREATED)
-                .entity(toDTO(patient))
-                .build();
+            Patient patient = patientBean.findPatient(id);
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(toDTO(patient))
+                    .build();
+
+        }catch(Exception e){
+            log.warning(e.toString());
+            return Response.status(400).build();
+        }
+
     }
 
     @PUT
     @Path("{id}")
-    public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO) throws MyEntityNotFoundException {
+    public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO) throws Exception {
         patientBean.update(
                 id,
                 patientDTO.getEmail(),
@@ -94,7 +110,7 @@ public class PatientService {
 
     @PATCH
     @Path("{id}")
-    public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
         patientBean.updatePassword(
                 id,
                 newPasswordDTO.getOldPassword(),
@@ -106,7 +122,7 @@ public class PatientService {
 
     @DELETE
     @Path("{id}")
-    public Response deletePatientWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deletePatientWS(@PathParam("id") long id) throws Exception {
         if (patientBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("healthcareprofessionals") // relative url web path for this service
@@ -22,9 +24,14 @@ import java.util.stream.Collectors;
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
 public class HealthcareProfessionalService {
+    private static final Logger log =
+            Logger.getLogger(HealthcareProfessionalService.class.getName());
+
     @EJB
     private HealthcareProfessionalBean healthcareProfessionalBean;
 
+    @EJB
+    private PersonBean personBean;
     @GET
     @Path("/")
     public Response getAllHealcareProfessionalsWS() {
@@ -53,7 +60,7 @@ public class HealthcareProfessionalService {
 
     @GET
     @Path("{id}")
-    public Response getHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getHealthcareProfessionalWS(@PathParam("id") long id) throws Exception {
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
@@ -63,25 +70,31 @@ public class HealthcareProfessionalService {
 
     @POST
     @Path("/")
-    public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO) throws MyEntityNotFoundException, MyEntityExistsException {
-        long id = healthcareProfessionalBean.create(
-            healthcareProfessionalDTO.getEmail(),
-            healthcareProfessionalDTO.getPassword(),
-            healthcareProfessionalDTO.getName(),
-            healthcareProfessionalDTO.getGender(),
-            healthcareProfessionalDTO.getSpecialty(),
-            healthcareProfessionalDTO.getCreated_by());
+    public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        try
+        {
+            long id = healthcareProfessionalBean.create(
+                healthcareProfessionalDTO.getEmail(),
+                healthcareProfessionalDTO.getPassword(),
+                healthcareProfessionalDTO.getName(),
+                healthcareProfessionalDTO.getGender(),
+                healthcareProfessionalDTO.getSpecialty(),
+                personBean.getPersonByAuthToken(auth).getId());
 
-        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
+            HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
-        return Response.status(Response.Status.CREATED)
-                .entity(toDTO(healthcareProfessional))
-                .build();
+            return Response.status(Response.Status.CREATED)
+                    .entity(toDTO(healthcareProfessional))
+                    .build();
+        }catch(Exception e){
+            log.warning(e.toString());
+            return Response.status(400).build();
+        }
     }
 
     @PUT
     @Path("{id}")
-    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws MyEntityNotFoundException {
+    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws Exception {
         healthcareProfessionalBean.update(
             id,
             doctorDTO.getEmail(),
@@ -98,7 +111,7 @@ public class HealthcareProfessionalService {
 
     @PATCH
     @Path("{id}")
-    public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
         healthcareProfessionalBean.updatePassword(
                 id,
                 newPasswordDTO.getOldPassword(),
@@ -110,7 +123,7 @@ public class HealthcareProfessionalService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteHealthcareProfessionalWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteHealthcareProfessionalWS(@PathParam("id") long id) throws Exception {
         if (healthcareProfessionalBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

@@ -15,7 +15,7 @@ import java.util.List;
                 query = "SELECT a FROM Administrator a ORDER BY a.id"
         )
 })
-public class Administrator extends Person implements Serializable {
+public class Administrator extends Employee implements Serializable {
 
     @NotNull
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)

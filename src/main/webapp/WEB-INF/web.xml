@@ -27,6 +27,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         </web-resource-collection>
         <auth-constraint>
             <role-name>Administrator</role-name>
+            <role-name>HealthcareProfessional</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -207,6 +208,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         </web-resource-collection>
         <auth-constraint>
             <role-name>Administrator</role-name>
+            <role-name>HealthcareProfessional</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>

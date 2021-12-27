@@ -70,7 +70,6 @@ public class PersonBean {
         throw new Exception("Failed logging in with Person email '" + email + "':unknown Person email or wrong password");
     }
 
-
     public Person getPersonByAuthToken(String auth) throws ParseException {
         if (auth != null && auth.startsWith("Bearer ")) {
             try {

@@ -71,7 +71,7 @@ public class AuthService {
 
     @PATCH
     @Path("/updatepassword")
-    public Response selfUpdatePasswordWS(@HeaderParam("Authorization") String auth, NewPasswordDTO newPasswordDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response selfUpdatePasswordWS(@HeaderParam("Authorization") String auth, NewPasswordDTO newPasswordDTO) throws Exception {
         try {
             Person person = personBean.getPersonByAuthToken(auth);
 
@@ -90,7 +90,7 @@ public class AuthService {
 
     @PUT
     @Path("/update")
-    public Response selfUpdateWS(@HeaderParam("Authorization") String auth, PersonDTO administratorDTO) throws MyEntityNotFoundException {
+    public Response selfUpdateWS(@HeaderParam("Authorization") String auth, PersonDTO administratorDTO) throws Exception {
         try
         {
             Person person = personBean.getPersonByAuthToken(auth);
