@@ -1,11 +1,9 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
-import io.smallrye.common.constraint.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ public class Prescription implements Serializable {
     // @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime end_date;
 
-    @Nullable
     private String notes;
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

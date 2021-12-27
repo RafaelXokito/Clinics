@@ -79,9 +79,9 @@ public class ConfigBean {
 
             System.out.println("Creating some Biometric Data");
             BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId);
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exame");
             BiometricData biometricData2 = biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
-                    pDanielId, pDanielId);
+                    pDanielId, pDanielId, "Sensor");
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());

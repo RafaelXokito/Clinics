@@ -49,6 +49,8 @@ public class BiometricDataIssueBean {
             throw new MyIllegalArgumentException("Both min \"" + min + "\"  and max \"" + max + "\" must be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
 
         BiometricDataIssue newBiometricDataIssue = new BiometricDataIssue(name, min, max, biometricDataType);
+        biometricDataType.addIssue(newBiometricDataIssue);
+
         entityManager.persist(newBiometricDataIssue);
         entityManager.flush();
 
@@ -61,6 +63,7 @@ public class BiometricDataIssueBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
+        biometricDataIssue.getBiometric_data_type().removeIssue(biometricDataIssue);
         entityManager.remove(biometricDataIssue);
         return entityManager.find(BiometricDataIssue.class, id) == null;
     }
@@ -82,7 +85,9 @@ public class BiometricDataIssueBean {
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
+        biometricDataIssue.getBiometric_data_type().removeIssue(biometricDataIssue);
         biometricDataIssue.setBiometric_data_type(biometricDataType);
+        biometricDataType.addIssue(biometricDataIssue);
         biometricDataIssue.setName(name);
         biometricDataIssue.setMin(min);
         biometricDataIssue.setMax(max);

@@ -16,9 +16,10 @@ public class BiometricDataBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT bioData.id, bioData.patient.id as PatientId, bioData.patient.name as Patient, bioData.patient.healthNo as HealthNumber, bioData.biometric_data_type.id, bioData.biometric_data_type.name as BiometricDataTypeName, bioData.value, bioData.biometric_data_type.unit as Unit, bioData.notes FROM BiometricData bioData");
+        Query query = entityManager.createQuery("SELECT b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit FROM BiometricData b");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
+
         //return (List<BiometricData>) entityManager.createNamedQuery("getAllBiometricData").getResultList();
     }
 
@@ -43,7 +44,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
@@ -59,7 +60,15 @@ public class BiometricDataBean {
         if (value < biometricDataType.getMin() || value > biometricDataType.getMax())
             throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
 
-        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes, patient, person);
+        BiometricDataIssue biometricDataIssue = null;
+        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+            if (value >= issue.getMin() && value <= issue.getMax()) {
+                biometricDataIssue = issue;
+                break;
+            }
+        }
+
+        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes, patient, person, source, biometricDataIssue);
         entityManager.persist(newBiometricData);
         entityManager.flush();
 

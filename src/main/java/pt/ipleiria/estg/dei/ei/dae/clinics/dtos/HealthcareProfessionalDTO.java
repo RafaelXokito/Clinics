@@ -17,8 +17,9 @@ public class HealthcareProfessionalDTO {
     private long created_by;
     private List<PrescriptionDTO> prescriptions;
     private List<ObservationDTO> observations;
+    private List<PatientDTO> patients;
 
-    public HealthcareProfessionalDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations) {
+    public HealthcareProfessionalDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations, List<PatientDTO> patients) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -31,9 +32,10 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
         this.prescriptions = prescriptions;
         this.observations = observations;
+        this.patients = patients;
     }
 
-    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations) {
+    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations, List<PatientDTO> patients) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -45,6 +47,7 @@ public class HealthcareProfessionalDTO {
         this.created_by = created_by;
         this.prescriptions = prescriptions;
         this.observations = observations;
+        this.patients = patients;
     }
 
     public HealthcareProfessionalDTO(long id, String email, String name, String gender, String specialty) {
@@ -55,6 +58,7 @@ public class HealthcareProfessionalDTO {
         this.specialty = specialty;
         this.prescriptions = new ArrayList<>();
         this.observations = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public HealthcareProfessionalDTO() {
@@ -69,6 +73,7 @@ public class HealthcareProfessionalDTO {
         created_by = -1;
         this.prescriptions = new ArrayList<>();
         this.observations = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public long getId() {
@@ -165,5 +170,13 @@ public class HealthcareProfessionalDTO {
 
     public void setObservations(List<ObservationDTO> observations) {
         this.observations = observations;
+    }
+
+    public List<PatientDTO> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(List<PatientDTO> patients) {
+        this.patients = patients;
     }
 }

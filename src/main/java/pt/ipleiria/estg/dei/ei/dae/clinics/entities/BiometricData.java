@@ -24,6 +24,10 @@ public class BiometricData implements Serializable {
     @NotNull
     private BiometricDataType biometric_data_type;
 
+    @ManyToOne
+    @JoinColumn(name="BIOMETRIC_DATA_ISSUE_ID")
+    private BiometricDataIssue biometricDataIssue;
+
     @NotNull
     private double value;
 
@@ -43,13 +47,18 @@ public class BiometricData implements Serializable {
     @ManyToOne
     private Person created_by;
 
-    public BiometricData(BiometricDataType biometric_data_type, double value, String notes, Patient patient, Person person) {
+    @NotNull
+    private String source;
+
+    public BiometricData(BiometricDataType biometric_data_type, double value, String notes, Patient patient, Person person, String source, BiometricDataIssue biometricDataIssue) {
         this.biometric_data_type = biometric_data_type;
         this.value = value;
         this.notes = notes;
         this.patient = patient;
         this.created_at = new Date();
         this.created_by = person;
+        this.source = source;
+        this.biometricDataIssue = biometricDataIssue;
     }
 
     public BiometricData() {
@@ -105,5 +114,21 @@ public class BiometricData implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public BiometricDataIssue getBiometricDataIssue() {
+        return biometricDataIssue;
+    }
+
+    public void setBiometricDataIssue(BiometricDataIssue biometricDataIssue) {
+        this.biometricDataIssue = biometricDataIssue;
     }
 }

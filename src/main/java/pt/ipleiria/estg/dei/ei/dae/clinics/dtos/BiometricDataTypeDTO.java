@@ -5,12 +5,12 @@ import java.util.Objects;
 public class BiometricDataTypeDTO {
     private long id;
     private String name;
-    private int min; //TODO Should be double
-    private int max; //TODO Should be double
+    private double min;
+    private double max;
     private String unit;
     private String unit_name;
 
-    public BiometricDataTypeDTO(long id, String name, int min, int max, String unit, String unit_name) {
+    public BiometricDataTypeDTO(long id, String name, double min, double max, String unit, String unit_name) {
         this.id = id;
         this.name = name;
         this.min = min;
@@ -28,7 +28,7 @@ public class BiometricDataTypeDTO {
         unit_name = "";
     }
 
-    public BiometricDataTypeDTO(long id, String name,String unit, String unit_name, int min, int max) {
+    public BiometricDataTypeDTO(long id, String name,String unit, String unit_name, double min, double max) {
         this.id = id;
         this.name = name;
         this.unit = unit;
@@ -37,8 +37,9 @@ public class BiometricDataTypeDTO {
         this.max = max;
     }
 
-    public BiometricDataTypeDTO(String name, String unit_name) {
+    public BiometricDataTypeDTO(String name, String unit, String unit_name) {
         this.name = name;
+        this.unit = unit;
         this.unit_name = unit_name;
     }
 
@@ -58,19 +59,19 @@ public class BiometricDataTypeDTO {
         this.name = name;
     }
 
-    public int getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public int getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(int max) {
+    public void setMax(double max) {
         this.max = max;
     }
 

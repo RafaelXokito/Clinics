@@ -29,18 +29,27 @@ public class HealthcareProfessional extends Person implements Serializable {
     @OneToMany(mappedBy = "healthcareProfessional", cascade = CascadeType.PERSIST)
     private List<Observation> observations;
 
+    @NotNull
+    @ManyToMany
+    @JoinTable(name = "HEALTHCARE_PROFESSIONALS_PACIENTS",
+            joinColumns = @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "PACIENT_ID", referencedColumnName = "ID"))
+    private List<Patient> patients;
+
     public HealthcareProfessional(String email, String password, String name, String gender, String specialty,
-            Administrator created_by) {
+                                  Administrator created_by) {
         super(email, password, name, gender);
         this.specialty = specialty;
         this.created_by = created_by;
         this.observations = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public HealthcareProfessional() {
         this.observations = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public Prescription addPrescription(Prescription prescription) {
@@ -99,5 +108,27 @@ public class HealthcareProfessional extends Person implements Serializable {
             return;
 
         observations.remove(observation);
+    }
+
+    public List<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(List<Patient> patients) {
+        this.patients = patients;
+    }
+
+    public void addPatient(Patient patient) {
+        if (patient == null || patients.contains(patient))
+            return;
+
+        patients.add(patient);
+    }
+
+    public void removePacient(Patient patient) {
+        if (patient == null)
+            return;
+
+        patients.remove(patient);
     }
 }

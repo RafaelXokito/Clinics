@@ -35,7 +35,7 @@ public class BiometricDataService {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataDTO>(
                         toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),
-                        "patientName", "healthNo", "biometricDataTypeName", "valueUnit"))
+                        "patientName", "healthNo", "biometricDataTypeName", "value", "valueUnit"))
                 .build();
     }
 
@@ -43,15 +43,11 @@ public class BiometricDataService {
         List<BiometricDataDTO> BiometricDataDTOList = new ArrayList<>();
         for (Object[] obj : allBiometricDatas) {
             BiometricDataDTOList.add(new BiometricDataDTO(
-                    Long.parseLong(obj[0].toString()), // BioData.id
-                    Long.parseLong(obj[1].toString()), // bioData.patient.id
-                    obj[2].toString(), // bioData.patient.name
-                    obj[3].toString(), // bioData.patient.healthNo
-                    Long.parseLong(obj[4].toString()), // bioData.biometric_data_type.id
-                    obj[5].toString(), // bioData.biometric_data_type.name
-                    Double.parseDouble(obj[6].toString()), // bioData.value
-                    obj[6].toString() + " " + obj[7].toString(), // bioData.value + bioData.biometric_data_type.unit
-                    obj[8].toString() // bioData.biometric_data_type.name
+                    obj[0].toString(),
+                    obj[1].toString(),
+                    obj[2].toString(),
+                    Double.parseDouble(obj[3].toString()),
+                    obj[4].toString()
             ));
         }
         return BiometricDataDTOList;
@@ -75,7 +71,8 @@ public class BiometricDataService {
                 biometricDataDTO.getValue(),
                 biometricDataDTO.getNotes(),
                 biometricDataDTO.getPatientId(),
-                personBean.getPersonByAuthToken(auth).getId());
+                personBean.getPersonByAuthToken(auth).getId(),
+                biometricDataDTO.getSource());
 
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
@@ -103,10 +100,17 @@ public class BiometricDataService {
         return new BiometricDataDTO(
                 biometricData.getId(),
                 biometricData.getBiometric_data_type().getId(),
+                biometricData.getBiometric_data_type().getName(),
                 biometricData.getValue(),
                 biometricData.getNotes(),
                 biometricData.getPatient().getId(),
+                biometricData.getPatient().getName(),
                 biometricData.getCreated_at(),
-                biometricData.getCreated_by().getId());
+                biometricData.getCreated_by().getId(),
+                String.valueOf(biometricData.getPatient().getHealthNo()),
+                biometricData.getBiometric_data_type().getUnit_name(),
+                biometricData.getSource(),
+                biometricData.getBiometricDataIssue().getId(),
+                biometricData.getBiometricDataIssue().getName());
     }
 }

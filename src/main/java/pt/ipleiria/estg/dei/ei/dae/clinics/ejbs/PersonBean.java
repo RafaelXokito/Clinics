@@ -2,22 +2,13 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AuthDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.Response;
 import java.text.ParseException;
-import java.util.List;
 
 @Stateless
 public class PersonBean {

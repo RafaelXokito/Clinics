@@ -114,6 +114,36 @@ public class PatientService {
                 .build();
     }
 
+    @GET
+    @Path("{id}/observations")
+    public Response getPatientObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        Patient patient = patientBean.findPatient(id);
+
+        return Response.status(Response.Status.OK)
+                .entity(observationToDTOs(patient.getObservations()))
+                .build();
+    }
+
+    @GET
+    @Path("{id}/biometricdata")
+    public Response getPatientBiometricDatasWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        Patient patient = patientBean.findPatient(id);
+
+        return Response.status(Response.Status.OK)
+                .entity(biometricDataToDTOs(patient.getBiometric_data()))
+                .build();
+    }
+
+    @GET
+    @Path("{id}/healthcareprofessionals")
+    public Response getPatientHealthcareProfessionalsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+        Patient patient = patientBean.findPatient(id);
+
+        return Response.status(Response.Status.OK)
+                .entity(healthcareProfessionalToDTOs(patient.getHealthcareProfessionals()))
+                .build();
+    }
+
     private List<PatientDTO> toDTOs(List<Patient> patients) {
         return patients.stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -127,6 +157,19 @@ public class PatientService {
                 patient.getCreated_by().getId(),
                 biometricDataToDTOs(patient.getBiometric_data()),
                 observationToDTOs(patient.getObservations()));
+    }
+
+    private List<HealthcareProfessionalDTO> healthcareProfessionalToDTOs(List<HealthcareProfessional> healthcareProfessionals) {
+        return healthcareProfessionals.stream().map(this::healthcareProfessionalToDTO).collect(Collectors.toList());
+    }
+
+    private HealthcareProfessionalDTO healthcareProfessionalToDTO(HealthcareProfessional healthcareProfessional) {
+        return new HealthcareProfessionalDTO(
+                healthcareProfessional.getId(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getSpecialty());
     }
 
     private List<ObservationDTO> observationToDTOs(List<Observation> observations) {
