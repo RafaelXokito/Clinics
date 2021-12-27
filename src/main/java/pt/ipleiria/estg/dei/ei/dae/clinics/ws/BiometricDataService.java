@@ -84,6 +84,23 @@ public class BiometricDataService {
                 .build();
     }
 
+    @PUT
+    @Path("{id}")
+    public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        BiometricData createdBiometricData = biometricDataBean.update(
+                id,
+                biometricDataDTO.getBiometricTypeId(),
+                biometricDataDTO.getValue(),
+                biometricDataDTO.getNotes(),
+                biometricDataDTO.getPatientId());
+
+        BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
+
+        return Response.status(Response.Status.OK)
+                .entity(toDTO(biometricData))
+                .build();
+    }
+
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {

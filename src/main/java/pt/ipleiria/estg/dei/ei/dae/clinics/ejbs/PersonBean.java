@@ -8,6 +8,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ws.AuthService;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -16,14 +18,19 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.Response;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class PersonBean {
     @PersistenceContext
     EntityManager em;
 
+    private static final Logger log =
+            Logger.getLogger(AuthService.class.getName());
     public Person findPerson(String email) {
         TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.email = '"+ email+"'", Person.class);
         em.flush();
@@ -79,5 +86,34 @@ public class PersonBean {
             }
         }
         return null;
+    }
+
+    /***
+     * Update a Person by given @Id:username
+     * @param email @Id to find the proposal update Person
+     * @param name to update Person
+     * @param gender to update Person
+     */
+    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException {
+        Person person = findPerson(id);
+
+        person.setEmail(email);
+        person.setName(name);
+        person.setGender(gender);
+    }
+
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        Person person = findPerson(id);
+
+        try {
+            if (!Person.validatePassword(oldPassword,person.getPassword()))
+                throw new MyIllegalArgumentException("Password does not match with the old one");
+        } catch (Exception e) {
+            log.warning(e.toString());
+            throw e;
+        }
+
+        person.setPassword(newPassword);
     }
 }
