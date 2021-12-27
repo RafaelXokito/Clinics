@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.util.logging.Logger;
 @Path("/auth")
+@Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
+@Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 public class AuthService {
     private static final Logger log =
             Logger.getLogger(AuthService.class.getName());
@@ -30,8 +32,6 @@ public class AuthService {
     PersonBean personBean;
     @POST
     @Path("/login")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response authenticateUser(AuthDTO authDTO) {
         System.out.println(authDTO);
         try {
