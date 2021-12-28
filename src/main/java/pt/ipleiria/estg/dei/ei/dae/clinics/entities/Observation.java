@@ -1,10 +1,15 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
+import org.jboss.resteasy.spi.touri.MappedBy;
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.DocumentDTO;
 
 import javax.persistence.*;
+import javax.print.Doc;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Observation implements Serializable {
@@ -31,12 +36,16 @@ public class Observation implements Serializable {
     @OneToOne
     private Prescription prescription;
 
+    @OneToMany(mappedBy = "observation", cascade = CascadeType.REMOVE)
+    private List<Document> documents;
+
     public Observation(HealthcareProfessional healthcareProfessional, Patient patient, String notes, Prescription prescription) {
         this.healthcareProfessional = healthcareProfessional;
         this.patient = patient;
         this.notes = notes;
         this.created_at = new Date();
         this.prescription = prescription;
+        this.documents = new ArrayList<>();
     }
 
     public Observation(HealthcareProfessional healthcareProfessional, Patient patient, String notes) {
@@ -45,9 +54,35 @@ public class Observation implements Serializable {
         this.notes = notes;
         this.created_at = new Date();
         this.prescription = null;
+        this.documents = new ArrayList<>();
     }
 
     public Observation() {
+        this.documents = new ArrayList<>();
+    }
+
+    public Document addDocument(Document document){
+        if (this.documents.contains(document))
+            return null;
+
+        this.documents.add(document);
+        return document;
+    }
+
+    public Document removeDocument(Document document){
+        if (!this.documents.contains(document))
+            return null;
+
+        this.documents.remove(document);
+        return document;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 
     public Date getCreated_at() {

@@ -87,6 +87,7 @@ public class ObservationService {
     @PUT
     @Path("{id}")
     public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO) throws Exception {
+        System.out.println(observationDTO.getId());
         observationBean.update(
                 id,
                 observationDTO.getNotes(),
@@ -133,7 +134,8 @@ public class ObservationService {
                 observation.getPatient().getName(),
                 observation.getNotes(),
                 observation.getCreated_at(),
-                observation.getPrescription() != null ? prescriptionToDTO(observation.getPrescription()) : null) ;
+                observation.getPrescription() != null ? prescriptionToDTO(observation.getPrescription()) : null,
+                documentsToDTOs(observation.getDocuments())) ;
     }
 
     private PrescriptionDTO prescriptionToDTO(Prescription prescription) {
@@ -172,6 +174,18 @@ public class ObservationService {
                 biometricDataIssue.getMax(),
                 biometricDataIssue.getBiometric_data_type().getId(),
                 biometricDataIssue.getBiometric_data_type().getName());
+    }
+
+    private DocumentDTO documentToDTO(Document document) {
+        return new DocumentDTO(
+                document.getId(),
+                document.getFilename(),
+                document.getFilepath()
+        );
+    }
+
+    private List<DocumentDTO> documentsToDTOs(List<Document> documents) {
+        return documents.stream().map(this::documentToDTO).collect(Collectors.toList());
     }
 
 }
