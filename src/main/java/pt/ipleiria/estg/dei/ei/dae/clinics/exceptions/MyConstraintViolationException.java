@@ -8,8 +8,8 @@ public class MyConstraintViolationException extends Exception {
     public MyConstraintViolationException(ConstraintViolationException e) {
         super(getConstraintViolationMessages(e));
     }
-    private static String
-    getConstraintViolationMessages(ConstraintViolationException e) {
+
+    private static String getConstraintViolationMessages(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> cvs = e.getConstraintViolations();
         StringBuilder errorMessages = new StringBuilder();
         for (ConstraintViolation<?> cv : cvs) {

@@ -10,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,17 +72,17 @@ public class ConfigBean {
 
             System.out.println("Creating some Biometric Data Types");
             BiometricDataType temperaturaCorporal = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC",
-                    "(Graus Celsius)");
-            BiometricDataType altura = biometricDataTypeBean.create("Altura", 0, 3, "m", "(Metros)");
+                    "Graus Celsius");
+            BiometricDataType altura = biometricDataTypeBean.create("Altura", 0, 3, "m", "Metros");
 
             System.out.println("Creating some Biometric Data Issues");
             BiometricDataIssue febre = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporal.getId());
 
             System.out.println("Creating some Biometric Data");
             BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exame");
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exame", new Date());
             BiometricData biometricData2 = biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
-                    pDanielId, pDanielId, "Sensor");
+                    pDanielId, pDanielId, "Sensor", new Date());
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());

@@ -47,11 +47,12 @@ public class BiometricDataService {
         List<BiometricDataDTO> BiometricDataDTOList = new ArrayList<>();
         for (Object[] obj : allBiometricDatas) {
             BiometricDataDTOList.add(new BiometricDataDTO(
-                    obj[0].toString(),
+                    Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    Double.parseDouble(obj[3].toString()),
-                    obj[4].toString()));
+                    obj[3].toString(),
+                    Double.parseDouble(obj[4].toString()),
+                    obj[5].toString()));
         }
         return BiometricDataDTOList;
     }
@@ -77,7 +78,8 @@ public class BiometricDataService {
                     biometricDataDTO.getNotes(),
                     biometricDataDTO.getPatientId(),
                     personBean.getPersonByAuthToken(auth).getId(),
-                    biometricDataDTO.getSource());
+                    biometricDataDTO.getSource(),
+                    biometricDataDTO.getCreated_at());
 
             BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
@@ -101,7 +103,8 @@ public class BiometricDataService {
                 biometricDataDTO.getNotes(),
                 biometricDataDTO.getPatientId(),
                 personBean.getPersonByAuthToken(auth).getId(),
-                biometricDataDTO.getSource());
+                biometricDataDTO.getSource(),
+                biometricDataDTO.getCreated_at());
 
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
@@ -139,7 +142,7 @@ public class BiometricDataService {
                 String.valueOf(biometricData.getPatient().getHealthNo()),
                 biometricData.getBiometric_data_type().getUnit_name(),
                 biometricData.getSource(),
-                biometricData.getBiometricDataIssue().getId(),
-                biometricData.getBiometricDataIssue().getName());
+                biometricData.getBiometricDataIssue() == null ? 0 : biometricData.getBiometricDataIssue().getId(),
+                biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName());
     }
 }

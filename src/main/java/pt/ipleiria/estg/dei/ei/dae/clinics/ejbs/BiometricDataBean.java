@@ -8,6 +8,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -16,7 +18,7 @@ public class BiometricDataBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit FROM BiometricData b");
+        Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit FROM BiometricData b");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
 
@@ -44,7 +46,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
@@ -68,7 +70,7 @@ public class BiometricDataBean {
             }
         }
 
-        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes, patient, person, source, biometricDataIssue);
+        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes, patient, person, source, biometricDataIssue, createdAt);
         entityManager.persist(newBiometricData);
         entityManager.flush();
 
@@ -98,7 +100,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, long personId, String source)  throws MyEntityNotFoundException, MyIllegalArgumentException{
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt)  throws MyEntityNotFoundException, MyIllegalArgumentException{
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
 
         if (personId != biometricData.getCreated_by().getId())
@@ -120,6 +122,7 @@ public class BiometricDataBean {
         biometricData.setPatient(patient);
         biometricData.setNotes(notes);
         biometricData.setSource(source);
+        biometricData.setCreated_at(createdAt);
 
         for (BiometricDataIssue issue : biometricDataType.getIssues()) {
             if (value >= issue.getMin() && value <= issue.getMax()) {

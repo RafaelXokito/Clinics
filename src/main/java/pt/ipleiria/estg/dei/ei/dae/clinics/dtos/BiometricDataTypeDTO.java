@@ -37,7 +37,8 @@ public class BiometricDataTypeDTO {
         this.max = max;
     }
 
-    public BiometricDataTypeDTO(String name, String unit, String unit_name) {
+    public BiometricDataTypeDTO(long id, String name, String unit, String unit_name) {
+        this.id = id;
         this.name = name;
         this.unit = unit;
         this.unit_name = unit_name;
