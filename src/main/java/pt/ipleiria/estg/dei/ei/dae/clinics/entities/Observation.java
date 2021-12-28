@@ -28,7 +28,6 @@ public class Observation implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
-    @NotNull
     @OneToOne
     private Prescription prescription;
 
@@ -38,6 +37,14 @@ public class Observation implements Serializable {
         this.notes = notes;
         this.created_at = new Date();
         this.prescription = prescription;
+    }
+
+    public Observation(HealthcareProfessional healthcareProfessional, Patient patient, String notes) {
+        this.healthcareProfessional = healthcareProfessional;
+        this.patient = patient;
+        this.notes = notes;
+        this.created_at = new Date();
+        this.prescription = null;
     }
 
     public Observation() {

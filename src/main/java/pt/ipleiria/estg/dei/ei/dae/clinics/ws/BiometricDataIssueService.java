@@ -30,7 +30,7 @@ public class BiometricDataIssueService {
     public Response getAllBiometricDataIssuesWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataIssueDTO>(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()),
-                        "id", "name", "biometricDataTypeName"))
+                        "name", "biometricDataTypeName"))
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class BiometricDataIssueService {
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataIssueWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
         BiometricDataIssue biometricDataIssue = biometricDataIssueBean.findBiometricDataIssue(id);
 
         return Response.status(Response.Status.OK)
@@ -61,7 +61,7 @@ public class BiometricDataIssueService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataIssueWS(BiometricDataIssueDTO biometricDataIssueDTO) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public Response createBiometricDataIssueWS(BiometricDataIssueDTO biometricDataIssueDTO) throws Exception {
         BiometricDataIssue createdBiometricDataIssue = biometricDataIssueBean.create(
                 biometricDataIssueDTO.getName(),
                 biometricDataIssueDTO.getMin(),
@@ -77,7 +77,7 @@ public class BiometricDataIssueService {
 
     @PUT
     @Path("{id}")
-    public Response updateBiometricDataIssueWS(@PathParam("id") long id, BiometricDataIssueDTO biometricDataIssueDTO) throws MyEntityNotFoundException {
+    public Response updateBiometricDataIssueWS(@PathParam("id") long id, BiometricDataIssueDTO biometricDataIssueDTO) throws Exception {
         biometricDataIssueBean.update(id,
             biometricDataIssueDTO.getName(),
             biometricDataIssueDTO.getMin(),
@@ -93,7 +93,7 @@ public class BiometricDataIssueService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataIssueWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
         if (biometricDataIssueBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

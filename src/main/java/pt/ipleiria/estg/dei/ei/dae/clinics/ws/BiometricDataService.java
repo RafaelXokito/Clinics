@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class BiometricDataService {
-    private static final Logger log = Logger.getLogger(AuthService.class.getName());
+    private static final Logger log =
+            Logger.getLogger(BiometricDataService.class.getName());
 
     @EJB
     private BiometricDataBean biometricDataBean;
@@ -59,7 +60,7 @@ public class BiometricDataService {
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getBiometricDataWS(@PathParam("id") long id) throws Exception {
         BiometricData biometricData = biometricDataBean.findBiometricData(id);
 
         return Response.status(Response.Status.OK)
@@ -70,32 +71,26 @@ public class BiometricDataService {
     @POST
     @Path("/")
     public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth)
-            throws MyEntityNotFoundException, MyIllegalArgumentException {
-        try {
-            BiometricData createdBiometricData = biometricDataBean.create(
-                    biometricDataDTO.getBiometricTypeId(),
-                    biometricDataDTO.getValue(),
-                    biometricDataDTO.getNotes(),
-                    biometricDataDTO.getPatientId(),
-                    personBean.getPersonByAuthToken(auth).getId(),
-                    biometricDataDTO.getSource(),
-                    biometricDataDTO.getCreated_at());
+            throws Exception {
+        BiometricData createdBiometricData = biometricDataBean.create(
+                biometricDataDTO.getBiometricTypeId(),
+                biometricDataDTO.getValue(),
+                biometricDataDTO.getNotes(),
+                biometricDataDTO.getPatientId(),
+                personBean.getPersonByAuthToken(auth).getId(),
+                biometricDataDTO.getSource(),
+                biometricDataDTO.getCreated_at());
 
-            BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
+        BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(toDTO(biometricData))
-                    .build();
-        } catch (Exception e) {
-            log.warning(e.toString());
-            return Response.status(400).build();
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(toDTO(biometricData))
+                .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO,
-            @HeaderParam("Authorization") String auth) throws MyEntityNotFoundException, MyIllegalArgumentException, ParseException {
+    public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
         BiometricData createdBiometricData = biometricDataBean.update(
                 id,
                 biometricDataDTO.getBiometricTypeId(),
@@ -115,7 +110,7 @@ public class BiometricDataService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteBiometricDataWS(@PathParam("id") long id) throws Exception {
         if (biometricDataBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

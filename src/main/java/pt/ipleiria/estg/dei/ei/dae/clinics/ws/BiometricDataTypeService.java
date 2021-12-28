@@ -49,7 +49,7 @@ public class BiometricDataTypeService {
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataTypeWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(id);
 
         return Response.status(Response.Status.OK)
@@ -59,7 +59,7 @@ public class BiometricDataTypeService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataTypeWS(BiometricDataTypeDTO biometricDataTypeDTO) throws MyEntityNotFoundException {
+    public Response createBiometricDataTypeWS(BiometricDataTypeDTO biometricDataTypeDTO) throws Exception {
         BiometricDataType createdBiometricDataType = biometricDataTypeBean.create(
                 biometricDataTypeDTO.getName(),
                 biometricDataTypeDTO.getMin(),
@@ -76,7 +76,7 @@ public class BiometricDataTypeService {
 
     @PUT
     @Path("{id}")
-    public Response updateBiometricDataTypeWS(@PathParam("id") long id, BiometricDataTypeDTO biometricDataTypeDTO) throws MyEntityNotFoundException {
+    public Response updateBiometricDataTypeWS(@PathParam("id") long id, BiometricDataTypeDTO biometricDataTypeDTO) throws Exception {
         biometricDataTypeBean.update(
             biometricDataTypeDTO.getId(),
             biometricDataTypeDTO.getName(),
@@ -94,7 +94,7 @@ public class BiometricDataTypeService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataTypeWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         if (biometricDataTypeBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();

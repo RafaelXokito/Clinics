@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
@@ -42,14 +43,14 @@ public class PatientBean {
     }
 
     /***
-     * Creating a Patient by a Doctor
-     * 
-     * @param email        of doctor acc
-     * @param password     of doctor acc
-     * @param name         of doctor acc
-     * @param gender       of doctor acc
-     * @param healthNo     of doctor acc
-     * @param created_byId Doctor Username that is creating the current Patient
+     * Creating a Patient by a Administrator
+     *
+     * @param email        of patient acc
+     * @param password     of patient acc
+     * @param name         of patient acc
+     * @param gender       of patient acc
+     * @param healthNo     of patient acc
+     * @param created_byId Administrator Username that is creating the current Patient
      */
     public long create(String email, String password, String name, String gender, int healthNo, long created_byId)
             throws MyEntityExistsException, MyEntityNotFoundException {
@@ -57,11 +58,11 @@ public class PatientBean {
         if (patient != null)
             throw new MyEntityExistsException("Patient \"" + email + "\" already exist");
 
-        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, created_byId);
-        if (healthcareProfessional == null)
-            throw new MyEntityNotFoundException("Healthcare Professional \"" + created_byId + "\" already exist");
+        Employee employee = entityManager.find(Employee.class, created_byId);
+        if (employee == null)
+            throw new MyEntityNotFoundException("Employee \"" + created_byId + "\" don't exist");
 
-        Patient newPatient = new Patient(email, password, name, gender, healthNo, healthcareProfessional);
+        Patient newPatient = new Patient(email, password, name, gender, healthNo, employee);
         entityManager.persist(newPatient);
         entityManager.flush();
         return newPatient.getId();

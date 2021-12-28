@@ -2,11 +2,9 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -20,21 +18,27 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("observations") // relative url web path for this service
 @Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 public class ObservationService {
+    private static final Logger log =
+            Logger.getLogger(BiometricDataService.class.getName());
     @EJB
     private ObservationBean observationBean;
+
+    @EJB
+    private PersonBean personBean;
 
     @GET
     @Path("/")
     public Response getAllObservationsWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<>(toDTOAllObservations(observationBean.getAllObservations()),
-                        "id", "healthcareProfessionalName", "patientName", "created_at"))
+                        "healthcareProfessionalName", "patientName", "created_at"))
                 .build();
     }
 
@@ -54,7 +58,7 @@ public class ObservationService {
 
     @GET
     @Path("{id}")
-    public Response getObservationWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response getObservationWS(@PathParam("id") long id) throws Exception {
         Observation observation = observationBean.findObservation(id);
 
         return Response.status(Response.Status.OK)
@@ -64,25 +68,25 @@ public class ObservationService {
 
     @POST
     @Path("/")
-    public Response createObservationWS(ObservationDTO observationDTO) throws MyEntityNotFoundException, MyEntityExistsException {
+    public Response createObservationWS(ObservationDTO observationDTO, @HeaderParam("Authorization") String auth) throws Exception {
         long id = observationBean.create(
-                observationDTO.getHealthcareProfessionalId(),
-                observationDTO.getPatientId(),
-                observationDTO.getNotes(),
-                observationDTO.getPrescription().getStart_date(),
-                observationDTO.getPrescription().getEnd_date(),
-                observationDTO.getPrescription().getNotes());
+                    personBean.getPersonByAuthToken(auth).getId(),
+                    observationDTO.getPatientId(),
+                    observationDTO.getNotes(),
+                    observationDTO.getPrescription().getStart_date(),
+                    observationDTO.getPrescription().getEnd_date(),
+                    observationDTO.getPrescription().getNotes());
 
-        Observation observation = observationBean.findObservation(id);
+            Observation observation = observationBean.findObservation(id);
 
-        return Response.status(Response.Status.CREATED)
-                .entity(toDTO(observation))
-                .build();
+            return Response.status(Response.Status.CREATED)
+                    .entity(toDTO(observation))
+                    .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO) throws MyEntityNotFoundException {
+    public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO) throws Exception {
         observationBean.update(
                 id,
                 observationDTO.getNotes(),
@@ -99,7 +103,7 @@ public class ObservationService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteObservationWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    public Response deleteObservationWS(@PathParam("id") long id) throws Exception {
         if (observationBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();
@@ -129,7 +133,7 @@ public class ObservationService {
                 observation.getPatient().getName(),
                 observation.getNotes(),
                 observation.getCreated_at(),
-                prescriptionToDTO(observation.getPrescription()));
+                observation.getPrescription() != null ? prescriptionToDTO(observation.getPrescription()) : null) ;
     }
 
     private PrescriptionDTO prescriptionToDTO(Prescription prescription) {

@@ -12,7 +12,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "getAllDoctors", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
 })
-public class HealthcareProfessional extends Person implements Serializable {
+public class HealthcareProfessional extends Employee implements Serializable {
     @NotNull
     private String specialty;
 

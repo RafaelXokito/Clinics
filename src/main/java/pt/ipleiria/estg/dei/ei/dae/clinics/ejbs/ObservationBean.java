@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Stateless
 public class ObservationBean {
@@ -38,18 +39,22 @@ public class ObservationBean {
         if (patient == null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
-        Prescription prescription = new Prescription(healthcareProfessional, patient, start_date, end_date, notesPrescription);
-        healthcareProfessional.addPrescription(prescription);
-
-        entityManager.persist(prescription);
-        entityManager.flush();
-
-        Observation newObservation = new Observation(healthcareProfessional, patient, notes, prescription);
+        Observation newObservation = new Observation(healthcareProfessional, patient, notes);
         healthcareProfessional.addObservation(newObservation);
         patient.addObservation(newObservation);
 
         entityManager.persist(newObservation);
         entityManager.flush();
+
+        if (!(Objects.equals(start_date, "") || Objects.equals(end_date, ""))) {
+            Prescription prescription = new Prescription(healthcareProfessional, patient, start_date, end_date, notesPrescription);
+            healthcareProfessional.addPrescription(prescription);
+
+            entityManager.persist(prescription);
+            entityManager.flush();
+
+            newObservation.setPrescription(prescription);
+        }
 
         return newObservation.getId();
     }
