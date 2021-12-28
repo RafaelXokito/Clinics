@@ -8,6 +8,17 @@ public class BiometricDataIssueDTO {
     private double max;
     private long biometricDataTypeId;
     private String biometricDataTypeName;
+    private String biometricDataTypeUnitName;
+
+    public BiometricDataIssueDTO(long id, String name, double min, double max, long biometricDataTypeId, String biometricDataTypeName, String biometricDataTypeUnitName) {
+        this.id = id;
+        this.name = name;
+        this.min = min;
+        this.max = max;
+        this.biometricDataTypeId = biometricDataTypeId;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.biometricDataTypeUnitName = biometricDataTypeUnitName;
+    }
 
     public BiometricDataIssueDTO(long id, String name, double min, double max, long biometricDataTypeId, String biometricDataTypeName) {
         this.id = id;
@@ -18,7 +29,15 @@ public class BiometricDataIssueDTO {
         this.biometricDataTypeName = biometricDataTypeName;
     }
 
-    public BiometricDataIssueDTO(String name, String biometricDataTypeName) {
+    public BiometricDataIssueDTO(long id, String name, double min, double max) {
+        this.id = id;
+        this.name = name;
+        this.min = min;
+        this.max = max;
+    }
+
+    public BiometricDataIssueDTO(long id, String name, String biometricDataTypeName) {
+        this.id = id;
         this.name = name;
         this.biometricDataTypeName = biometricDataTypeName;
     }
@@ -78,5 +97,13 @@ public class BiometricDataIssueDTO {
 
     public void setBiometricDataTypeName(String biometricDataTypeName) {
         this.biometricDataTypeName = biometricDataTypeName;
+    }
+
+    public String getBiometricDataTypeUnitName() {
+        return biometricDataTypeUnitName;
+    }
+
+    public void setBiometricDataTypeUnitName(String biometricDataTypeUnitName) {
+        this.biometricDataTypeUnitName = biometricDataTypeUnitName;
     }
 }

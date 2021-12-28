@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataTypeDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataTypeBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -41,7 +42,9 @@ public class BiometricDataTypeService {
                     Long.parseLong(obj[0].toString()),
                     obj[1].toString(),
                     obj[2].toString(),
-                    obj[3].toString()
+                    obj[3].toString(),
+                    Double.parseDouble(obj[4].toString()),
+                    Double.parseDouble(obj[5].toString())
             ));
         }
         return BiometricDataTypeDTOList;
@@ -103,6 +106,16 @@ public class BiometricDataTypeService {
                 .build();
     }
 
+    @GET
+    @Path("{id}/biometricdataissues")
+    public Response getBiometricDataTypeBiometricDataIssuesWS(@PathParam("id") long id) throws Exception {
+        BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(id);
+
+        return Response.status(Response.Status.OK)
+                .entity(biometricDataIssueToDTOs(biometricDataType.getIssues()))
+                .build();
+    }
+
 
     private List<BiometricDataTypeDTO> toDTOs(List<BiometricDataType> biometricDataTypes) {
         return biometricDataTypes.stream().map(this::toDTO).collect(Collectors.toList());
@@ -115,5 +128,16 @@ public class BiometricDataTypeService {
                 biometricDataType.getMax(),
                 biometricDataType.getUnit(),
                 biometricDataType.getUnit_name());
+    }
+
+    private List<BiometricDataIssueDTO> biometricDataIssueToDTOs(List<BiometricDataIssue> biometricDataIssues) {
+        return biometricDataIssues.stream().map(this::biometricDataIssueToDTO).collect(Collectors.toList());
+    }
+
+    private BiometricDataIssueDTO biometricDataIssueToDTO(BiometricDataIssue biometricDataIssue) {
+        return new BiometricDataIssueDTO(biometricDataIssue.getId(),
+                biometricDataIssue.getName(),
+                biometricDataIssue.getMin(),
+                biometricDataIssue.getMax());
     }
 }
