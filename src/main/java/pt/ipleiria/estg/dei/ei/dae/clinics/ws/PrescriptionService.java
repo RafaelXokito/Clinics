@@ -32,7 +32,7 @@ public class PrescriptionService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
-                        "id", "healthcareProfessionalId", "healthcareProfessionalName", "start_date", "end_date"))
+                        "healthcareProfessionalName", "start_date", "end_date"))
                 .build();
     }
 

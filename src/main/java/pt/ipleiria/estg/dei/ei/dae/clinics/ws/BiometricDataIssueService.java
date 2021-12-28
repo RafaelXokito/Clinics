@@ -30,7 +30,7 @@ public class BiometricDataIssueService {
     public Response getAllBiometricDataIssuesWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<BiometricDataIssueDTO>(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()),
-                        "id", "name", "biometricDataTypeName"))
+                        "name", "biometricDataTypeName"))
                 .build();
     }
 

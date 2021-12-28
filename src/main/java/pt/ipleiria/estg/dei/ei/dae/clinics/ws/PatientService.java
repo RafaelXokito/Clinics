@@ -38,7 +38,7 @@ public class PatientService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),
-                        "id", "email", "name", "gender", "healthNo"))
+                        "email", "name", "gender", "healthNo"))
                 .build();
     }
 

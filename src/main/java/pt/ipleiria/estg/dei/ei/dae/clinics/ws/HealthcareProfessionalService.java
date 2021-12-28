@@ -40,7 +40,7 @@ public class HealthcareProfessionalService {
 
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllHealthcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()),
-                        "id", "email", "name", "gender", "specialty"))
+                        "email", "name", "gender", "specialty"))
                 .build();
     }
 

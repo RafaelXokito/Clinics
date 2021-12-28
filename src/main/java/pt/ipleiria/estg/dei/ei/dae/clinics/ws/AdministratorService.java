@@ -30,7 +30,7 @@ public class AdministratorService {
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<AdministratorDTO>(toDTOAllAdministrators(administratorBean.getAllAdministrators()),
-                        "id", "email", "name", "gender"))
+                        "email", "name", "gender"))
                 .build();
     }
     /*

@@ -38,7 +38,7 @@ public class ObservationService {
     public Response getAllObservationsWS() {
         return Response.status(Response.Status.OK)
                 .entity(new EntitiesDTO<>(toDTOAllObservations(observationBean.getAllObservations()),
-                        "id", "healthcareProfessionalName", "patientName", "created_at"))
+                        "healthcareProfessionalName", "patientName", "created_at"))
                 .build();
     }
 
