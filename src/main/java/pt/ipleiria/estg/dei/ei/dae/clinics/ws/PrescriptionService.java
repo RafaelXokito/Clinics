@@ -52,19 +52,6 @@ public class PrescriptionService {
                 .build();
     }
 
-    private List<PrescriptionDTO> toDTOAllPrescriptions(List<Object[]> allPrescriptions) {
-        List<PrescriptionDTO> prescriptionDTOList = new ArrayList<>();
-        for (Object[] obj : allPrescriptions) {
-            prescriptionDTOList.add(new PrescriptionDTO(
-                    Long.parseLong(obj[0].toString()),
-                    Long.parseLong(obj[1].toString()),
-                    obj[2].toString(),
-                    obj[3].toString(),
-                    obj[4].toString()));
-        }
-        return prescriptionDTOList;
-    }
-
     @GET
     @Path("{id}")
     public Response getPrescriptionWS(@PathParam("id") long id) throws Exception {

@@ -60,11 +60,14 @@ public class ConfigBean {
             long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt", "1234",
                     "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId);
 
+            long hJoseId = healthcareProfessionalBean.create("jose@mail.pt", "1234",
+                    "Jose Artur Bento", "Male", "Cardiologist", aRafaelId);
+
             System.out.println("Creating Some Patients");
             long pDanielId = patientBean.create("219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789,
                     hBrunaId);
             long pLeonelId = patientBean.create("219XXX1@my.ipleiria.pt", "1234", "Leonél Brás", "Male", 123456798,
-                    hBrunaId);
+                    hJoseId);
             long pAndreiaId = patientBean.create("219XXX2@my.ipleiria.pt", "1234", "Andreia Brás", "Female", 123456799,
                     hBrunaId);
             long pSilviaId = patientBean.create("219XXX3@my.ipleiria.pt", "1234", "Silvia Brás", "Female", 123456788,
@@ -102,7 +105,7 @@ public class ConfigBean {
 
             observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2021-12-29 11:30", "more notes");
             observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2021-12-29 11:30", "more notes");
-
+            observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-21 11:30", "2021-12-23 18:30", "more notes");
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }

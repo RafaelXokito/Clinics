@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -19,15 +20,6 @@ import java.util.List;
 public class PrescriptionBean {
     @PersistenceContext
     private EntityManager entityManager;
-
-    public List<Object[]> getAllPrescriptions() {
-        Query query = entityManager
-                .createQuery("SELECT p.id, p.healthcareProfessional.id, p.healthcareProfessional.name, p.start_date, p.end_date FROM Prescription p");
-        List<Object[]> prescriptionList = query.getResultList();
-        return prescriptionList;
-        // return entityManager.createNamedQuery("getAllPrescriptions",
-        // Prescription.class).getResultList();
-    }
 
     public Prescription findPrescription(long id) throws MyEntityNotFoundException {
         Prescription prescription = entityManager.find(Prescription.class, id);
@@ -58,7 +50,7 @@ public class PrescriptionBean {
      *         (bio_data_issues_id)
      */
     public long create(long healthcareProfessionalId, String start_date, String end_date, String notes,
-            List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
+            List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
 
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         if (healthcareProfessional == null)
@@ -74,6 +66,9 @@ public class PrescriptionBean {
             TypedQuery<Patient> query = entityManager.createQuery("SELECT DISTINCT a.patient FROM BiometricData a WHERE a.biometricDataIssue.id = :issue_id AND a.created_at = ANY (SELECT MAX(b.created_at) FROM BiometricData b WHERE b.patient.id = a.patient.id AND b.biometric_data_type.id = a.biometric_data_type.id GROUP BY b.patient.id, b.biometric_data_type.id)", Patient.class);
             query.setParameter("issue_id", biometricDataIssue.getId());
             List<Patient> patientsTarget = query.getResultList();
+
+            if (patientsTarget.size() == 0)
+                throw new MyIllegalArgumentException("This prescription will be sent to 0 people");
 
             for (Patient patientTarget : patientsTarget) {
                 patientTarget.addPrescription(prescription);

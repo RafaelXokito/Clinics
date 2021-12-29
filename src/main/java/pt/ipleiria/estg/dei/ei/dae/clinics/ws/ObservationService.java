@@ -11,8 +11,10 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -25,35 +27,31 @@ import java.util.stream.Collectors;
 @Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 public class ObservationService {
-    private static final Logger log =
-            Logger.getLogger(BiometricDataService.class.getName());
     @EJB
     private ObservationBean observationBean;
 
     @EJB
     private PersonBean personBean;
 
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllObservationsWS() {
+    public Response getAllObservationsWS(@HeaderParam("Authorization") String auth) throws Exception {
+        Person person = personBean.getPersonByAuthToken(auth);
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            return Response.status(Response.Status.OK)
+                    .entity(new EntitiesDTO<ObservationDTO>(toDTOs(((HealthcareProfessional) person).getObservations()),
+                            "healthcareProfessionalName", "patientName", "created_at"))
+                    .build();
+        }
+
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<>(toDTOAllObservations(observationBean.getAllObservations()),
+                .entity(new EntitiesDTO<ObservationDTO>(toDTOs(((Patient) person).getObservations()),
                         "healthcareProfessionalName", "patientName", "created_at"))
                 .build();
-    }
-
-    private List<ObservationDTO> toDTOAllObservations(List<Object[]> observations) {
-        List<ObservationDTO> observationDTOs = new ArrayList<>();
-        for (Object[] obj : observations) {
-            observationDTOs.add(new ObservationDTO(
-                    Long.parseLong(obj[0].toString()),
-                    Long.parseLong(obj[1].toString()),
-                    obj[2].toString(),
-                    Long.parseLong(obj[3].toString()),
-                    obj[4].toString(),
-                    (Date) obj[5]));
-        }
-        return observationDTOs;
     }
 
     @GET
