@@ -13,7 +13,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -110,6 +113,10 @@ public class PrescriptionBean {
         if (biometricDataIssues.isEmpty())
             throw new MyIllegalArgumentException("At least 1 biometric data issue is mandatory");
 
+        if (compareDates(start_date, end_date) != 2)
+            throw new MyIllegalArgumentException("Error when validating dates");
+
+
         Prescription prescription = findPrescription(id);
 
         prescription.setStart_date(start_date);
@@ -134,5 +141,41 @@ public class PrescriptionBean {
             if (!biometricDataIssue.getPrescriptions().contains(prescription))
                 biometricDataIssue.addPrescription(prescription);
         }
+    }
+
+    /**
+     *
+     * @param d1
+     * @param d2
+     * @return 0 if @d2 is equals @d1
+     * @return 1 if @d2 is greater then @d1
+     * @return 2 if @d1 is greater then @d2
+     * @return -1 if a error happened
+     */
+    public static int compareDates(String d1,String d2) throws ParseException {
+        //1
+        // Create 2 dates starts
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime date1 = LocalDateTime.parse(d1,formatter);
+        LocalDateTime date2 = LocalDateTime.parse(d2,formatter);
+
+        // Create 2 dates ends
+        //1
+
+        // Date object is having 3 methods namely after,before and equals for comparing
+        // after() will return true if and only if date1 is after date 2
+        if(date1.isAfter(date2)){
+            return 1;
+        }
+        // before() will return true if and only if date1 is before date2
+        if(date1.isBefore(date2)){
+            return 2;
+        }
+
+        //equals() returns true if both the dates are equal
+        if(date1.equals(date2)){
+            return 0;
+        }
+        return -1;
     }
 }
