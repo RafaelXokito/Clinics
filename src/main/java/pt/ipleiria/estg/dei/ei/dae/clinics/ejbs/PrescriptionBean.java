@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -100,7 +101,11 @@ public class PrescriptionBean {
      * @throw TODO - Acrescentar os throws e a descrição
      */
     public void update(long id, String start_date, String end_date, String notes,
-                       List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
+                       List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
+
+        if (biometricDataIssues.isEmpty())
+            throw new MyIllegalArgumentException("At least 1 biometric data issue is mandatory");
+
         Prescription prescription = findPrescription(id);
 
         prescription.setStart_date(start_date);

@@ -63,6 +63,7 @@ public class PrescriptionService {
     @Path("/")
     public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
+        System.out.println(issues);
         long id = prescriptionBean.create(
                 prescriptionDTO.getHealthcareProfessionalId(),
                 prescriptionDTO.getStart_date(),
@@ -80,8 +81,9 @@ public class PrescriptionService {
     @PUT
     @Path("{id}")
     public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO)
-            throws ParseException, MyEntityNotFoundException {
+            throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
+
         prescriptionBean.update(id,
                 prescriptionDTO.getStart_date(),
                 prescriptionDTO.getEnd_date(),
