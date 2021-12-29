@@ -1,9 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
@@ -68,7 +65,7 @@ public class PrescriptionBean {
             List<Patient> patientsTarget = query.getResultList();
 
             if (patientsTarget.size() == 0)
-                throw new MyIllegalArgumentException("This prescription can not be sent to 0 people");
+                throw new MyIllegalArgumentException("There are currently 0 people with that condition(s)");
 
             for (Patient patientTarget : patientsTarget) {
                 patientTarget.addPrescription(prescription);
@@ -89,6 +86,20 @@ public class PrescriptionBean {
      */
     public boolean delete(long id) {
         Prescription prescription = entityManager.find(Prescription.class, id);
+
+        //REMOVE DEPENDENCIES
+        HealthcareProfessional healthcareProfessional = prescription.getHealthcareProfessional();
+        List<Patient> patients = prescription.getPatients();
+        List<BiometricDataIssue> biometricDataIssues = prescription.getBiometric_data_issue();
+
+        healthcareProfessional.removePrescription(prescription);
+        for (Patient patient : patients) {
+            patient.removePrescription(prescription);
+        }
+        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
+            biometricDataIssue.removePrescription(prescription);
+        }
+
         entityManager.remove(prescription);
         return entityManager.find(Prescription.class, id) == null;
     }
@@ -119,16 +130,14 @@ public class PrescriptionBean {
             // Se as Issues antigas ainda estiverem presentes nesta, a prescrição não é
             // removida das mesmas
             // Se já não estiverem presentes, são removidas
-            if (!biometricDataIssues.contains(biometricDataIssue))
-                biometricDataIssue.removePrescription(prescription);
+            biometricDataIssue.removePrescription(prescription);
         }
 
         prescription.setBiometricDataIssues(biometricDataIssues);
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             // São adicionadas às novas Issues esta prescrição
-            if (!biometricDataIssue.getPrescriptions().contains(prescription))
-                biometricDataIssue.addPrescription(prescription);
+            biometricDataIssue.addPrescription(prescription);
         }
     }
 }

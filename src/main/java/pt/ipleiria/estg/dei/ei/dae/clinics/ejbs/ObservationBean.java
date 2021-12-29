@@ -37,6 +37,7 @@ public class ObservationBean {
 
         Observation newObservation = new Observation(healthcareProfessional, patient, notes);
         healthcareProfessional.addObservation(newObservation);
+        healthcareProfessional.addPatient(patient);
         patient.addObservation(newObservation);
 
         if (!(Objects.equals(start_date, "") || Objects.equals(end_date, ""))) {
@@ -44,6 +45,7 @@ public class ObservationBean {
             healthcareProfessional.addPrescription(prescription);
             newObservation.setPrescription(prescription);
             patient.addPrescription(prescription);
+            prescription.addPatient(patient);
 
             entityManager.persist(prescription);
         }
