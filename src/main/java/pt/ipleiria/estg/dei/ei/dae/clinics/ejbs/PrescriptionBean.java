@@ -56,6 +56,12 @@ public class PrescriptionBean {
         if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
+        if (compareDates(start_date, end_date) != 2)
+            throw new MyIllegalArgumentException("Error when validating dates");
+
+        if (biometricDataIssues == null || biometricDataIssues.size() == 0)
+            throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
+
         Prescription prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
 
         healthcareProfessional.addPrescription(prescription);
@@ -121,20 +127,22 @@ public class PrescriptionBean {
     public void update(long id, String start_date, String end_date, String notes,
                        List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
 
-        if (biometricDataIssues.isEmpty())
-            throw new MyIllegalArgumentException("At least 1 biometric data issue is mandatory");
-
         if (compareDates(start_date, end_date) != 2)
             throw new MyIllegalArgumentException("Error when validating dates");
 
-
         Prescription prescription = findPrescription(id);
+
+        boolean isGlobalPrescription = prescription.getBiometric_data_issue().size() > 0;
+        if (isGlobalPrescription) {
+            if (biometricDataIssues == null || biometricDataIssues.size() == 0)
+                throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
+        }
 
         prescription.setStart_date(start_date);
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
-        if (prescription.getBiometric_data_issue().size() > 0)
+        if (isGlobalPrescription)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {
