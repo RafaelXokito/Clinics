@@ -70,11 +70,11 @@ public class Observation implements Serializable {
     }
 
     public Document removeDocument(Document document){
-        if (!this.documents.contains(document))
+        if (document == null)
             return null;
 
-        this.documents.remove(document);
-        return document;
+        documents.remove(document);
+        return documents.contains(document) ? null : document;
     }
 
     public List<Document> getDocuments() {

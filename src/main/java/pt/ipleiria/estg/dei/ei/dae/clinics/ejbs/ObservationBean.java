@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -90,4 +91,5 @@ public class ObservationBean {
 
         return entityManager.find(HealthcareProfessional.class, id) == null;
     }
+
 }

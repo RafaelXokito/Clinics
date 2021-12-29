@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -36,5 +37,21 @@ public class DocumentBean {
 
     public List<Document> getObservationDocuments(long id){
         return (List<Document>) entityManager.createNamedQuery("getObservationDocuments").setParameter("id",id).getResultList();
+    }
+
+
+    public boolean deleteDocument(Long observation_id, Document document) throws MyIllegalArgumentException {
+        Observation observation = entityManager.find(Observation.class, observation_id);
+
+        if (!entityManager.contains(document)) {
+            document = entityManager.merge(document);
+        }
+        entityManager.remove(document);
+        entityManager.flush();
+
+        if (observation.removeDocument(document) == null)
+            throw new MyIllegalArgumentException("Error removing document from observation");
+
+        return true;
     }
 }
