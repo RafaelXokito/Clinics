@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ObservationDTO {
     private long id;
@@ -11,6 +13,19 @@ public class ObservationDTO {
     private String notes;
     private Date created_at;
     private PrescriptionDTO prescription;
+    private List<DocumentDTO> documents;
+
+    public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, String notes, Date created_at, PrescriptionDTO prescription, List<DocumentDTO> documents) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.patientId = patientId;
+        this.patientName = patientName;
+        this.notes = notes;
+        this.created_at = created_at;
+        this.prescription = prescription;
+        this.documents = documents;
+    }
 
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, String notes, Date created_at, PrescriptionDTO prescription) {
         this.id = id;
@@ -21,6 +36,7 @@ public class ObservationDTO {
         this.notes = notes;
         this.created_at = created_at;
         this.prescription = prescription;
+        this.documents = new ArrayList<>();
     }
 
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at) {
@@ -30,6 +46,7 @@ public class ObservationDTO {
         this.patientId = patientId;
         this.patientName = patientName;
         this.created_at = created_at;
+        this.documents = new ArrayList<>();
     }
 
     public ObservationDTO() {
@@ -41,6 +58,15 @@ public class ObservationDTO {
         this.notes = "";
         this.created_at = null;
         this.prescription = new PrescriptionDTO();
+        this.documents = new ArrayList<>();
+    }
+
+    public List<DocumentDTO> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentDTO> documents) {
+        this.documents = documents;
     }
 
     public long getId() {

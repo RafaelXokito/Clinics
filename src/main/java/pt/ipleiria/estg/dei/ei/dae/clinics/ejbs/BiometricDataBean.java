@@ -37,7 +37,7 @@ public class BiometricDataBean {
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
      * @param biometricDataTypeId @Id of Biometric_Data_Type
      * @param value that Patient got in this Biometric_Data_Type
-     * @param notes given by doctor about this specific Biometric Data
+     * @param notes given by healthcare professional about this specific Biometric Data
      * @param patientId @Id of Patient
      * @param personId @Id of Person who is creating this biometric data
      * @return BiometricData created

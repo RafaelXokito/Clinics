@@ -63,6 +63,8 @@ public class ObservationBean {
         Observation observation = findObservation(id);
         observation.setNotes(notesObservation);
 
+        if (observation.getPrescription() == null) return;
+
         Prescription prescription = entityManager.find(Prescription.class, observation.getPrescription().getId());
         prescription.setStart_date(start_date);
         prescription.setEnd_date(end_date);
