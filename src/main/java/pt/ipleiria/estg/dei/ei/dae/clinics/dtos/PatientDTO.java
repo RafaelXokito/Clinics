@@ -32,6 +32,7 @@ public class PatientDTO {
         this.healthNo = healthNo;
         this.created_by = created_by;
         this.biometricDatas = biometricDatas;
+        this.observations = observations;
     }
 
     public PatientDTO(long id, String email, String name, String gender, int healthNo) {
@@ -40,6 +41,13 @@ public class PatientDTO {
         this.name = name;
         this.gender = gender;
         this.healthNo = healthNo;
+        biometricDatas = new ArrayList<>();
+        observations = new ArrayList<>();
+    }
+
+    public PatientDTO(long id, String name) {
+        this.id = id;
+        this.name = name;
         biometricDatas = new ArrayList<>();
         observations = new ArrayList<>();
     }

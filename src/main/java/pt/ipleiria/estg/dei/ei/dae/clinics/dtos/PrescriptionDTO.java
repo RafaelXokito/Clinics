@@ -7,11 +7,10 @@ public class PrescriptionDTO {
     private long id;
     private long healthcareProfessionalId;
     private String healthcareProfessionalName;
-    private long patientId;
-    private String patientName;
     private String start_date;
     private String end_date;
     private String notes;
+    private List<PatientDTO> patients;
     private List<BiometricDataIssueDTO> issues;
 
     public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, String start_date,
@@ -25,12 +24,11 @@ public class PrescriptionDTO {
         this.issues = issues;
     }
 
-    public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, String start_date, String end_date, String notes) {
+    public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, List<PatientDTO> patients, String start_date, String end_date, String notes) {
         this.id = id;
         this.healthcareProfessionalId = healthcareProfessionalId;
         this.healthcareProfessionalName = healthcareProfessionalName;
-        this.patientId = patientId;
-        this.patientName = patientName;
+        this.patients = patients;
         this.start_date = start_date;
         this.end_date = end_date;
         this.notes = notes;
@@ -40,8 +38,7 @@ public class PrescriptionDTO {
         id = -1;
         healthcareProfessionalId = -1;
         healthcareProfessionalName = "";
-        patientId = -1;
-        patientName = "";
+        patients = new ArrayList<>();
         start_date = "";
         end_date = "";
         notes = "";
@@ -55,6 +52,7 @@ public class PrescriptionDTO {
         this.start_date = start_date;
         this.end_date = end_date;
         issues = new ArrayList<>();
+        patients = new ArrayList<>();
     }
 
     public PrescriptionDTO(long id, String healthcareProfessionalName, String start_date, String end_date) {
@@ -63,6 +61,7 @@ public class PrescriptionDTO {
         this.start_date = start_date;
         this.end_date = end_date;
         issues = new ArrayList<>();
+        patients = new ArrayList<>();
     }
 
     public long getId() {
@@ -121,19 +120,11 @@ public class PrescriptionDTO {
         this.issues = issues;
     }
 
-    public long getPatientId() {
-        return patientId;
+    public List<PatientDTO> getPatients() {
+        return patients;
     }
 
-    public void setPatientId(long patientId) {
-        this.patientId = patientId;
-    }
-
-    public String getPatientName() {
-        return patientName;
-    }
-
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
+    public void setPatients(List<PatientDTO> patients) {
+        this.patients = patients;
     }
 }

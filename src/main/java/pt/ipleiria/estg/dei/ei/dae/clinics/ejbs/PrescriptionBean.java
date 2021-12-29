@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,15 +20,6 @@ import java.util.List;
 public class PrescriptionBean {
     @PersistenceContext
     private EntityManager entityManager;
-
-    public List<Object[]> getAllPrescriptions() {
-        Query query = entityManager
-                .createQuery("SELECT p.id, p.healthcareProfessional.id, p.healthcareProfessional.name, p.start_date, p.end_date FROM Prescription p");
-        List<Object[]> prescriptionList = query.getResultList();
-        return prescriptionList;
-        // return entityManager.createNamedQuery("getAllPrescriptions",
-        // Prescription.class).getResultList();
-    }
 
     public Prescription findPrescription(long id) throws MyEntityNotFoundException {
         Prescription prescription = entityManager.find(Prescription.class, id);
@@ -58,7 +50,7 @@ public class PrescriptionBean {
      *         (bio_data_issues_id)
      */
     public long create(long healthcareProfessionalId, String start_date, String end_date, String notes,
-            List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException {
+            List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
 
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         if (healthcareProfessional == null)
@@ -70,6 +62,18 @@ public class PrescriptionBean {
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.addPrescription(prescription);
+
+            TypedQuery<Patient> query = entityManager.createQuery("SELECT DISTINCT a.patient FROM BiometricData a WHERE a.biometricDataIssue.id = :issue_id AND a.created_at = ANY (SELECT MAX(b.created_at) FROM BiometricData b WHERE b.patient.id = a.patient.id AND b.biometric_data_type.id = a.biometric_data_type.id GROUP BY b.patient.id, b.biometric_data_type.id)", Patient.class);
+            query.setParameter("issue_id", biometricDataIssue.getId());
+            List<Patient> patientsTarget = query.getResultList();
+
+            if (patientsTarget.size() == 0)
+                throw new MyIllegalArgumentException("This prescription can not be sent to 0 people");
+
+            for (Patient patientTarget : patientsTarget) {
+                patientTarget.addPrescription(prescription);
+                prescription.addPatient(patientTarget);
+            }
         }
 
         entityManager.persist(prescription);
@@ -112,7 +116,7 @@ public class PrescriptionBean {
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
-        if (prescription.getPatient() != null)
+        if (prescription.getBiometric_data_issue().size() > 0)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {

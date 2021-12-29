@@ -28,9 +28,12 @@ public class Prescription implements Serializable {
     @NotNull
     private HealthcareProfessional healthcareProfessional;
 
-    @ManyToOne
-    @JoinColumn(name = "PATIENT_ID")
-    private Patient patient;
+    @NotNull
+    @ManyToMany
+    @JoinTable(name = "PRESCRIPTIONS_PATIENTS",
+            joinColumns = @JoinColumn(name = "PRESCRIPTION_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "PATIENT_ID", referencedColumnName = "ID"))
+    private List<Patient> patients;
 
     @NotNull
     // @Temporal(TemporalType.TIMESTAMP)
@@ -46,17 +49,18 @@ public class Prescription implements Serializable {
 
     public Prescription(HealthcareProfessional healthcareProfessional, Patient patient, String start_date, String end_date, String notes) {
         this.healthcareProfessional = healthcareProfessional;
-        this.patient = patient;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
 
         this.notes = notes;
 
         this.biometricDataIssues = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public Prescription() {
         this.biometricDataIssues = new ArrayList<>();
+        this.patients = new ArrayList<>();
     }
 
     public Prescription(HealthcareProfessional healthcareProfessional, String start_date, String end_date, String notes,
@@ -67,6 +71,7 @@ public class Prescription implements Serializable {
         this.notes = notes;
 
         this.biometricDataIssues = new ArrayList<>();
+        this.patients = new ArrayList<>();
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             addBiometricDataIssue(biometricDataIssue);
@@ -133,11 +138,23 @@ public class Prescription implements Serializable {
         this.biometricDataIssues = biometric_data_issue;
     }
 
-    public Patient getPatient() {
-        return patient;
+    public List<Patient> getPatients() {
+        return patients;
     }
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setPatients(List<Patient> patients) {
+        this.patients = patients;
+    }
+
+    public void addPatient(Patient patient) {
+        if (patient == null || this.patients.contains(patient)) return;
+
+        this.patients.add(patient);
+    }
+
+    public void removePatient(Patient patient) {
+        if (patient == null) return;
+
+        this.patients.remove(patient);
     }
 }

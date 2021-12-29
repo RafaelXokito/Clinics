@@ -26,11 +26,6 @@ public class ObservationBean {
         return observation;
     }
 
-    public List<Object[]> getAllObservations() {
-        Query query = entityManager.createQuery("SELECT o.id, o.healthcareProfessional.id, o.healthcareProfessional.name, o.patient.id, o.patient.name, o.created_at FROM Observation o");
-        return query.getResultList();
-    }
-
     public long create(long healthcareProfessionalId, long patientId, String notes, String start_date, String end_date, String notesPrescription) throws MyEntityNotFoundException, MyEntityExistsException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         if (healthcareProfessional == null)
@@ -44,18 +39,16 @@ public class ObservationBean {
         healthcareProfessional.addObservation(newObservation);
         patient.addObservation(newObservation);
 
-        entityManager.persist(newObservation);
-        entityManager.flush();
-
         if (!(Objects.equals(start_date, "") || Objects.equals(end_date, ""))) {
             Prescription prescription = new Prescription(healthcareProfessional, patient, start_date, end_date, notesPrescription);
             healthcareProfessional.addPrescription(prescription);
+            newObservation.setPrescription(prescription);
+            patient.addPrescription(prescription);
 
             entityManager.persist(prescription);
-            entityManager.flush();
-
-            newObservation.setPrescription(prescription);
         }
+        entityManager.persist(newObservation);
+        entityManager.flush();
 
         return newObservation.getId();
     }

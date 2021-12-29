@@ -15,6 +15,9 @@ public class ObservationDTO {
     private PrescriptionDTO prescription;
     private List<DocumentDTO> documents;
 
+    private boolean hasPrescription;
+    private long nDocuments;
+
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, String notes, Date created_at, PrescriptionDTO prescription, List<DocumentDTO> documents) {
         this.id = id;
         this.healthcareProfessionalId = healthcareProfessionalId;
@@ -39,6 +42,18 @@ public class ObservationDTO {
         this.documents = new ArrayList<>();
     }
 
+    public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at, boolean hasPrescription, long nDocuments) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.patientId = patientId;
+        this.patientName = patientName;
+        this.created_at = created_at;
+        this.documents = new ArrayList<>();
+        this.hasPrescription = hasPrescription;
+        this.nDocuments = nDocuments;
+    }
+
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at) {
         this.id = id;
         this.healthcareProfessionalId = healthcareProfessionalId;
@@ -48,6 +63,8 @@ public class ObservationDTO {
         this.created_at = created_at;
         this.documents = new ArrayList<>();
     }
+
+
 
     public ObservationDTO() {
         this.id = -1;
@@ -131,5 +148,21 @@ public class ObservationDTO {
 
     public void setPatientName(String patientName) {
         this.patientName = patientName;
+    }
+
+    public boolean isHasPrescription() {
+        return hasPrescription;
+    }
+
+    public void setHasPrescription(boolean hasPrescription) {
+        this.hasPrescription = hasPrescription;
+    }
+
+    public long getnDocuments() {
+        return nDocuments;
+    }
+
+    public void setnDocuments(long nDocuments) {
+        this.nDocuments = nDocuments;
     }
 }
