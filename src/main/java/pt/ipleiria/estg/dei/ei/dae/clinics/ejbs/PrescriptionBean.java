@@ -68,7 +68,7 @@ public class PrescriptionBean {
             List<Patient> patientsTarget = query.getResultList();
 
             if (patientsTarget.size() == 0)
-                throw new MyIllegalArgumentException("This prescription will be sent to 0 people");
+                throw new MyIllegalArgumentException("This prescription can not be sent to 0 people");
 
             for (Patient patientTarget : patientsTarget) {
                 patientTarget.addPrescription(prescription);
