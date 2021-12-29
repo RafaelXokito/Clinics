@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,12 +70,28 @@ public class DocumentService {
     @GET
     @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response download(@PathParam("id") Integer id) throws MyEntityNotFoundException {
+    public Response download(@PathParam("id") Long id) throws MyEntityNotFoundException {
         Document document = documentBean.findDocument(id);
         File fileDownload = new File(document.getFilepath() + File.separator + document.getFilename());
         Response.ResponseBuilder response = Response.ok((Object) fileDownload);
         response.header("Content-Disposition", "attachment;filename=" + document.getFilename());
         return response.build();
+    }
+
+    @DELETE
+    @Path("delete/{id}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response delete(@PathParam("id") Long id) throws Exception {
+        Document document = documentBean.findDocument(id);
+        File fileToDelete = new File(document.getFilepath() + File.separator + document.getFilename());
+        if (fileToDelete.delete()) {
+            if (!documentBean.deleteDocument(document.getObservation().getId(), document))
+                return Response.status(400,"File deleted, with errors").build();
+
+            return Response.ok("File deleted").build();
+        }
+        else
+            return Response.status(400, "File was not deleted").build();
     }
 
     @GET
