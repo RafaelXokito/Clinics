@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "HEALTHCAREPROFESSIONAL")
+@Table(name = "HEALTHCARE_PROFESSIONAL")
 @NamedQueries({
         @NamedQuery(name = "getAllDoctors", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
 })
@@ -31,9 +31,9 @@ public class HealthcareProfessional extends Employee implements Serializable {
 
     @NotNull
     @ManyToMany
-    @JoinTable(name = "HEALTHCARE_PROFESSIONALS_PACIENTS",
+    @JoinTable(name = "HEALTHCARE_PROFESSIONALS_PATIENTS",
             joinColumns = @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "PACIENT_ID", referencedColumnName = "ID"))
+            inverseJoinColumns = @JoinColumn(name = "PATIENT_ID", referencedColumnName = "ID"))
     private List<Patient> patients;
 
     public HealthcareProfessional(String email, String password, String name, String gender, String specialty,

@@ -137,28 +137,27 @@ public class ObservationService {
     }
 
     private PrescriptionDTO prescriptionToDTO(Prescription prescription) {
-        boolean hasPatient = prescription.getPatient() != null;
+        boolean isGlobal = prescription.getBiometric_data_issue() != null && prescription.getBiometric_data_issue().size() > 0;
 
-        if (hasPatient) {
+        if (isGlobal) {
             return new PrescriptionDTO(
                     prescription.getId(),
                     prescription.getHealthcareProfessional().getId(),
                     prescription.getHealthcareProfessional().getName(),
-                    prescription.getPatient().getId(),
-                    prescription.getPatient().getName(),
                     prescription.getStart_date().toString(),
                     prescription.getEnd_date().toString(),
-                    prescription.getNotes());
+                    prescription.getNotes(),
+                    issuesToDTOs(prescription.getBiometric_data_issue()));
         }
 
         return new PrescriptionDTO(
                 prescription.getId(),
                 prescription.getHealthcareProfessional().getId(),
                 prescription.getHealthcareProfessional().getName(),
+                patientToDTOs(prescription.getPatients()),
                 prescription.getStart_date().toString(),
                 prescription.getEnd_date().toString(),
-                prescription.getNotes(),
-                issuesToDTOs(prescription.getBiometric_data_issue()));
+                prescription.getNotes());
     }
 
     private List<BiometricDataIssueDTO> issuesToDTOs(List<BiometricDataIssue> biometricDataIssues) {
@@ -172,6 +171,15 @@ public class ObservationService {
                 biometricDataIssue.getMax(),
                 biometricDataIssue.getBiometric_data_type().getId(),
                 biometricDataIssue.getBiometric_data_type().getName());
+    }
+
+    private List<PatientDTO> patientToDTOs(List<Patient> patients) {
+        return patients.stream().map(this::patientToDTO).collect(Collectors.toList());
+    }
+
+    private PatientDTO patientToDTO(Patient patient) {
+        return new PatientDTO(patient.getId(),
+                patient.getName());
     }
 
 }

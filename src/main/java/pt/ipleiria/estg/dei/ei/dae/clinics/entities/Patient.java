@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "PATIENTS")
 @NamedQueries({
-        @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p ORDER BY p.id")
+        @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p ORDER BY p.id"),
 })
 public class Patient extends Person implements Serializable {
 
@@ -36,6 +36,10 @@ public class Patient extends Person implements Serializable {
     @ManyToMany(mappedBy = "patients")
     private List<HealthcareProfessional> healthcareProfessionals;
 
+    @NotNull
+    @ManyToMany(mappedBy = "patients")
+    private List<Prescription> prescriptions;
+
     public Patient(String email, String password, String name, String gender, int healthNo,
             Employee created_by) {
         super(email, password, name, gender);
@@ -44,12 +48,14 @@ public class Patient extends Person implements Serializable {
         this.created_by = created_by;
         this.biometric_data = new ArrayList<>();
         this.healthcareProfessionals = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
     public Patient() {
         this.observations = new ArrayList<>();
         this.biometric_data = new ArrayList<>();
         this.healthcareProfessionals = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
     }
 
     public BiometricData addBiometricData(BiometricData biometricData) {
@@ -130,5 +136,25 @@ public class Patient extends Person implements Serializable {
             return;
 
         healthcareProfessionals.remove(healthcareProfessional);
+    }
+
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
+    }
+
+    public void addPrescription(Prescription prescription) {
+        if (prescription == null || this.prescriptions.contains(prescription)) return;
+
+        this.prescriptions.add(prescription);
+    }
+
+    public void removePrescription(Prescription prescription) {
+        if (prescription == null) return;
+
+        this.prescriptions.remove(prescription);
     }
 }

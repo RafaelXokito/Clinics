@@ -3,15 +3,17 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +27,27 @@ public class PrescriptionService {
     @EJB
     private PrescriptionBean prescriptionBean;
 
+    @EJB
+    private PersonBean personBean;
+
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllPrescriptionsWS() {
+    public Response getAllPrescriptionsWS(@HeaderParam("Authorization") String auth) throws Exception {
         // List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
+        Person person = personBean.getPersonByAuthToken(auth);
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            return Response.status(Response.Status.OK)
+                    .entity(new EntitiesDTO<PrescriptionDTO>(toDTOs(((HealthcareProfessional) person).getPrescriptions()),
+                            "healthcareProfessionalName", "start_date", "end_date"))
+                    .build();
+        }
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<PrescriptionDTO>(toDTOAllPrescriptions(prescriptionBean.getAllPrescriptions()),
+                .entity(new EntitiesDTO<PrescriptionDTO>(toDTOs(((Patient) person).getPrescriptions()),
                         "healthcareProfessionalName", "start_date", "end_date"))
                 .build();
     }
@@ -120,28 +136,27 @@ public class PrescriptionService {
     }
 
     private PrescriptionDTO toDTO(Prescription prescription) {
-        boolean hasPatient = prescription.getPatient() != null;
+        boolean isGlobal = prescription.getBiometric_data_issue() != null && prescription.getBiometric_data_issue().size() > 0;
 
-        if (hasPatient) {
+        if (isGlobal) {
             return new PrescriptionDTO(
                     prescription.getId(),
                     prescription.getHealthcareProfessional().getId(),
                     prescription.getHealthcareProfessional().getName(),
-                    prescription.getPatient().getId(),
-                    prescription.getPatient().getName(),
                     prescription.getStart_date().toString(),
                     prescription.getEnd_date().toString(),
-                    prescription.getNotes());
+                    prescription.getNotes(),
+                    issuesToDTOs(prescription.getBiometric_data_issue()));
         }
 
         return new PrescriptionDTO(
                 prescription.getId(),
                 prescription.getHealthcareProfessional().getId(),
                 prescription.getHealthcareProfessional().getName(),
+                patientToDTOs(prescription.getPatients()),
                 prescription.getStart_date().toString(),
                 prescription.getEnd_date().toString(),
-                prescription.getNotes(),
-                issuesToDTOs(prescription.getBiometric_data_issue()));
+                prescription.getNotes());
     }
 
     private List<BiometricDataIssueDTO> issuesToDTOs(List<BiometricDataIssue> biometricDataIssues) {
@@ -155,5 +170,14 @@ public class PrescriptionService {
                 biometricDataIssue.getMax(),
                 biometricDataIssue.getBiometric_data_type().getId(),
                 biometricDataIssue.getBiometric_data_type().getName());
+    }
+
+    private List<PatientDTO> patientToDTOs(List<Patient> patients) {
+        return patients.stream().map(this::patientToDTO).collect(Collectors.toList());
+    }
+
+    private PatientDTO patientToDTO(Patient patient) {
+        return new PatientDTO(patient.getId(),
+                patient.getName());
     }
 }

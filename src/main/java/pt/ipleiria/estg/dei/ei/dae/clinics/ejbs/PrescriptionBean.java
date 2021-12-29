@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,6 +70,15 @@ public class PrescriptionBean {
 
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.addPrescription(prescription);
+
+            TypedQuery<Patient> query = entityManager.createQuery("SELECT DISTINCT a.patient FROM BiometricData a WHERE a.biometricDataIssue.id = :issue_id AND a.created_at = ANY (SELECT MAX(b.created_at) FROM BiometricData b WHERE b.patient.id = a.patient.id AND b.biometric_data_type.id = a.biometric_data_type.id GROUP BY b.patient.id, b.biometric_data_type.id)", Patient.class);
+            query.setParameter("issue_id", biometricDataIssue.getId());
+            List<Patient> patientsTarget = query.getResultList();
+
+            for (Patient patientTarget : patientsTarget) {
+                patientTarget.addPrescription(prescription);
+                prescription.addPatient(patientTarget);
+            }
         }
 
         entityManager.persist(prescription);
@@ -107,7 +117,7 @@ public class PrescriptionBean {
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
-        if (prescription.getPatient() != null)
+        if (prescription.getBiometric_data_issue().size() > 0)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {
