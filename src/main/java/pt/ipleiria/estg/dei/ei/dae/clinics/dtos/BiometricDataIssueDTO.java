@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
-
 public class BiometricDataIssueDTO {
     private long id;
     private String name;

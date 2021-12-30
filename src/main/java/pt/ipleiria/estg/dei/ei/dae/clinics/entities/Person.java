@@ -226,7 +226,7 @@ public abstract class Person {
     }
 
     @PreRemove
-    public void remove() {
+    public void onRemove() {
         this.deleted_at = new Date();
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataTypes",
-                query = "SELECT bioDataTypes FROM BiometricDataType bioDataTypes ORDER BY bioDataTypes.id"
+                query = "SELECT b FROM BiometricDataType b ORDER BY b.id DESC"
         )
 })
 public class BiometricDataType implements Serializable {

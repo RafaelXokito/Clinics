@@ -3,7 +3,6 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;

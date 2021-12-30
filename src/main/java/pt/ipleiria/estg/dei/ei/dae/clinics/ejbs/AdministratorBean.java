@@ -1,8 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -12,9 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.lang.reflect.Type;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @Stateless
@@ -27,10 +22,9 @@ public class AdministratorBean {
      * @return a list of All Administrators
      */
     public List<Object[]> getAllAdministrators() {
-        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender  FROM Administrator a");
+        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender  FROM Administrator a ORDER BY a.id DESC");
         List<Object[]> administratorList = query.getResultList();
         return administratorList;
-        //return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
     }
 
     /***
@@ -82,7 +76,7 @@ public class AdministratorBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
-        administrator.remove();
+        entityManager.remove(administrator);
         return entityManager.find(Administrator.class, id) == null;
     }
 
