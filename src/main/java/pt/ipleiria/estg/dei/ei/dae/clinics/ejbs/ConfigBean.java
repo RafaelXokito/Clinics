@@ -89,6 +89,16 @@ public class ConfigBean {
 
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());
+            BiometricDataIssue issue1 = biometricDataIssueBean.create("Muito Pequeno", 0, 1,
+                    altura.getId());
+            BiometricDataIssue issue2 = biometricDataIssueBean.create("Pequeno", 1, 1.6,
+                    altura.getId());
+            BiometricDataIssue issue3 = biometricDataIssueBean.create("Normal", 1.5, 1.75,
+                    altura.getId());
+            BiometricDataIssue issue4 = biometricDataIssueBean.create("Alto", 1.75, 1.85,
+                    altura.getId());
+            BiometricDataIssue issue5 = biometricDataIssueBean.create("Muito Alto", 1.85, 3,
+                    altura.getId());
 
             System.out.println(febre);
             List<BiometricDataIssue> issues = new ArrayList<BiometricDataIssue>();
@@ -103,9 +113,9 @@ public class ConfigBean {
             prescriptionBean.create(hBrunaId, "2021-12-29 11:30", "2022-01-03 23:30",
                     "Prescrição 1", issues);
 
-            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2021-12-29 11:30", "more notes");
-            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2021-12-29 11:30", "more notes");
-            observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-21 11:30", "2021-12-23 18:30", "more notes");
+            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
+            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
+            observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }

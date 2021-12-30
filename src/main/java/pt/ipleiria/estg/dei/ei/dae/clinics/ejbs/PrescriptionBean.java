@@ -56,25 +56,15 @@ public class PrescriptionBean {
         if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
+        if (compareDates(start_date, end_date) != 2)
+            throw new MyIllegalArgumentException("Error when validating dates");
+
+        if (biometricDataIssues == null || biometricDataIssues.size() == 0)
+            throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
+
         Prescription prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
 
         healthcareProfessional.addPrescription(prescription);
-
-        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
-            biometricDataIssue.addPrescription(prescription);
-
-            TypedQuery<Patient> query = entityManager.createQuery("SELECT DISTINCT a.patient FROM BiometricData a WHERE a.biometricDataIssue.id = :issue_id AND a.created_at = ANY (SELECT MAX(b.created_at) FROM BiometricData b WHERE b.patient.id = a.patient.id AND b.biometric_data_type.id = a.biometric_data_type.id GROUP BY b.patient.id, b.biometric_data_type.id)", Patient.class);
-            query.setParameter("issue_id", biometricDataIssue.getId());
-            List<Patient> patientsTarget = query.getResultList();
-
-            if (patientsTarget.size() == 0)
-                throw new MyIllegalArgumentException("There are currently 0 people with that condition(s)");
-
-            for (Patient patientTarget : patientsTarget) {
-                patientTarget.addPrescription(prescription);
-                prescription.addPatient(patientTarget);
-            }
-        }
 
         entityManager.persist(prescription);
         entityManager.flush();
@@ -121,20 +111,22 @@ public class PrescriptionBean {
     public void update(long id, String start_date, String end_date, String notes,
                        List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
 
-        if (biometricDataIssues.isEmpty())
-            throw new MyIllegalArgumentException("At least 1 biometric data issue is mandatory");
-
         if (compareDates(start_date, end_date) != 2)
             throw new MyIllegalArgumentException("Error when validating dates");
 
-
         Prescription prescription = findPrescription(id);
+
+        boolean isGlobalPrescription = prescription.getBiometric_data_issue().size() > 0;
+        if (isGlobalPrescription) {
+            if (biometricDataIssues == null || biometricDataIssues.size() == 0)
+                throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
+        }
 
         prescription.setStart_date(start_date);
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
-        if (prescription.getBiometric_data_issue().size() > 0)
+        if (isGlobalPrescription)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {

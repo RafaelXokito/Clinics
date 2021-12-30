@@ -225,6 +225,7 @@ public abstract class Person {
         this.updated_at = new Date();
     }
 
+    @PreRemove
     public void remove() {
         this.deleted_at = new Date();
     }
