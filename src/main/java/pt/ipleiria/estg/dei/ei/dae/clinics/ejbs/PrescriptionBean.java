@@ -126,7 +126,7 @@ public class PrescriptionBean {
         prescription.setEnd_date(end_date);
         prescription.setNotes(notes);
 
-        if (isGlobalPrescription)
+        if (!isGlobalPrescription)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {

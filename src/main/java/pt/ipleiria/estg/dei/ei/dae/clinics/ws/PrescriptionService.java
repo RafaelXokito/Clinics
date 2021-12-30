@@ -87,6 +87,8 @@ public class PrescriptionService {
             throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
 
+        System.out.println(issues.size());
+
         prescriptionBean.update(id,
                 prescriptionDTO.getStart_date(),
                 prescriptionDTO.getEnd_date(),
