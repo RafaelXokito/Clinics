@@ -64,13 +64,14 @@ public class BiometricDataDTO {
         created_by = -1;
     }
 
-    public BiometricDataDTO(long id, String patientName, String healthNo, String biometricDataTypeName, double value, String valueUnit) {
+    public BiometricDataDTO(long id, String patientName, String healthNo, String biometricDataTypeName, double value, String valueUnit, Date createdAt) {
         this.id = id;
         this.patientName = patientName;
         this.healthNo = healthNo;
         this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.valueUnit = valueUnit;
+        this.created_at = createdAt;
     }
 
     public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, long createdBy, Date createdAt) {

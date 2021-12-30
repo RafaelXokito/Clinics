@@ -36,19 +36,16 @@ public class PrescriptionService {
     @GET
     @Path("/")
     public Response getAllPrescriptionsWS(@HeaderParam("Authorization") String auth) throws Exception {
-        // List<Prescription> prescriptions = prescriptionBean.getAllPrescriptions();
         Person person = personBean.getPersonByAuthToken(auth);
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(new EntitiesDTO<PrescriptionDTO>(toDTOs(((HealthcareProfessional) person).getPrescriptions()),
-                            "healthcareProfessionalName", "start_date", "end_date"))
+                    .entity(toDTOs(((HealthcareProfessional) person).getPrescriptions()))
                     .build();
         }
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<PrescriptionDTO>(toDTOs(((Patient) person).getPrescriptions()),
-                        "healthcareProfessionalName", "start_date", "end_date"))
+                .entity(toDTOs(((Patient) person).getPrescriptions()))
                 .build();
     }
 

@@ -29,8 +29,7 @@ public class BiometricDataIssueService {
     @Path("/")
     public Response getAllBiometricDataIssuesWS() {
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<BiometricDataIssueDTO>(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()),
-                        "name", "biometricDataTypeName"))
+                .entity(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()))
                 .build();
     }
 

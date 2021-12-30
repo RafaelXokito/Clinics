@@ -27,11 +27,8 @@ public class BiometricDataTypeService {
     @GET
     @Path("/")
     public Response getAllBiometricDataTypesWS() {
-        //List<BiometricDataType> biometricDataTypes = biometricDataTypeBean.getAllBiometricDataTypes();
-
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<BiometricDataTypeDTO>(toDTOAllBiometricDataTypes(biometricDataTypeBean.getAllBiometricDataTypes()),
-                        "name", "unit", "unit_name"))
+                .entity(toDTOAllBiometricDataTypes(biometricDataTypeBean.getAllBiometricDataTypes()))
                 .build();
     }
 

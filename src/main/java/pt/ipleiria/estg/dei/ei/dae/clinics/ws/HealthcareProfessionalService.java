@@ -36,11 +36,8 @@ public class HealthcareProfessionalService {
     @GET
     @Path("/")
     public Response getAllHealcareProfessionalsWS() {
-        //List<Doctor> doctors = doctorBean.getAllDoctors();
-
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<HealthcareProfessionalDTO>(toDTOAllHealthcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()),
-                        "email", "name", "gender", "specialty"))
+                .entity(toDTOAllHealthcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()))
                 .build();
     }
 

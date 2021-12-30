@@ -34,11 +34,8 @@ public class PatientService {
     @GET
     @Path("/")
     public Response getAllPatientsWS() {
-        // List<Patient> patients = patientBean.getAllPatients();
-
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<PatientDTO>(toDTOAllPatients(patientBean.getAllPatients()),
-                        "email", "name", "gender", "healthNo"))
+                .entity(toDTOAllPatients(patientBean.getAllPatients()))
                 .build();
     }
 

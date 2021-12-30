@@ -29,23 +29,9 @@ public class AdministratorService {
     @Path("/")
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<AdministratorDTO>(toDTOAllAdministrators(administratorBean.getAllAdministrators()),
-                        "email", "name", "gender"))
+                .entity(toDTOAllAdministrators(administratorBean.getAllAdministrators()))
                 .build();
     }
-    /*
-    {
-    columns: ["id", "name", "email", "gender"],
-    data: [
-        {
-            username: "rafael.pereira",
-            password: null,
-            ...
-            name: "Rafael Pereira"
-        }
-    ]
-    }
-     */
 
     private List<AdministratorDTO> toDTOAllAdministrators(List<Object[]> allAdministrators) {
         List<AdministratorDTO> administratorDTOList = new ArrayList<>();

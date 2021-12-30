@@ -10,6 +10,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
@@ -49,12 +50,8 @@ public class BiometricDataService {
     @GET
     @Path("/")
     public Response getAllBiometricDataWS() {
-        // List<BiometricData> biometricData = biometricDataBean.getAllBiometricData();
-
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<BiometricDataDTO>(
-                        toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()),
-                        "patientName", "healthNo", "biometricDataTypeName", "value", "valueUnit"))
+                .entity(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()))
                 .build();
     }
 
@@ -67,7 +64,10 @@ public class BiometricDataService {
                     obj[2].toString(),
                     obj[3].toString(),
                     Double.parseDouble(obj[4].toString()),
-                    obj[5].toString()));
+                    obj[5].toString(),
+                    (Date) obj[6]
+                )
+            );
         }
         return BiometricDataDTOList;
     }
@@ -86,14 +86,24 @@ public class BiometricDataService {
     @Path("/")
     public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth)
             throws Exception {
+        Person person = personBean.getPersonByAuthToken(auth);
+
+        long patientId;
+        if (person.getClass().getSimpleName().equals("Patient")) {
+            patientId = person.getId();
+        }
+        else {
+            patientId = biometricDataDTO.getPatientId();
+        }
+
         BiometricData createdBiometricData = biometricDataBean.create(
-                biometricDataDTO.getBiometricTypeId(),
-                biometricDataDTO.getValue(),
-                biometricDataDTO.getNotes(),
-                biometricDataDTO.getPatientId(),
-                personBean.getPersonByAuthToken(auth).getId(),
-                biometricDataDTO.getSource(),
-                biometricDataDTO.getCreated_at());
+            biometricDataDTO.getBiometricTypeId(),
+            biometricDataDTO.getValue(),
+            biometricDataDTO.getNotes(),
+            patientId,
+            person.getId(),
+            biometricDataDTO.getSource(),
+            biometricDataDTO.getCreated_at());
 
         BiometricData biometricData = biometricDataBean.findBiometricData(createdBiometricData.getId());
 

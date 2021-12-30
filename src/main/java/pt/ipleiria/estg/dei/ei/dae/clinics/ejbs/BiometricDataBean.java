@@ -18,7 +18,7 @@ public class BiometricDataBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit FROM BiometricData b ORDER BY b.id DESC");
+        Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit, b.created_at FROM BiometricData b ORDER BY b.id DESC");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
 

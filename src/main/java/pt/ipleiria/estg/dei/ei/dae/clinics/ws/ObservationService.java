@@ -3,11 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -15,12 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("observations") // relative url web path for this service
@@ -43,14 +34,12 @@ public class ObservationService {
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(new EntitiesDTO<ObservationDTO>(toDTOs(((HealthcareProfessional) person).getObservations()),
-                            "healthcareProfessionalName", "patientName", "created_at"))
+                    .entity(toDTOs(((HealthcareProfessional) person).getObservations()))
                     .build();
         }
 
         return Response.status(Response.Status.OK)
-                .entity(new EntitiesDTO<ObservationDTO>(toDTOs(((Patient) person).getObservations()),
-                        "healthcareProfessionalName", "patientName", "created_at"))
+                .entity(toDTOs(((Patient) person).getObservations()))
                 .build();
     }
 
