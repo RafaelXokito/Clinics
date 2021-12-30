@@ -66,22 +66,6 @@ public class PrescriptionBean {
 
         healthcareProfessional.addPrescription(prescription);
 
-        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
-            biometricDataIssue.addPrescription(prescription);
-
-            TypedQuery<Patient> query = entityManager.createQuery("SELECT DISTINCT a.patient FROM BiometricData a WHERE a.biometricDataIssue.id = :issue_id AND a.created_at = ANY (SELECT MAX(b.created_at) FROM BiometricData b WHERE b.patient.id = a.patient.id AND b.biometric_data_type.id = a.biometric_data_type.id GROUP BY b.patient.id, b.biometric_data_type.id)", Patient.class);
-            query.setParameter("issue_id", biometricDataIssue.getId());
-            List<Patient> patientsTarget = query.getResultList();
-
-            if (patientsTarget.size() == 0)
-                throw new MyIllegalArgumentException("There are currently 0 people with that condition(s)");
-
-            for (Patient patientTarget : patientsTarget) {
-                patientTarget.addPrescription(prescription);
-                prescription.addPatient(patientTarget);
-            }
-        }
-
         entityManager.persist(prescription);
         entityManager.flush();
 

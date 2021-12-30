@@ -40,7 +40,7 @@ public class AdministratorBean {
      */
     public Administrator findAdministrator(long id) throws MyEntityNotFoundException {
         Administrator administrator = entityManager.find(Administrator.class, id);
-        if (administrator == null)
+        if (administrator == null || administrator.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Administrator \"" + id + "\" does not exist");
         return administrator;
     }
