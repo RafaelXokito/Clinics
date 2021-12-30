@@ -42,6 +42,11 @@ public class PatientBean {
         return query.getResultList().size()>0 ? query.getSingleResult() : null;
     }
 
+    public Patient findPatientByHealthNo(long healthNo) {
+        TypedQuery<Patient> query = entityManager.createQuery("SELECT p FROM Patient p WHERE p.healthNo = '"+ healthNo+"'", Patient.class);
+        return query.getResultList().size()>0 ? query.getSingleResult() : null;
+    }
+
     /***
      * Creating a Patient by a Administrator
      *
@@ -108,4 +113,5 @@ public class PatientBean {
 
         patient.setPassword(newPassword);
     }
+
 }

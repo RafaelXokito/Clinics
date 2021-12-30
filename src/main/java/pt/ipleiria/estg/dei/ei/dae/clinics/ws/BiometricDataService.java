@@ -1,20 +1,31 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -31,6 +42,9 @@ public class BiometricDataService {
 
     @EJB
     private PersonBean personBean;
+
+    @EJB
+    private PatientBean patientBean;
 
     @GET
     @Path("/")
@@ -88,6 +102,45 @@ public class BiometricDataService {
                 .build();
     }
 
+    @POST
+    @Path("import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA) //TODO FAlta fazer as restrições deste service
+    public Response importFile(MultipartFormDataInput input, @HeaderParam("Authorization") String auth) throws Exception {
+        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        List<InputPart> inputParts = uploadForm.get("file");
+        for (InputPart inputPart : inputParts) {
+                MultivaluedMap<String, String> header = inputPart.getHeaders(); String filename = getFilename(header);
+                // convert the uploaded file to inputstream
+                InputStream inputStream = inputPart.getBody(InputStream.class, null);
+                byte[] bytes = IOUtils.toByteArray(inputStream);
+
+                String[] lines = new String(bytes).split("\\r?\\n");
+
+                List<Integer> failedRows = new ArrayList<>();
+                int successRows = 0;
+                //Skip first row
+                for (int i = 1; i < lines.length; i++) {
+                    String[] cols = lines[i].split(";");
+                    try {
+                        BiometricData createdBiometricData = biometricDataBean.create(
+                                Long.parseLong(cols[0]), //Biometric Data Type
+                                Double.parseDouble(cols[1]), //Value
+                                cols[2], //Notes
+                                patientBean.findPatientByHealthNo(Long.parseLong(cols[3])).getId(), //Patient Health Number
+                                personBean.getPersonByAuthToken(auth).getId(),
+                                cols[4], //Source
+                                Date.from(Instant.parse(cols[5]))); //Created At
+                        successRows++;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        failedRows.add(i);
+                    }
+                }
+                return Response.status(200).entity("Imported file, name : " + filename+"\nTotal success rows: "+successRows+"\nFailed rows: "+failedRows).build();
+        }
+        return null;
+    }
+
     @PUT
     @Path("{id}")
     public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
@@ -139,5 +192,14 @@ public class BiometricDataService {
                 biometricData.getSource(),
                 biometricData.getBiometricDataIssue() == null ? 0 : biometricData.getBiometricDataIssue().getId(),
                 biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName());
+    }
+
+    private String getFilename(MultivaluedMap<String, String> header) {
+        String[] contentDisposition = header.getFirst("Content-Disposition").split(";"); for (String filename : contentDisposition) {
+            if ((filename.trim().startsWith("filename"))) {
+                String[] name = filename.split("=");
+                String finalFileName = name[1].trim().replaceAll("\"", ""); return finalFileName;
+            } }
+        return "unknown";
     }
 }

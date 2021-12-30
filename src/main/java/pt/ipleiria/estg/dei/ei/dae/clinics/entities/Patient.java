@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "PATIENTS")
+@Table(name = "PATIENTS", uniqueConstraints = @UniqueConstraint(columnNames = {"healthNo"}))
 @NamedQueries({
         @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p ORDER BY p.id"),
 })
