@@ -42,7 +42,7 @@ public class ObservationDTO {
         this.documents = new ArrayList<>();
     }
 
-    public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at, boolean hasPrescription, long nDocuments) {
+    public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at, String notes, PrescriptionDTO prescription, long nDocuments) {
         this.id = id;
         this.healthcareProfessionalId = healthcareProfessionalId;
         this.healthcareProfessionalName = healthcareProfessionalName;
@@ -50,8 +50,9 @@ public class ObservationDTO {
         this.patientName = patientName;
         this.created_at = created_at;
         this.documents = new ArrayList<>();
-        this.hasPrescription = hasPrescription;
+        this.prescription = prescription;
         this.nDocuments = nDocuments;
+        this.notes = notes;
     }
 
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at) {

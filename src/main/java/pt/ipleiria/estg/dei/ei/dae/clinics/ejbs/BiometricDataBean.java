@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -8,6 +9,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +48,12 @@ public class BiometricDataBean {
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
     public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException {
+        //REQUIRED VALIDATION
+        if (source == null || source.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"source\" is required");
+        if (createdAt == null)
+            throw new MyIllegalArgumentException("Field \"created_at\" is required");
+
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
@@ -56,8 +66,12 @@ public class BiometricDataBean {
         if (person == null)
             throw new MyEntityNotFoundException("Person \"" + personId + "\" does not exist");
 
-        if (value < biometricDataType.getMin() || value > biometricDataType.getMax())
-            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
+        if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
+            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
+
+        //CHECK VALUES
+        if (!source.trim().equals("Exam") && !source.trim().equals("Sensor") && !source.trim().equals("Wearable"))
+            throw new MyIllegalArgumentException("Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
 
         BiometricDataIssue biometricDataIssue = null;
         for (BiometricDataIssue issue : biometricDataType.getIssues()) {
@@ -67,7 +81,37 @@ public class BiometricDataBean {
             }
         }
 
-        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes, patient, person, source, biometricDataIssue, createdAt);
+        //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+            for (Prescription prescription : issue.getPrescriptions()) {
+                LocalDateTime startDate = prescription.getStart_date();
+                LocalDateTime endDate = prescription.getEnd_date();
+                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
+
+                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
+                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
+                    patient.removePrescription(prescription);
+                }
+            }
+        }
+
+        if (biometricDataIssue != null) {
+            //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+            for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+
+                LocalDateTime startDate = prescription.getStart_date();
+                LocalDateTime endDate = prescription.getEnd_date();
+                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
+
+                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
+                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
+                    //ADD PRESCRIPTION TO PATIENT
+                    patient.addPrescription(prescription);
+                }
+            }
+        }
+
+        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person, source.trim(), biometricDataIssue, createdAt);
         entityManager.persist(newBiometricData);
         entityManager.flush();
 
@@ -101,7 +145,7 @@ public class BiometricDataBean {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
 
         if (personId != biometricData.getCreated_by().getId())
-            throw new MyIllegalArgumentException("BiometricData " + id + " was not created by you");
+            throw new MyIllegalArgumentException("Biometric Data with id " + id + " does not belongs to you");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
         if (biometricDataType == null)
@@ -111,8 +155,12 @@ public class BiometricDataBean {
         if (patient == null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
-        if (value < biometricDataType.getMin() || value > biometricDataType.getMax())
-            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
+        if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
+            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
+
+        //CHECK VALUES
+        if (!source.trim().equals("Exam") && !source.trim().equals("Sensor") && !source.trim().equals("Wearable"))
+            throw new MyIllegalArgumentException("Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
 
         biometricData.setBiometric_data_type(biometricDataType);
         biometricData.setValue(value);

@@ -8,14 +8,15 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
@@ -26,8 +27,6 @@ import java.util.stream.Collectors;
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class BiometricDataService {
-    private static final Logger log =
-            Logger.getLogger(BiometricDataService.class.getName());
 
     @EJB
     private BiometricDataBean biometricDataBean;
@@ -38,11 +37,22 @@ public class BiometricDataService {
     @EJB
     private PatientBean patientBean;
 
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllBiometricDataWS() {
+    public Response getAllBiometricDataWS(@HeaderParam("Authorization") String auth) throws Exception {
+        Person person = personBean.getPersonByAuthToken(auth);
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            return Response.status(Response.Status.OK)
+                    .entity(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()))
+                    .build();
+        }
+
         return Response.status(Response.Status.OK)
-                .entity(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()))
+                .entity(biometricDataToDTOs(((Patient) person).getBiometric_data()))
                 .build();
     }
 
@@ -171,6 +181,21 @@ public class BiometricDataService {
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
+    }
+
+    private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
+        return biometricData.stream().map(this::biometricDataToDTO).collect(Collectors.toList());
+    }
+
+    private BiometricDataDTO biometricDataToDTO(BiometricData biometricData) {
+        return new BiometricDataDTO(
+                biometricData.getId(),
+                biometricData.getPatient().getName(),
+                String.valueOf(biometricData.getPatient().getHealthNo()),
+                biometricData.getBiometric_data_type().getName(),
+                biometricData.getValue(),
+                biometricData.getBiometric_data_type().getUnit_name(),
+                biometricData.getCreated_at());
     }
 
     private List<BiometricDataDTO> toDTOs(List<BiometricData> biometricData) {
