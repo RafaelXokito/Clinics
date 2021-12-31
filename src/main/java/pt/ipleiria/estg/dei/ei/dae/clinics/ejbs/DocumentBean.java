@@ -15,12 +15,17 @@ public class DocumentBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Document create(long observation_id, String filepath, String filename) throws MyEntityNotFoundException {
+    public Document create(long observation_id, String filepath, String filename) throws MyEntityNotFoundException, MyIllegalArgumentException {
         Observation observation = entityManager.find(Observation.class, observation_id);
         if (observation == null)
-            throw new MyEntityNotFoundException("Observation \"" + observation + "\" does not exist");
+            throw new MyEntityNotFoundException("Observation \"" + observation_id + "\" does not exist");
 
-        Document newDocument = new Document(observation, filename, filepath);
+        if (filepath == null || filepath.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"filepath\" is required");
+        if (filename == null || filename.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"filepath\" is required");
+
+        Document newDocument = new Document(observation, filename.trim(), filepath.trim());
 
         observation.addDocument(newDocument);
 
@@ -30,8 +35,12 @@ public class DocumentBean {
         return newDocument;
     }
 
-    public Document findDocument(long id){
-        return entityManager.find(Document.class, id);
+    public Document findDocument(long id) throws MyEntityNotFoundException {
+        Document document = entityManager.find(Document.class, id);
+        if (document == null)
+            throw new MyEntityNotFoundException("Document with id " + id + " was not found");
+
+        return document;
     }
 
     public List<Document> getObservationDocuments(long id){
@@ -39,8 +48,11 @@ public class DocumentBean {
     }
 
 
-    public boolean deleteDocument(Long observation_id, Document document) throws MyIllegalArgumentException {
-        Observation observation = entityManager.find(Observation.class, observation_id);
+    public boolean deleteDocument(Document document) throws MyIllegalArgumentException, MyEntityNotFoundException {
+        long observationId = document.getObservation().getId();
+        Observation observation = entityManager.find(Observation.class, observationId);
+        if (observation == null)
+            throw new MyEntityNotFoundException("Observation \"" + observationId + "\" does not exist");
 
         if (!entityManager.contains(document)) {
             document = entityManager.merge(document);

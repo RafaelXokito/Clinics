@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name="Biometric_Data")
+@Table(name="Biometric_Datas")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricData",

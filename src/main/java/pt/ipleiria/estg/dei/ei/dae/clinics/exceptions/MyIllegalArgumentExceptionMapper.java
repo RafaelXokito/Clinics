@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 @Provider
 public class MyIllegalArgumentExceptionMapper implements ExceptionMapper<MyIllegalArgumentException> {
-    private static final Logger logger = Logger.getLogger("exceptions.MyEntityNotFoundExceptionMapper");
+    private static final Logger logger = Logger.getLogger("exceptions.MyIllegalArgumentExceptionMapper");
     @Override
     public Response toResponse(MyIllegalArgumentException e) {
         String errorMsg = e.getMessage();

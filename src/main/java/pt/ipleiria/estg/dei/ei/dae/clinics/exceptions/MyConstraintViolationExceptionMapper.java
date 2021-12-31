@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 @Provider
 public class MyConstraintViolationExceptionMapper implements ExceptionMapper<MyConstraintViolationException> {
     private static final Logger logger =
-            Logger.getLogger("exceptions.MyEntityExistsExceptionMapper");
+            Logger.getLogger("exceptions.MyConstraintViolationExceptionMapper");
     @Override
     public Response toResponse(MyConstraintViolationException e) {
         String errorMsg = e.getMessage();

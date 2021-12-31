@@ -8,7 +8,6 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 
@@ -16,13 +15,11 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@Path("biometricdata") // relative url web path for this service
+@Path("biometricdatas") // relative url web path for this service
 @Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
@@ -85,12 +82,11 @@ public class BiometricDataService {
 
     @POST
     @Path("/")
-    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth)
-            throws Exception {
+    public Response createBiometricDataWS(BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
         Person person = personBean.getPersonByAuthToken(auth);
 
         long patientId;
-        if (person.getClass().getSimpleName().equals("Patient")) {
+        if (securityContext.isUserInRole("Patient")) {
             patientId = person.getId();
         }
         else {
@@ -115,7 +111,7 @@ public class BiometricDataService {
 
     @POST
     @Path("import")
-    @Consumes(MediaType.MULTIPART_FORM_DATA) //TODO FAlta fazer as restrições deste service
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response importFile(MultipartFormDataInput input, @HeaderParam("Authorization") String auth) throws Exception {
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
@@ -133,21 +129,26 @@ public class BiometricDataService {
                 for (int i = 1; i < lines.length; i++) {
                     String[] cols = lines[i].split(";");
                     try {
-                        BiometricData createdBiometricData = biometricDataBean.create(
-                                Long.parseLong(cols[0]), //Biometric Data Type
-                                Double.parseDouble(cols[1]), //Value
-                                cols[2], //Notes
-                                patientBean.findPatientByHealthNo(Long.parseLong(cols[3])).getId(), //Patient Health Number
-                                personBean.getPersonByAuthToken(auth).getId(),
-                                cols[4], //Source
-                                Date.from(Instant.parse(cols[5]))); //Created At
+                        Patient patient = patientBean.findPatientByHealthNo(Long.parseLong(cols[3]));
+                        Person person = personBean.getPersonByAuthToken(auth);
+                        biometricDataBean.create(
+                            Long.parseLong(cols[0]), //Biometric Data Type
+                            Double.parseDouble(cols[1]), //Value
+                            cols[2], //Notes
+                            patient == null ? 0 : patient.getId(),
+                            person == null ? 0 : person.getId(),
+                            cols[4], //Source
+                            Date.from(Instant.parse(cols[5])) //Created At
+                        );
                         successRows++;
-                    }catch (Exception e){
+                    }
+                    catch (Exception e){
                         e.printStackTrace();
                         failedRows.add(i);
                     }
                 }
-                return Response.status(200).entity("Imported file, name : " + filename+"\nTotal success rows: "+successRows+"\nFailed rows: "+failedRows).build();
+                return Response.ok("Imported file, name : " + filename+"\nTotal success rows: "+successRows+"\nFailed rows: "+failedRows)
+                        .build();
         }
         return null;
     }
@@ -174,8 +175,8 @@ public class BiometricDataService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteBiometricDataWS(@PathParam("id") long id) throws Exception {
-        if (biometricDataBean.delete(id))
+    public Response deleteBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (biometricDataBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
             return Response.status(Response.Status.OK)
                     .build();
 

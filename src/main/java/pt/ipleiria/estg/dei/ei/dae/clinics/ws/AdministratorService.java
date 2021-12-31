@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.AdministratorDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.NewPasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.AdministratorBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 
 import javax.ejb.EJB;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 public class AdministratorService {
     @EJB
     private AdministratorBean administratorBean;
+
+    @EJB
+    private PersonBean personBean;
 
     @GET
     @Path("/")
@@ -55,13 +59,13 @@ public class AdministratorService {
     @POST
     @Path("/")
     public Response createAdministratorWS(AdministratorDTO administratorDTO) throws Exception {
-        administratorBean.create(
+        long id = administratorBean.create(
             administratorDTO.getEmail(),
             administratorDTO.getPassword(),
             administratorDTO.getName(),
             administratorDTO.getGender());
 
-        Administrator administrator = administratorBean.findAdministrator(administratorDTO.getEmail());
+        Administrator administrator = administratorBean.findAdministrator(id);
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(administrator))
@@ -72,10 +76,10 @@ public class AdministratorService {
     @Path("{id}")
     public Response updateAdministratorWS(@PathParam("id") long id,AdministratorDTO administratorDTO) throws Exception {
         administratorBean.update(
-                id,
-                administratorDTO.getEmail(),
-                administratorDTO.getName(),
-                administratorDTO.getGender());
+            id,
+            administratorDTO.getEmail(),
+            administratorDTO.getName(),
+            administratorDTO.getGender());
 
         Administrator administrator = administratorBean.findAdministrator(id);
 
@@ -86,11 +90,12 @@ public class AdministratorService {
 
     @PATCH
     @Path("{id}")
-    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
+    public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
         administratorBean.updatePassword(
-                id,
-                newPasswordDTO.getOldPassword(),
-                newPasswordDTO.getNewPassword());
+            id,
+            newPasswordDTO.getOldPassword(),
+            newPasswordDTO.getNewPassword(),
+            personBean.getPersonByAuthToken(auth).getId());
 
         return Response.status(Response.Status.OK)
                 .build();

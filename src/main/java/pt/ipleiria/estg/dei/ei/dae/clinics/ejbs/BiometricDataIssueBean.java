@@ -43,11 +43,22 @@ public class BiometricDataIssueBean {
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometric_data_type + "\" does not exist");
 
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+
+        if (max < min)
+            throw new MyIllegalArgumentException("Field \"max\" must be greater or equal to the field \"min\"");
+
         if (min < biometricDataType.getMin() || max > biometricDataType.getMax())
             //min or max out of bounds for limits in Biometric_Data_Type
-            throw new MyIllegalArgumentException("Both min \"" + min + "\"  and max \"" + max + "\" must be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "]");
+            throw new MyIllegalArgumentException("Both min \"" + min + "\"  and max \"" + max + "\" must be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
 
-        BiometricDataIssue newBiometricDataIssue = new BiometricDataIssue(name, min, max, biometricDataType);
+        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+            if (min >= issue.getMin() && max < issue.getMax())
+                throw new MyIllegalArgumentException("Interval [" + min + ", " + max + "[ collide with another biometric data issue");
+        }
+
+        BiometricDataIssue newBiometricDataIssue = new BiometricDataIssue(name.trim(), min, max, biometricDataType);
         biometricDataType.addIssue(newBiometricDataIssue);
 
         entityManager.persist(newBiometricDataIssue);
@@ -76,17 +87,34 @@ public class BiometricDataIssueBean {
      * @param max to update Biometric Data Issue
      * @return Biometric Data
      */
-    public BiometricDataIssue update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException {
+    public BiometricDataIssue update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+
+        if (max < min)
+            throw new MyIllegalArgumentException("Field \"max\" must be greater or equal to the field \"min\"");
+
+        if (min < biometricDataType.getMin() || max > biometricDataType.getMax())
+            //min or max out of bounds for limits in Biometric_Data_Type
+            throw new MyIllegalArgumentException("Both min \"" + min + "\"  and max \"" + max + "\" must be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
+
+        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+            if (issue.getId() == id) continue; //SKIP THE ISSUE TO UPDATE
+
+            if (min >= issue.getMin() && max < issue.getMax())
+                throw new MyIllegalArgumentException("Interval [" + min + ", " + max + "[ collide with another biometric data issue");
+        }
+
         biometricDataIssue.getBiometric_data_type().removeIssue(biometricDataIssue);
         biometricDataIssue.setBiometric_data_type(biometricDataType);
         biometricDataType.addIssue(biometricDataIssue);
-        biometricDataIssue.setName(name);
+        biometricDataIssue.setName(name.trim());
         biometricDataIssue.setMin(min);
         biometricDataIssue.setMax(max);
 

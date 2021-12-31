@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="Biometric_Data_Issue")
+@Table(name="Biometric_Data_Issues")
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataIssues",
