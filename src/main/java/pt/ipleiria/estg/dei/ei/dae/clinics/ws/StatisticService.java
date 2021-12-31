@@ -76,12 +76,9 @@ public class StatisticService {
                 prescrições ativas (Entre datas da prescrição coincida com a atual)
                 ultima biometric data
                  */
-                System.out.println(((Patient)person).getHealthNo());
                 List<BiometricData> biometricData = ((Patient)person).getBiometric_data();
-                System.out.println(biometricData);
                 BiometricData lastBiometricData = biometricData.get(biometricData.size()-1);
                 List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
-                System.out.println(prescriptions);
                 return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
             }
         }
