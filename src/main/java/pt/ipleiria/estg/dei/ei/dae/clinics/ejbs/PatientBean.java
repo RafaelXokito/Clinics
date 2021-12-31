@@ -2,7 +2,6 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -22,11 +21,9 @@ public class PatientBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllPatients() {
-        Query query = entityManager.createQuery("SELECT p.id, p.email, p.name, p.gender, p.healthNo  FROM Patient p");
+        Query query = entityManager.createQuery("SELECT p.id, p.email, p.name, p.gender, p.healthNo  FROM Patient p ORDER BY p.id DESC");
         List<Object[]> patientList = query.getResultList();
         return patientList;
-        // return entityManager.createNamedQuery("getAllPatients",
-        // Patient.class).getResultList();
     }
 
     public List<Patient> getAllPatientsClass() {

@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -17,10 +16,9 @@ public class HealthcareProfessionalBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllHealthcareProfessionals() {
-        Query query = entityManager.createQuery("SELECT d.id, d.email, d.name, d.gender, d.specialty  FROM HealthcareProfessional d");
+        Query query = entityManager.createQuery("SELECT d.id, d.email, d.name, d.gender, d.specialty  FROM HealthcareProfessional d ORDER BY d.id DESC");
         List<Object[]> healthcareProfessionalList = query.getResultList();
         return healthcareProfessionalList;
-        //return entityManager.createNamedQuery("getAllDoctors", Doctor.class).getResultList();
     }
 
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {

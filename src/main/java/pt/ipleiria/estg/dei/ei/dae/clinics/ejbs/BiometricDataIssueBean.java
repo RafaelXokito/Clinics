@@ -19,7 +19,6 @@ public class BiometricDataIssueBean {
         Query query = entityManager.createQuery("SELECT b.id, b.name, b.biometric_data_type.name FROM BiometricDataIssue b ORDER BY b.id DESC");
         List<Object[]> biometricDataIssueList = query.getResultList();
         return biometricDataIssueList;
-        //return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).getResultList();
     }
 
     public BiometricDataIssue findBiometricDataIssue(long id) throws MyEntityNotFoundException {
@@ -76,9 +75,8 @@ public class BiometricDataIssueBean {
      * @param min to update Biometric Data Issue
      * @param max to update Biometric Data Issue
      * @return Biometric Data
-     * @throw TODO - Acrescentar os throws e a descrição
      */
-    public void update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException {
+    public BiometricDataIssue update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
@@ -91,5 +89,7 @@ public class BiometricDataIssueBean {
         biometricDataIssue.setName(name);
         biometricDataIssue.setMin(min);
         biometricDataIssue.setMax(max);
+
+        return biometricDataIssue;
     }
 }

@@ -7,13 +7,10 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -106,7 +103,6 @@ public class PrescriptionBean {
      * @param end_date            to update Biometric Data Issue
      * @param notes               to update Biometric Data Issue
      * @param biometricDataIssues to update Biometric Data Issue
-     * @throw TODO - Acrescentar os throws e a descrição
      */
     public void update(long id, String start_date, String end_date, String notes,
                        List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {

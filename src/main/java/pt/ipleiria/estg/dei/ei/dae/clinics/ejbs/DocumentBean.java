@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;

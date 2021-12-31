@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
@@ -17,10 +16,9 @@ public class BiometricDataTypeBean {
     private EntityManager entityManager;
 
     public List<Object[]> getAllBiometricDataTypes() {
-        Query query = entityManager.createQuery("SELECT b.id, b.name, b.unit, b.unit_name, b.min, b.max FROM BiometricDataType b");
+        Query query = entityManager.createQuery("SELECT b.id, b.name, b.unit, b.unit_name, b.min, b.max FROM BiometricDataType b ORDER BY b.id DESC");
         List<Object[]> biometricDataTypeList = query.getResultList();
         return biometricDataTypeList;
-        //return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();
     }
 
     public BiometricDataType findBiometricDataType(long id) throws MyEntityNotFoundException {
@@ -68,9 +66,8 @@ public class BiometricDataTypeBean {
      * @param unit to update Biometric Data Issue
      * @param unit_name to update Biometric Data Issue
      * @return Biometric Data
-     * @throw TODO - Acrescentar os throws e a descrição
      */
-    public void update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException {
+    public BiometricDataType update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException {
         BiometricDataType biometricDataType = findBiometricDataType(id);
 
         biometricDataType.setName(name);
@@ -78,5 +75,7 @@ public class BiometricDataTypeBean {
         biometricDataType.setMax(max);
         biometricDataType.setUnit(unit);
         biometricDataType.setUnit(unit_name);
+
+        return biometricDataType;
     }
 }

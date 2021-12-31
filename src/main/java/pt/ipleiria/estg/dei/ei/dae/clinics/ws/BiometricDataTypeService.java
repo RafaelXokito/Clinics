@@ -2,11 +2,9 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataTypeDTO;
-import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.EntitiesDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataTypeBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
