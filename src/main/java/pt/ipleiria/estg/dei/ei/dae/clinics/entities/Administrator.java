@@ -12,6 +12,10 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllAdministrators",
+                query = "SELECT a FROM Administrator a WHERE a.deleted_at IS NULL ORDER BY a.id"
+        ),
+        @NamedQuery(
+                name = "getAllAdministratorsWithTrashed",
                 query = "SELECT a FROM Administrator a ORDER BY a.id"
         )
 })

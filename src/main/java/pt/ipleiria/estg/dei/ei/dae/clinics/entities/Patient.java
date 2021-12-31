@@ -11,7 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "PATIENTS", uniqueConstraints = @UniqueConstraint(columnNames = {"healthNo"}))
 @NamedQueries({
-        @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p ORDER BY p.id"),
+        @NamedQuery(name = "getAllPatients", query = "SELECT p FROM Patient p WHERE p.deleted_at IS NULL ORDER BY p.id"),
+        @NamedQuery(name = "getAllPatientsWithTrashed", query = "SELECT p FROM Patient p ORDER BY p.id"),
 })
 public class Patient extends Person implements Serializable {
 

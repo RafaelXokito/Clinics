@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -22,19 +23,15 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllPersons",
-                query = "SELECT p FROM Person p WHERE p.deleted_at != NULL ORDER BY p.id"
+                query = "SELECT p FROM Person p ORDER BY p.id"
         ),
         @NamedQuery(
                 name = "getPersonByEmail",
                 query = "SELECT p FROM Person p WHERE p.deleted_at != NULL and p.email = :email"
         )
 })
-@NamedNativeQuery(
-        name = "getAllPersons2",
-        query = "SELECT p.id, p.email, p.name, p.gender FROM Person",
-        resultClass = Person.class
-)
 @Inheritance(strategy = InheritanceType.JOINED)
+@AdditionalCriteria("this.deleted_at is null")
 public abstract class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -215,6 +212,10 @@ public abstract class Person {
         this.deleted_at = deleted_at;
     }
 
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
+    }
+
     @PrePersist
     protected void onCreate() {
         this.created_at = new Date();
@@ -226,7 +227,7 @@ public abstract class Person {
     }
 
     @PreRemove
-    public void onRemove() {
+    protected void onRemove() {
         this.deleted_at = new Date();
     }
 

@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -13,6 +14,7 @@ import javax.persistence.TypedQuery;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.List;
 
 @Stateless
 public class PersonBean {
@@ -27,7 +29,12 @@ public class PersonBean {
     }
 
     public Person findPerson(long id) {
-        return em.find(Person.class, id);
+        Person person = em.find(Person.class, id);
+        return person.getDeleted_at() == null ? person : null;
+    }
+
+    public List<Person> getAllPersons() {
+        return em.createNamedQuery("getAllPersons", Person.class).getResultList();
     }
 
     public Person authenticate(final String email, final String password) throws Exception {

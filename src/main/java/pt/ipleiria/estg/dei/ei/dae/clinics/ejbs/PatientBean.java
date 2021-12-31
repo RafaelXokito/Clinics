@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -30,9 +31,13 @@ public class PatientBean {
         return entityManager.createNamedQuery("getAllPatients", Patient.class).getResultList();
     }
 
+    public List<Patient> getAllPatientsClassWithTrashed() {
+        return entityManager.createNamedQuery("getAllPatientsWithTrashed", Patient.class).getResultList();
+    }
+
     public Patient findPatient(long id) throws MyEntityNotFoundException {
         Patient patient = entityManager.find(Patient.class, id);
-        if (patient == null)
+        if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + id + "\" does not exist");
 
         return patient;
@@ -65,7 +70,7 @@ public class PatientBean {
             throw new MyEntityExistsException("Patient \"" + email + "\" already exist");
 
         Employee employee = entityManager.find(Employee.class, created_byId);
-        if (employee == null)
+        if (employee == null || employee.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Employee \"" + created_byId + "\" don't exist");
 
         Patient newPatient = new Patient(email, password, name, gender, healthNo, employee);
@@ -82,8 +87,8 @@ public class PatientBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
-        entityManager.remove(patient); //TODO soft delete
-        return entityManager.find(Patient.class, id) == null;
+        patient.setDeleted_at();
+        return true;
     }
 
     /***
@@ -113,6 +118,20 @@ public class PatientBean {
             throw new MyIllegalArgumentException("Password does not match with the old one");
 
         patient.setPassword(newPassword);
+    }
+
+    /***
+     * Restore a Patient by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Patient
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        Patient patient = entityManager.find(Patient.class, id);
+        if (patient == null)
+            throw new MyEntityNotFoundException("Patient \"" + id + "\" does not exist");
+        if (patient.getDeleted_at() == null)
+            throw new MyEntityExistsException("Patient \"" + id + "\" already exist");
+        patient.setDeleted_at(null);
+        return true;
     }
 
 }

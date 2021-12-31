@@ -25,7 +25,7 @@ public class AdministratorService {
     @Path("/")
     public Response getAllAdministratorsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOAllAdministrators(administratorBean.getAllAdministrators()))
+                .entity(toDTOs(administratorBean.getAllAdministratorsClassWithTrashed()))
                 .build();
     }
 
@@ -100,6 +100,17 @@ public class AdministratorService {
     @Path("{id}")
     public Response deleteAdministratorWS(@PathParam("id") long id) throws Exception {
         if (administratorBean.delete(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
+
+    @POST
+    @Path("{id}/restore")
+    public Response restoreAdministratorWS(@PathParam("id") long id) throws Exception {
+        if (administratorBean.restore(id))
             return Response.status(Response.Status.OK)
                     .build();
 

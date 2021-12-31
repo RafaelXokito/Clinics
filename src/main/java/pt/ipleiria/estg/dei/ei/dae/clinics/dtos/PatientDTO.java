@@ -45,12 +45,25 @@ public class PatientDTO {
         observations = new ArrayList<>();
     }
 
+    public PatientDTO(long id, String email, String name, String gender, int healthNo, Date deleted_at) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.healthNo = healthNo;
+        this.deleted_at = deleted_at;
+        biometricDatas = new ArrayList<>();
+        observations = new ArrayList<>();
+    }
+
     public PatientDTO(long id, String name) {
         this.id = id;
         this.name = name;
         biometricDatas = new ArrayList<>();
         observations = new ArrayList<>();
     }
+
+
 
     public PatientDTO(long id, String email, String name, String gender, int healthNo, long created_by,
                       List<BiometricDataDTO> biometricDatas, List<ObservationDTO> observations) {
@@ -63,6 +76,8 @@ public class PatientDTO {
         this.biometricDatas = biometricDatas;
         this.observations = observations;
     }
+
+
 
     public PatientDTO(long id, String email, String name, String gender, Date created_at, Date updated_at,
             Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,

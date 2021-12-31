@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Date;
                 query = "SELECT bioData FROM BiometricData bioData ORDER BY bioData.id"
         )
 })
+@AdditionalCriteria("this.deleted_at is null")
 public class BiometricData implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,8 +49,13 @@ public class BiometricData implements Serializable {
     @ManyToOne
     private Person created_by;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleted_at;
+
     @NotNull
     private String source;
+
+
 
     public BiometricData(BiometricDataType biometric_data_type, double value, String notes, Patient patient, Person person, String source, BiometricDataIssue biometricDataIssue, Date created_at) {
         this.biometric_data_type = biometric_data_type;
@@ -130,5 +137,13 @@ public class BiometricData implements Serializable {
 
     public void setBiometricDataIssue(BiometricDataIssue biometricDataIssue) {
         this.biometricDataIssue = biometricDataIssue;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
     }
 }

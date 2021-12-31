@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.validation.constraints.Email;
 import java.util.List;
 
 @Stateless
@@ -23,13 +22,25 @@ public class AdministratorBean {
      * @return a list of All Administrators
      */
     public List<Object[]> getAllAdministrators() {
-        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender  FROM Administrator a ORDER BY a.id DESC");
+        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender, a.deleted_at  FROM Administrator a ORDER BY a.id DESC");
         List<Object[]> administratorList = query.getResultList();
         return administratorList;
     }
 
+    /***
+     * Execute Administrator query getAllAdministrators getting all Administrators Class
+     * @return a list of All Administrators
+     */
     public List<Administrator> getAllAdministratorsClass() {
         return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
+    }
+
+    /***
+     * Execute Administrator query getAllAdministrators getting all Administrators Class
+     * @return a list of All Administrators
+     */
+    public List<Administrator> getAllAdministratorsClassWithTrashed() {
+        return entityManager.createNamedQuery("getAllAdministratorsWithTrashed", Administrator.class).getResultList();
     }
 
     /***
@@ -84,6 +95,7 @@ public class AdministratorBean {
             throw new IllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
 
         Administrator newAdministrator = new Administrator(email.trim(), password.trim(), name.trim(), gender.trim());
+        //personRepository.save(newAdministrator);
         entityManager.persist(newAdministrator);
         entityManager.flush();
         return newAdministrator.getId();
@@ -95,8 +107,10 @@ public class AdministratorBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
-        entityManager.remove(administrator);
-        return entityManager.find(Administrator.class, id) == null;
+        administrator.setDeleted_at();
+        return true;
+        //entityManager.remove(administrator);
+        //return entityManager.find(Administrator.class, id) == null;
     }
 
     /***
@@ -127,6 +141,13 @@ public class AdministratorBean {
         administrator.setGender(gender);
     }
 
+    /***
+     * Update a Administrator password by given @Id:username
+     * @param id @Id to find the proposal update Administrator
+     * @param oldPassword to update Administrator
+     * @param newPassword to update Administrator
+     * @throws MyEntityNotFoundException
+     */
     public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
 
@@ -146,5 +167,19 @@ public class AdministratorBean {
             throw new IllegalArgumentException("Field \"oldPassword\" does not match with the current password");
 
         administrator.setPassword(newPassword.trim());
+    }
+
+    /***
+     * Restore a Administrator by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Administrator
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        Administrator administrator = entityManager.find(Administrator.class, id);
+        if (administrator == null)
+            throw new MyEntityNotFoundException("Administrator \"" + id + "\" does not exist");
+        if (administrator.getDeleted_at() == null)
+            throw new MyEntityExistsException("Administrator \"" + id + "\" already exist");
+        administrator.setDeleted_at(null);
+        return true;
     }
 }

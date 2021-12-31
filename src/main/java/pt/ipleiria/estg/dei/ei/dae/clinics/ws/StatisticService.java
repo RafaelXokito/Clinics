@@ -49,10 +49,10 @@ public class StatisticService {
             if (securityContext.isUserInRole("Administrator")) {
                 /*
                 - Admin
-                numero total de administradores
-                numero total de healthcare professionals
-                numero total de pacientes
-                numero de biometric data types
+                numero total de administradores NOT DELETED
+                numero total de healthcare professionals NOT DELETED
+                numero total de pacientes NOT DELETED
+                numero de biometric data types NOT DELETED
                  */
                 long totalAdmin = administratorBean.getAllAdministratorsClass().size();
                 long totalHealthcareProfessionals = healthcareProfessionalBean.getAllHealthcareProfessionalsClass().size();

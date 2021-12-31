@@ -42,6 +42,9 @@ public class ConfigBean {
     @EJB
     ObservationBean observationBean;
 
+    @EJB
+    private PersonBean personBean;
+
     // Pay attention to the correct import: import java.util.logging.Logger;
     private static final Logger logger = Logger.getLogger("ejbs.ConfigBean");
 
@@ -52,6 +55,7 @@ public class ConfigBean {
 
             System.out.println("Creating Some Administrators");
             long aRafaelId = administratorBean.create("2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
+
             long aGasparId = administratorBean.create("2191267@my.ipleiria.pt", "1234", "Gaspar Mendes Pererira","Male");
             long aLeitaoId = administratorBean.create("2191268@my.ipleiria.pt", "1234", "Leitão Mendes Pererira","Male");
 
@@ -115,6 +119,9 @@ public class ConfigBean {
             observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
             observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
             observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
+
+            administratorBean.delete(aGasparId);
+            System.out.println(personBean.getAllPersons().size());
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }

@@ -51,7 +51,7 @@ public class PrescriptionBean {
             List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
 
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
-        if (healthcareProfessional == null)
+        if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
         if (compareDates(start_date, end_date) != 2)

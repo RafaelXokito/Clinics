@@ -1,6 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,7 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "HEALTHCARE_PROFESSIONAL")
 @NamedQueries({
-        @NamedQuery(name = "getAllDoctors", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
+        @NamedQuery(name = "getAllHealthcareProfessionals", query = "SELECT d FROM HealthcareProfessional d WHERE d.deleted_at IS NULL ORDER BY d.id"),
+        @NamedQuery(name = "getAllHealthcareProfessionalsWithTrashed", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
 })
 public class HealthcareProfessional extends Employee implements Serializable {
     @NotNull
@@ -131,4 +134,5 @@ public class HealthcareProfessional extends Employee implements Serializable {
 
         patients.remove(patient);
     }
+
 }

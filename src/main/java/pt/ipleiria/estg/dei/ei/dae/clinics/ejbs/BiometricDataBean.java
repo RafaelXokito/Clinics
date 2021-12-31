@@ -59,11 +59,11 @@ public class BiometricDataBean {
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);
-        if (patient == null)
+        if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
         Person person = entityManager.find(Person.class, personId);
-        if (person == null)
+        if (person == null || person.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Person \"" + personId + "\" does not exist");
 
         if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
@@ -125,8 +125,8 @@ public class BiometricDataBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = findBiometricData(id);
-        entityManager.remove(biometricData);
-        return entityManager.find(BiometricData.class, id) == null;
+        biometricData.setDeleted_at();
+        return true;
     }
 
     /***
@@ -153,7 +153,7 @@ public class BiometricDataBean {
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);
-        if (patient == null)
+        if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
         if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())

@@ -25,11 +25,11 @@ public class ObservationBean {
 
     public long create(long healthcareProfessionalId, long patientId, String notes, String start_date, String end_date, String notesPrescription) throws MyEntityNotFoundException, MyEntityExistsException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
-        if (healthcareProfessional == null)
+        if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);
-        if (patient == null)
+        if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
         Observation newObservation = new Observation(healthcareProfessional, patient, notes);
@@ -68,13 +68,13 @@ public class ObservationBean {
         Observation observation = findObservation(id);
 
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, observation.getHealthcareProfessional().getId());
-        if (healthcareProfessional == null)
+        if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + observation.getHealthcareProfessional().getId() + "\" does not exist");
 
         healthcareProfessional.removeObservation(observation);
 
         Patient patient = entityManager.find(Patient.class, observation.getPatient().getId());
-        if (patient == null)
+        if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + observation.getPatient().getId() + "\" does not exist");
 
         patient.removeObservation(observation);

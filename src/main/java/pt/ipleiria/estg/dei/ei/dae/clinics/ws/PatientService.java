@@ -35,7 +35,7 @@ public class PatientService {
     @Path("/")
     public Response getAllPatientsWS() {
         return Response.status(Response.Status.OK)
-                .entity(toDTOAllPatients(patientBean.getAllPatients()))
+                .entity(toDTOsSimple(patientBean.getAllPatientsClassWithTrashed()))
                 .build();
     }
 
@@ -127,6 +127,17 @@ public class PatientService {
                 .build();
     }
 
+    @POST
+    @Path("{id}/restore")
+    public Response restorePatientWS(@PathParam("id") long id) throws Exception {
+        if (patientBean.restore(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
+
     @GET
     @Path("{id}/observations")
     public Response getPatientObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
@@ -170,6 +181,19 @@ public class PatientService {
                 patient.getCreated_by().getId(),
                 biometricDataToDTOs(patient.getBiometric_data()),
                 observationToDTOs(patient.getObservations()));
+    }
+
+    private List<PatientDTO> toDTOsSimple(List<Patient> patients) {
+        return patients.stream().map(this::toDTOSimple).collect(Collectors.toList());
+    }
+
+    private PatientDTO toDTOSimple(Patient patient) {
+        return new PatientDTO(patient.getId(),
+                patient.getEmail(),
+                patient.getName(),
+                patient.getGender(),
+                patient.getHealthNo(),
+                patient.getDeleted_at());
     }
 
     private List<HealthcareProfessionalDTO> healthcareProfessionalToDTOs(List<HealthcareProfessional> healthcareProfessionals) {

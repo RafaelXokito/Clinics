@@ -22,12 +22,16 @@ public class HealthcareProfessionalBean {
     }
 
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {
-        return entityManager.createNamedQuery("getAllDoctors", HealthcareProfessional.class).getResultList();
+        return entityManager.createNamedQuery("getAllHealthcareProfessionals", HealthcareProfessional.class).getResultList();
+    }
+
+    public List<HealthcareProfessional> getAllHealthcareProfessionalsClassWithTrashed() {
+        return entityManager.createNamedQuery("getAllHealthcareProfessionalsWithTrashed", HealthcareProfessional.class).getResultList();
     }
 
     public HealthcareProfessional findHealthcareProfessional(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
-        if (healthcareProfessional == null)
+        if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + id + "\" does not exist");
 
         return healthcareProfessional;
@@ -53,7 +57,7 @@ public class HealthcareProfessionalBean {
             throw new MyEntityExistsException("Healthcare Professional with an email of \"" + email + "\" already exist");
 
         Administrator created_by = entityManager.find(Administrator.class, created_ById);
-        if (created_by == null)
+        if (created_by == null || created_by.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Administrator \"" + email + "\" does not exist");
 
         HealthcareProfessional newHealthcareProfessional = new HealthcareProfessional(email, password, name, gender, specialty, created_by);
@@ -68,8 +72,8 @@ public class HealthcareProfessionalBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
-        entityManager.remove(healthcareProfessional);
-        return entityManager.find(HealthcareProfessional.class, id) == null;
+        healthcareProfessional.setDeleted_at();
+        return true;
     }
 
     /***
@@ -98,5 +102,20 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Password does not match with the old one");
 
         healthcareProfessional.setPassword(newPassword);
+    }
+
+
+    /***
+     * Restore a Healthcare professional by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Healthcare professional
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        HealthcareProfessional administrator = entityManager.find(HealthcareProfessional.class, id);
+        if (administrator == null)
+            throw new MyEntityNotFoundException("Healthcare Professional \"" + id + "\" does not exist");
+        if (administrator.getDeleted_at() == null)
+            throw new MyEntityExistsException("Healthcare Professional \"" + id + "\" already exist");
+        administrator.setDeleted_at(null);
+        return true;
     }
 }
