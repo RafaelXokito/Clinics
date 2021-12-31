@@ -196,8 +196,19 @@ public class PatientService {
                 observation.getPatient().getId(),
                 observation.getPatient().getName(),
                 observation.getCreated_at(),
-                observation.getPrescription() != null,
+                observation.getNotes(),
+                prescriptionToDTO(observation.getPrescription()),
                 observation.getDocuments().size());
+    }
+
+    private PrescriptionDTO prescriptionToDTO(Prescription prescription) {
+        if (prescription == null) return null;
+        return new PrescriptionDTO(
+                prescription.getId(),
+                prescription.getHealthcareProfessional().getName(),
+                prescription.getStart_date().toString(),
+                prescription.getEnd_date().toString(),
+                prescription.getNotes());
     }
 
     private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {

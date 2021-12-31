@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Stateless
@@ -61,14 +62,28 @@ public class AdministratorBean {
      * @param gender of administrator acc
      */
     public long create(String email, String password, String name, String gender) throws MyEntityExistsException {
-        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || gender.isEmpty()) {
-            throw new IllegalArgumentException("Invalid data given.");
-        }
+        //REQUIRED VALIDATION
+        if (email == null || email.trim().isEmpty())
+            throw new IllegalArgumentException("Field \"email\" is required");
+        if (password == null || password.isEmpty())
+            throw new IllegalArgumentException("Field \"password\" is required");
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Field \"name\" is required");
+        if (gender == null || gender.trim().isEmpty())
+            throw new IllegalArgumentException("Field \"gender\" is required");
+
+        //CHECK VALUES
         Administrator administrator = findAdministrator(email);
         if (administrator != null)
             throw new MyEntityExistsException("Administrator with email of \"" + email + "\" already exist");
+        if (password.trim().length() < 4)
+            throw new IllegalArgumentException("Field \"password\" must have at least 4 characters");
+        if (name.trim().length() < 6)
+            throw new IllegalArgumentException("Field \"name\" must have at least 6 characters");
+        if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
+            throw new IllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
 
-        Administrator newAdministrator = new Administrator(email, password, name, gender);
+        Administrator newAdministrator = new Administrator(email.trim(), password.trim(), name.trim(), gender.trim());
         entityManager.persist(newAdministrator);
         entityManager.flush();
         return newAdministrator.getId();
@@ -90,23 +105,46 @@ public class AdministratorBean {
      * @param name to update Administrator
      * @param gender to update Administrator
      */
-    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException, MyEntityExistsException {
         Administrator administrator = findAdministrator(id);
+
+        if (email != null) {
+            Administrator admin = findAdministrator(email.trim());
+            if (admin != null)
+                throw new MyEntityExistsException("Administrator with email of \"" + email + "\" already exist");
+        }
+        if (name != null) {
+            if (name.trim().length() < 6)
+                throw new IllegalArgumentException("Field \"name\" must have at least 6 characters");
+        }
+        if (gender != null) {
+            if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
+                throw new IllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+        }
 
         administrator.setEmail(email);
         administrator.setName(name);
         administrator.setGender(gender);
     }
 
-    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
 
+        //REQUIRED VALIDATION
+        if (oldPassword == null || oldPassword.trim().isEmpty())
+            throw new IllegalArgumentException("Field \"oldPassword\" is required");
+        if (newPassword == null || newPassword.trim().isEmpty())
+            throw new IllegalArgumentException("Field \"newPassword\" is required");
+
+        //CHECK VALUES
+        if (newPassword.trim().length() < 4)
+            throw new IllegalArgumentException("Field \"newPassword\" must have at least 4 characters");
+
         Administrator administratorOldPassword = new Administrator();
-        administratorOldPassword.setPassword(oldPassword);
-
+        administratorOldPassword.setPassword(oldPassword.trim());
         if (!administrator.getPassword().equals(administratorOldPassword.getPassword()))
-            throw new MyIllegalArgumentException("Password does not match with the old one");
+            throw new IllegalArgumentException("Field \"oldPassword\" does not match with the current password");
 
-        administrator.setPassword(newPassword);
+        administrator.setPassword(newPassword.trim());
     }
 }

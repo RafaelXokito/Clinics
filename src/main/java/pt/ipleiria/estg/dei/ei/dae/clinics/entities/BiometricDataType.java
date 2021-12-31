@@ -35,6 +35,7 @@ public class BiometricDataType implements Serializable {
     @NotNull
     private String unit_name; //Measure Unit Extended
 
+    @NotNull
     @OneToMany(mappedBy = "biometric_data_type")
     private List<BiometricDataIssue> issues;
 
