@@ -12,7 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "prescriptions")
 @NamedQueries({
-        @NamedQuery(name = "getAllPrescriptions", query = "SELECT p FROM Prescription p ORDER BY p.id")
+        @NamedQuery(name = "getAllPrescriptions", query = "SELECT p FROM Prescription p ORDER BY p.id"),
+        @NamedQuery(name = "getActivePrescriptions", query = "SELECT p FROM Prescription p WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id")
 })
 public class Prescription implements Serializable {
     @Id

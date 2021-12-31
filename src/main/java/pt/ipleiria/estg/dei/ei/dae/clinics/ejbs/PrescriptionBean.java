@@ -175,4 +175,16 @@ public class PrescriptionBean {
         }
         return -1;
     }
+
+    public List<Prescription> getAllPrescriptions() {
+        return entityManager.createNamedQuery("getAllPrescriptions", Prescription.class).getResultList();
+    }
+
+    public List<Prescription> getActivePrescriptionsByPatient(long patientId) {
+        TypedQuery<Prescription> query = entityManager.createQuery("SELECT p FROM Prescription p JOIN p.patients p2 WHERE p2.id = :patientId AND p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id",Prescription.class)
+                .setParameter("patientId", patientId);
+        entityManager.flush();
+        return query.getResultList();
+
+    }
 }

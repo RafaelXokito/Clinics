@@ -21,6 +21,10 @@ public class HealthcareProfessionalBean {
         return healthcareProfessionalList;
     }
 
+    public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {
+        return entityManager.createNamedQuery("getAllDoctors", HealthcareProfessional.class).getResultList();
+    }
+
     public HealthcareProfessional findHealthcareProfessional(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
         if (healthcareProfessional == null)

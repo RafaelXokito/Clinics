@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "getAllObservations", query = "SELECT o FROM Observation o ORDER BY o.id"),
+})
 public class Observation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
