@@ -8,7 +8,6 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 
@@ -16,13 +15,11 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@Path("biometricdata") // relative url web path for this service
+@Path("biometricdatas") // relative url web path for this service
 @Produces({ MediaType.APPLICATION_JSON }) // injects header “Content-Type: application/json”
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 

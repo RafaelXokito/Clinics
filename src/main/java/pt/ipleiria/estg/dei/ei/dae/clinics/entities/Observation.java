@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "OBSERVATIONS")
 @NamedQueries({
         @NamedQuery(name = "getAllObservations", query = "SELECT o FROM Observation o ORDER BY o.id"),
 })

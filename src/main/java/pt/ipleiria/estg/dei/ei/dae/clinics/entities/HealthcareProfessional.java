@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "HEALTHCARE_PROFESSIONAL")
+@Table(name = "HEALTHCARE_PROFESSIONALS")
 @NamedQueries({
         @NamedQuery(name = "getAllDoctors", query = "SELECT d FROM HealthcareProfessional d ORDER BY d.id")
 })

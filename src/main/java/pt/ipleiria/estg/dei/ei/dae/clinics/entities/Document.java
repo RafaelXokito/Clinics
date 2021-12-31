@@ -7,7 +7,7 @@ import java.io.Serializable;
 @NamedQuery(name = "getObservationDocuments", query = "SELECT doc FROM Document doc WHERE doc.observation.id = :id")
 
 @Entity
-@Table(name = "Document")
+@Table(name = "Documents")
 public class Document implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
