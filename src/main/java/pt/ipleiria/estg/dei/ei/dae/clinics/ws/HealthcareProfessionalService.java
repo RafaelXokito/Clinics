@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
