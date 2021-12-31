@@ -9,6 +9,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PersonDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.JwtBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -113,14 +115,40 @@ public class AuthService {
     }
 
     private PersonDTO toDTO(Person person) {
-        return new PersonDTO(
-                person.getId(),
-                person.getEmail(),
-                person.getName(),
-                person.getGender(),
-                person.getCreated_at(),
-                person.getUpdated_at(),
-                person.getDeleted_at(),
-                person.getClass().getSimpleName());
+        switch (person.getClass().getSimpleName()){
+            case "Administrator":
+                return new PersonDTO(
+                        person.getId(),
+                        person.getEmail(),
+                        person.getName(),
+                        person.getGender(),
+                        person.getCreated_at(),
+                        person.getUpdated_at(),
+                        person.getDeleted_at(),
+                        person.getClass().getSimpleName());
+            case "HealthcareProfessional":
+                return new PersonDTO(
+                        person.getId(),
+                        person.getEmail(),
+                        person.getName(),
+                        person.getGender(),
+                        person.getCreated_at(),
+                        person.getUpdated_at(),
+                        person.getDeleted_at(),
+                        person.getClass().getSimpleName(),
+                        ((HealthcareProfessional)person).getSpecialty());
+            case "Patient":
+                return new PersonDTO(
+                        person.getId(),
+                        person.getEmail(),
+                        person.getName(),
+                        person.getGender(),
+                        person.getCreated_at(),
+                        person.getUpdated_at(),
+                        person.getDeleted_at(),
+                        person.getClass().getSimpleName(),
+                        ((Patient)person).getHealthNo());
+        }
+        return new PersonDTO();
     }
 }
