@@ -3,10 +3,12 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -53,13 +55,19 @@ public class PrescriptionBean {
         if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
-        if (compareDates(start_date, end_date) != 2)
-            throw new MyIllegalArgumentException("Error when validating dates");
-
+        //REQUIRED VALIDATION
+        if (start_date == null || start_date.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"start_date\" is required");
+        if (end_date == null || end_date.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"end_date\" is required");
         if (biometricDataIssues == null || biometricDataIssues.size() == 0)
             throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
 
-        Prescription prescription = new Prescription(healthcareProfessional, start_date, end_date, notes, biometricDataIssues);
+        //CHECK VALUES
+        if (compareDates(start_date.trim(), end_date.trim()) >= 0)
+            throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
+
+        Prescription prescription = new Prescription(healthcareProfessional, start_date.trim(), end_date.trim(), notes, biometricDataIssues);
 
         healthcareProfessional.addPrescription(prescription);
 
@@ -74,8 +82,10 @@ public class PrescriptionBean {
      * 
      * @param id @Id to find the proposal delete Prescription
      */
-    public boolean delete(long id) {
-        Prescription prescription = entityManager.find(Prescription.class, id);
+    public boolean delete(long id, long personId) throws MyEntityNotFoundException, MyUnauthorizedException {
+        Prescription prescription = findPrescription(id);
+        if (prescription.getHealthcareProfessional().getId() != personId)
+            throw new MyUnauthorizedException("You are not allowed to delete this prescription");
 
         //REMOVE DEPENDENCIES
         HealthcareProfessional healthcareProfessional = prescription.getHealthcareProfessional();
@@ -105,12 +115,20 @@ public class PrescriptionBean {
      * @param biometricDataIssues to update Biometric Data Issue
      */
     public void update(long id, String start_date, String end_date, String notes,
-                       List<BiometricDataIssue> biometricDataIssues) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException {
-
-        if (compareDates(start_date, end_date) != 2)
-            throw new MyIllegalArgumentException("Error when validating dates");
-
+                       List<BiometricDataIssue> biometricDataIssues, long personId) throws ParseException, MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
         Prescription prescription = findPrescription(id);
+        if (prescription.getHealthcareProfessional().getId() != personId)
+            throw new MyUnauthorizedException("You are not allowed to modify this prescription");
+
+        //REQUIRED VALIDATION
+        if (start_date == null || start_date.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"start_date\" is required");
+        if (end_date == null || end_date.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"end_date\" is required");
+
+        //CHECK VALUES
+        if (compareDates(start_date.trim(), end_date.trim()) >= 0)
+            throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
         boolean isGlobalPrescription = prescription.getBiometric_data_issue().size() > 0;
         if (isGlobalPrescription) {
@@ -118,70 +136,39 @@ public class PrescriptionBean {
                 throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
         }
 
-        prescription.setStart_date(start_date);
-        prescription.setEnd_date(end_date);
+        prescription.setStart_date(start_date.trim());
+        prescription.setEnd_date(end_date.trim());
         prescription.setNotes(notes);
 
         if (!isGlobalPrescription)
             return;
 
         for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {
-            // Se as Issues antigas ainda estiverem presentes nesta, a prescrição não é
-            // removida das mesmas
-            // Se já não estiverem presentes, são removidas
             biometricDataIssue.removePrescription(prescription);
         }
 
         prescription.setBiometricDataIssues(biometricDataIssues);
-
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
-            // São adicionadas às novas Issues esta prescrição
             biometricDataIssue.addPrescription(prescription);
         }
     }
 
     /**
      *
-     * @param d1
-     * @param d2
-     * @return 0 if @d2 is equals @d1
-     * @return 1 if @d2 is greater then @d1
-     * @return 2 if @d1 is greater then @d2
-     * @return -1 if a error happened
+     * @param date1
+     * @param date2
+     * @return 0 if @date1 is equals @date2, 1 if @d1 is greater then @d2, -1 if @d2 is greater then @d1
      */
-    public static int compareDates(String d1,String d2) throws ParseException {
-        //1
-        // Create 2 dates starts
+    private int compareDates(String date1,String date2) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime date1 = LocalDateTime.parse(d1,formatter);
-        LocalDateTime date2 = LocalDateTime.parse(d2,formatter);
+        LocalDateTime d1 = LocalDateTime.parse(date1,formatter);
+        LocalDateTime d2 = LocalDateTime.parse(date2,formatter);
 
-        // Create 2 dates ends
-        //1
-
-        // Date object is having 3 methods namely after,before and equals for comparing
-        // after() will return true if and only if date1 is after date 2
-        if(date1.isAfter(date2)){
-            return 1;
-        }
-        // before() will return true if and only if date1 is before date2
-        if(date1.isBefore(date2)){
-            return 2;
-        }
-
-        //equals() returns true if both the dates are equal
-        if(date1.equals(date2)){
-            return 0;
-        }
-        return -1;
-    }
-
-    public List<Prescription> getAllPrescriptions() {
-        return entityManager.createNamedQuery("getAllPrescriptions", Prescription.class).getResultList();
+        return d1.compareTo(d2); // -1 -> date1 < date2 | 0 -> date1 = date2 | 1 -> date1 > date2
     }
 
     public List<Prescription> getActivePrescriptionsByPatient(long patientId) {
-        TypedQuery<Prescription> query = entityManager.createQuery("SELECT p FROM Prescription p JOIN p.patients p2 WHERE p2.id = :patientId AND p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id",Prescription.class)
+        TypedQuery<Prescription> query = entityManager.createQuery("SELECT p FROM Prescription p JOIN p.patients p2 WHERE p2.id = :patientId AND p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.start_date DESC", Prescription.class)
                 .setParameter("patientId", patientId);
         entityManager.flush();
         return query.getResultList();

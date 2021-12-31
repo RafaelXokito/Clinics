@@ -4,6 +4,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -45,8 +47,11 @@ public class ObservationService {
 
     @GET
     @Path("{id}")
-    public Response getObservationWS(@PathParam("id") long id) throws Exception {
+    public Response getObservationWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Observation observation = observationBean.findObservation(id);
+        long authId = personBean.getPersonByAuthToken(auth).getId();
+        if (observation.getHealthcareProfessional().getId() != authId && observation.getPatient().getId() != authId)
+            throw new MyUnauthorizedException("You are not allowed to view this observation");
 
         return Response.status(Response.Status.OK)
                 .entity(fullToDTO(observation))
@@ -73,14 +78,15 @@ public class ObservationService {
 
     @PUT
     @Path("{id}")
-    public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO) throws Exception {
+    public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO, @HeaderParam("Authorization") String auth) throws Exception {
         System.out.println(observationDTO.getId());
         observationBean.update(
                 id,
                 observationDTO.getNotes(),
                 observationDTO.getPrescription().getStart_date(),
                 observationDTO.getPrescription().getEnd_date(),
-                observationDTO.getPrescription().getNotes());
+                observationDTO.getPrescription().getNotes(),
+                personBean.getPersonByAuthToken(auth).getId());
 
         Observation observation = observationBean.findObservation(id);
 
@@ -91,8 +97,8 @@ public class ObservationService {
 
     @DELETE
     @Path("{id}")
-    public Response deleteObservationWS(@PathParam("id") long id) throws Exception {
-        if (observationBean.delete(id))
+    public Response deleteObservationWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (observationBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
             return Response.status(Response.Status.OK)
                     .build();
 

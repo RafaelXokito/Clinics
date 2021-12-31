@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -38,10 +39,21 @@ public class BiometricDataTypeBean {
      * @param unit_name (Graus Celsius)
      * @return BiometricDataType created
      */
-    public BiometricDataType create(String name, double min, double max, String unit, String unit_name){
-        BiometricDataType newBiometricDataType = new BiometricDataType(name, min, max, unit, unit_name);
+    public BiometricDataType create(String name, double min, double max, String unit, String unit_name) throws MyIllegalArgumentException {
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+        if (unit == null || unit.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"unit\" is required");
+        if (unit_name == null || unit_name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"unit_name\" is required");
+        if (min > max)
+            throw new MyIllegalArgumentException("Field \"max\" must be greater or equal to the field \"min\"");
+
+        BiometricDataType newBiometricDataType = new BiometricDataType(name.trim(), min, max, unit.trim(), unit_name.trim());
+
         entityManager.persist(newBiometricDataType);
         entityManager.flush();
+
         return newBiometricDataType;
 
     }
@@ -67,14 +79,23 @@ public class BiometricDataTypeBean {
      * @param unit_name to update Biometric Data Issue
      * @return Biometric Data
      */
-    public BiometricDataType update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException {
+    public BiometricDataType update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = findBiometricDataType(id);
 
-        biometricDataType.setName(name);
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+        if (unit == null || unit.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"unit\" is required");
+        if (unit_name == null || unit_name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"unit_name\" is required");
+        if (min > max)
+            throw new MyIllegalArgumentException("Field \"max\" must be greater or equal to the field \"min\"");
+
+        biometricDataType.setName(name.trim());
         biometricDataType.setMin(min);
         biometricDataType.setMax(max);
-        biometricDataType.setUnit(unit);
-        biometricDataType.setUnit(unit_name);
+        biometricDataType.setUnit(unit.trim());
+        biometricDataType.setUnit(unit_name.trim());
 
         return biometricDataType;
     }

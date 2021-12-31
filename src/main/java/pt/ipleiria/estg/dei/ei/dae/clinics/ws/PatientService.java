@@ -4,17 +4,18 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("patients") // relative url web path for this service
@@ -22,14 +23,15 @@ import java.util.stream.Collectors;
 @Consumes({ MediaType.APPLICATION_JSON }) // injects header “Accept: application/json”
 
 public class PatientService {
-    private static final Logger log =
-            Logger.getLogger(HealthcareProfessionalService.class.getName());
 
     @EJB
     private PatientBean patientBean;
 
     @EJB
     private PersonBean personBean;
+
+    @Context
+    private SecurityContext securityContext;
 
     @GET
     @Path("/")
@@ -54,7 +56,10 @@ public class PatientService {
 
     @GET
     @Path("{id}")
-    public Response getPatientWS(@PathParam("id") int id) throws Exception {
+    public Response getPatientWS(@PathParam("id") int id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
+
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
@@ -65,32 +70,27 @@ public class PatientService {
     @POST
     @Path("/")
     public Response createPatientWS(PatientDTO patientDTO, @HeaderParam("Authorization") String auth) throws Exception {
-        try {
+        long id = patientBean.create(
+                patientDTO.getEmail(),
+                patientDTO.getPassword(),
+                patientDTO.getName(),
+                patientDTO.getGender(),
+                patientDTO.getHealthNo(),
+                personBean.getPersonByAuthToken(auth).getId());
 
-            long id = patientBean.create(
-                    patientDTO.getEmail(),
-                    patientDTO.getPassword(),
-                    patientDTO.getName(),
-                    patientDTO.getGender(),
-                    patientDTO.getHealthNo(),
-                    personBean.getPersonByAuthToken(auth).getId());
+        Patient patient = patientBean.findPatient(id);
 
-            Patient patient = patientBean.findPatient(id);
-
-            return Response.status(Response.Status.CREATED)
-                    .entity(toDTO(patient))
-                    .build();
-
-        }catch(Exception e){
-            log.warning(e.toString());
-            return Response.status(400).build();
-        }
-
+        return Response.status(Response.Status.CREATED)
+                .entity(toDTO(patient))
+                .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO) throws Exception {
+    public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to modify this patient");
+
         patientBean.update(
                 id,
                 patientDTO.getEmail(),
@@ -107,7 +107,10 @@ public class PatientService {
 
     @PATCH
     @Path("{id}")
-    public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
+    public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        if (!securityContext.isUserInRole("Patient") || securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to modify the password of this patient");
+
         patientBean.updatePassword(
                 id,
                 newPasswordDTO.getOldPassword(),
@@ -124,36 +127,6 @@ public class PatientService {
             return Response.status(Response.Status.OK)
                     .build();
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .build();
-    }
-
-    @GET
-    @Path("{id}/observations")
-    public Response getPatientObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        Patient patient = patientBean.findPatient(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(observationToDTOs(patient.getObservations()))
-                .build();
-    }
-
-    @GET
-    @Path("{id}/biometricdata")
-    public Response getPatientBiometricDatasWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        Patient patient = patientBean.findPatient(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(biometricDataToDTOs(patient.getBiometric_data()))
-                .build();
-    }
-
-    @GET
-    @Path("{id}/healthcareprofessionals")
-    public Response getPatientHealthcareProfessionalsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        Patient patient = patientBean.findPatient(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(healthcareProfessionalToDTOs(patient.getHealthcareProfessionals()))
                 .build();
     }
 

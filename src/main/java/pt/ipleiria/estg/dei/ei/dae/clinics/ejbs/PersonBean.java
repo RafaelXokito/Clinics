@@ -2,7 +2,9 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
@@ -63,21 +65,47 @@ public class PersonBean {
      * @param name   to update Person
      * @param gender to update Person
      */
-    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
         Person person = findPerson(id);
 
-        person.setEmail(email);
-        person.setName(name);
-        person.setGender(gender);
+        //REQUIRED VALIDATION
+        if (email == null || email.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"email\" is required");
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+        if (gender == null || gender.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"gender\" is required");
+
+        //CHECK VALUES
+        Person personTest = findPerson(email.trim());
+        if (personTest != null && personTest.getId() != id)
+            throw new MyEntityExistsException("Person with email of \"" + email + "\" already exist");
+        if (name.trim().length() < 6)
+            throw new MyIllegalArgumentException("Field \"name\" must have at least 6 characters");
+        if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
+            throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+
+        person.setEmail(email.trim());
+        person.setName(name.trim());
+        person.setGender(gender.trim());
     }
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws
             MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
-
         Person person = findPerson(id);
 
-        if (!Person.validatePassword(oldPassword, person.getPassword()))
-            throw new MyIllegalArgumentException("Password does not match with the old one");
+        //REQUIRED VALIDATION
+        if (oldPassword == null || oldPassword.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"oldPassword\" is required");
+        if (newPassword == null || newPassword.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"newPassword\" is required");
+
+        //CHECK VALUES
+        if (newPassword.trim().length() < 4)
+            throw new MyIllegalArgumentException("Field \"newPassword\" must have at least 4 characters");
+
+        if (!Person.validatePassword(oldPassword.trim(), person.getPassword()))
+            throw new MyIllegalArgumentException("Field \"oldPassword\" does not match with the current password");
 
         person.setPassword(newPassword);
     }

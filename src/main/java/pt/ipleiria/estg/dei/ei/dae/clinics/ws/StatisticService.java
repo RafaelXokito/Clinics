@@ -37,53 +37,46 @@ public class StatisticService {
     @EJB
     private PrescriptionBean prescriptionBean;
 
-    @EJB
-    private ObservationBean observationBean;
     @Context
     private SecurityContext securityContext;
     @GET
     @Path("/")
     public Response getStatistics(@HeaderParam("Authorization") String auth) throws ParseException {
-        if (auth != null && auth.startsWith("Bearer ")) {
-            Person person = personBean.getPersonByAuthToken(auth);
-            if (securityContext.isUserInRole("Administrator")) {
-                /*
-                - Admin
-                numero total de administradores
-                numero total de healthcare professionals
-                numero total de pacientes
-                numero de biometric data types
-                 */
-                long totalAdmin = administratorBean.getAllAdministratorsClass().size();
-                long totalHealthcareProfessionals = healthcareProfessionalBean.getAllHealthcareProfessionalsClass().size();
-                long totalPatients = patientBean.getAllPatientsClass().size();
-                long totalBiometricDataTypes = biometricDataTypeBean.getAllBiometricDataTypes().size();
-                return Response.ok(getAdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients, totalBiometricDataTypes)).build();
-            }
-            if (securityContext.isUserInRole("HealthcareProfessional")) {
-                /*
-                - Healthcare professionals
-                ultima observação
-                 */
-                List<Observation> observations = ((HealthcareProfessional)person).getObservations();
-                Observation lastObservation = observations.size() > 0 ? observations.get(observations.size()-1) : null;
+        Person person = personBean.getPersonByAuthToken(auth);
+        if (securityContext.isUserInRole("Administrator")) {
+            /*
+            - Admin
+            numero total de administradores
+            numero total de healthcare professionals
+            numero total de pacientes
+            numero de biometric data types
+             */
+            long totalAdmin = administratorBean.getAllAdministratorsClass().size();
+            long totalHealthcareProfessionals = healthcareProfessionalBean.getAllHealthcareProfessionalsClass().size();
+            long totalPatients = patientBean.getAllPatientsClass().size();
+            long totalBiometricDataTypes = biometricDataTypeBean.getAllBiometricDataTypes().size();
+            return Response.ok(getAdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients, totalBiometricDataTypes)).build();
+        }
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            /*
+            - Healthcare professionals
+            ultima observação
+             */
+            List<Observation> observations = ((HealthcareProfessional)person).getObservations();
+            Observation lastObservation = observations.size() > 0 ? observations.get(observations.size()-1) : null;
 
-                return Response.ok(getHealthcareProfessionalStatisticsDTO(lastObservation)).build();
-            }
-            if (securityContext.isUserInRole("Patient")) {
-                /*
-                - Paciente
-                prescrições ativas (Entre datas da prescrição coincida com a atual)
-                ultima biometric data
-                 */
-                System.out.println(((Patient)person).getHealthNo());
-                List<BiometricData> biometricData = ((Patient)person).getBiometric_data();
-                System.out.println(biometricData);
-                BiometricData lastBiometricData = biometricData.get(biometricData.size()-1);
-                List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
-                System.out.println(prescriptions);
-                return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
-            }
+            return Response.ok(getHealthcareProfessionalStatisticsDTO(lastObservation)).build();
+        }
+        if (securityContext.isUserInRole("Patient")) {
+            /*
+            - Paciente
+            prescrições ativas (Entre datas da prescrição coincida com a atual)
+            ultima biometric data
+             */
+            List<BiometricData> biometricData = ((Patient)person).getBiometric_data();
+            BiometricData lastBiometricData = biometricData.get(biometricData.size()-1);
+            List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
+            return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
         }
         return Response.status(204).build(); //no jwt means no claims to extract
     }

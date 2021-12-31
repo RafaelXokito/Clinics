@@ -6,7 +6,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -51,8 +52,18 @@ public class PrescriptionService {
 
     @GET
     @Path("{id}")
-    public Response getPrescriptionWS(@PathParam("id") long id) throws Exception {
+    public Response getPrescriptionWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Prescription prescription = prescriptionBean.findPrescription(id);
+        long authId = personBean.getPersonByAuthToken(auth).getId();
+        boolean isPresPatient = false;
+        for (Patient patient : prescription.getPatients()) {
+            if (patient.getId() == authId) {
+                isPresPatient = true;
+                break;
+            }
+        }
+        if (prescription.getHealthcareProfessional().getId() != authId || isPresPatient)
+            throw new MyUnauthorizedException("You are not allowed to view this prescription");
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(prescription))
@@ -80,17 +91,15 @@ public class PrescriptionService {
 
     @PUT
     @Path("{id}")
-    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO)
-            throws Exception {
+    public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO, @HeaderParam("Authorization") String auth) throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
-
-        System.out.println(issues.size());
 
         prescriptionBean.update(id,
                 prescriptionDTO.getStart_date(),
                 prescriptionDTO.getEnd_date(),
                 prescriptionDTO.getNotes(),
-                issues);
+                issues,
+                personBean.getPersonByAuthToken(auth).getId());
 
         Prescription prescription = prescriptionBean.findPrescription(id);
 
@@ -101,8 +110,8 @@ public class PrescriptionService {
 
     @DELETE
     @Path("{id}")
-    public Response deletePrescriptionWS(@PathParam("id") long id) {
-        if (prescriptionBean.delete(id))
+    public Response deletePrescriptionWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (prescriptionBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
             return Response.status(Response.Status.OK)
                     .build();
 

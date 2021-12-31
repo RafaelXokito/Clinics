@@ -58,58 +58,44 @@ public class AuthService {
             try {
                 Person person = personBean.getPersonByAuthToken(auth);
                 return Response.ok(toDTO(person)).build();
-                //return personBean.findPerson(j.getJWTClaimsSet().getClaims().get("sub");
-                //return Response.ok(j.getJWTClaimsSet().getClaims()).build();
-                //Note: nimbusds converts token expiration time to milliseconds
             } catch (ParseException e) {
                 log.warning(e.toString());
-                return Response.status(400).build();
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
-        return Response.status(204).build(); //no jwt means no claims to extract
+        return Response.status(Response.Status.NO_CONTENT).build(); //no jwt means no claims to extract
     }
 
     @PATCH
     @Path("/updatepassword")
     public Response selfUpdatePasswordWS(@HeaderParam("Authorization") String auth, NewPasswordDTO newPasswordDTO) throws Exception {
-        try {
-            Person person = personBean.getPersonByAuthToken(auth);
+        Person person = personBean.getPersonByAuthToken(auth);
 
-            personBean.updatePassword(
-                    person.getId(),
-                    newPasswordDTO.getOldPassword(),
-                    newPasswordDTO.getNewPassword());
+        personBean.updatePassword(
+                person.getId(),
+                newPasswordDTO.getOldPassword(),
+                newPasswordDTO.getNewPassword());
 
-            return Response.status(Response.Status.OK)
-                    .build();
-        }catch (Exception ex){
-            log.warning(ex.toString());
-            return Response.status(400, ex.getMessage()).build();
-        }
+        return Response.status(Response.Status.OK)
+                .build();
     }
 
     @PUT
     @Path("/update")
     public Response selfUpdateWS(@HeaderParam("Authorization") String auth, PersonDTO administratorDTO) throws Exception {
-        try
-        {
-            Person person = personBean.getPersonByAuthToken(auth);
+        Person person = personBean.getPersonByAuthToken(auth);
 
-            personBean.update(
-                    person.getId(),
-                    administratorDTO.getEmail(),
-                    administratorDTO.getName(),
-                    administratorDTO.getGender());
+        personBean.update(
+                person.getId(),
+                administratorDTO.getEmail(),
+                administratorDTO.getName(),
+                administratorDTO.getGender());
 
-            person = personBean.findPerson(person.getId());
+        person = personBean.findPerson(person.getId());
 
-            return Response.status(Response.Status.OK)
-                    .entity(toDTO(person))
-                    .build();
-        }catch (Exception ex){
-            log.warning(ex.toString());
-            return Response.status(400, ex.getMessage()).build();
-        }
+        return Response.status(Response.Status.OK)
+                .entity(toDTO(person))
+                .build();
     }
 
     private PersonDTO toDTO(Person person) {

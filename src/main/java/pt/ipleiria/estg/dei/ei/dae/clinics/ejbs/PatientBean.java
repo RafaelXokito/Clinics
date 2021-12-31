@@ -1,8 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee;
-import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -12,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @Stateless
@@ -38,9 +38,9 @@ public class PatientBean {
         return patient;
     }
 
-    public Patient findPatient(String email) {
-        TypedQuery<Patient> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '"+ email+"'", Patient.class);
-        return query.getResultList().size()>0 ? query.getSingleResult() : null;
+    public Person findPerson(String email) {
+        TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '" + email + "'", Person.class);
+        return query.getResultList().size() > 0 ? query.getSingleResult() : null;
     }
 
     public Patient findPatientByHealthNo(long healthNo) {
@@ -59,16 +59,37 @@ public class PatientBean {
      * @param created_byId Administrator Username that is creating the current Patient
      */
     public long create(String email, String password, String name, String gender, int healthNo, long created_byId)
-            throws MyEntityExistsException, MyEntityNotFoundException {
-        Patient patient = findPatient(email);
-        if (patient != null)
-            throw new MyEntityExistsException("Patient \"" + email + "\" already exist");
+            throws MyEntityExistsException, MyEntityNotFoundException, MyIllegalArgumentException {
+        //REQUIRED VALIDATION
+        if (email == null || email.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"email\" is required");
+        if (password == null || password.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"password\" is required");
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+        if (gender == null || gender.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"gender\" is required");
+
+        //CHECK VALUES
+        Person person = findPerson(email.trim());
+        if (person != null)
+            throw new MyEntityExistsException("Person with email of \"" + email.trim() + "\" already exist");
 
         Employee employee = entityManager.find(Employee.class, created_byId);
         if (employee == null)
             throw new MyEntityNotFoundException("Employee \"" + created_byId + "\" don't exist");
 
-        Patient newPatient = new Patient(email, password, name, gender, healthNo, employee);
+        if (password.trim().length() < 4)
+            throw new MyIllegalArgumentException("Field \"password\" must have at least 4 characters");
+        if (name.trim().length() < 6)
+            throw new MyIllegalArgumentException("Field \"name\" must have at least 6 characters");
+        if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
+            throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+        Patient patient = findPatientByHealthNo(healthNo);
+        if (patient != null)
+            throw new MyEntityExistsException("Patient with a health number of \"" + healthNo + "\" already exist");
+
+        Patient newPatient = new Patient(email.trim(), password.trim(), name.trim(), gender.trim(), healthNo, employee);
         entityManager.persist(newPatient);
         entityManager.flush();
         return newPatient.getId();
@@ -82,7 +103,7 @@ public class PatientBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
-        entityManager.remove(patient); //TODO soft delete
+        entityManager.remove(patient);
         return entityManager.find(Patient.class, id) == null;
     }
 
@@ -94,25 +115,52 @@ public class PatientBean {
      * @param gender   to update Patient
      * @param healthNo to update Patient
      */
-    public void update(long id, String email, String name, String gender, int healthNo) throws MyEntityNotFoundException {
+    public void update(long id, String email, String name, String gender, int healthNo) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
         Patient patient = findPatient(id);
 
-        patient.setEmail(email);
-        patient.setName(name);
-        patient.setGender(gender);
+        //REQUIRED VALIDATION
+        if (email == null || email.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"email\" is required");
+        if (name == null || name.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"name\" is required");
+        if (gender == null || gender.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"gender\" is required");
+
+        //CHECK VALUES
+        Person person = findPerson(email.trim());
+        if (person != null && person.getId() != id)
+            throw new MyEntityExistsException("Person with email of \"" + email + "\" already exist");
+        if (name.trim().length() < 6)
+            throw new MyIllegalArgumentException("Field \"name\" must have at least 6 characters");
+        if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
+            throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+        Patient patientTest = findPatientByHealthNo(healthNo);
+        if (patientTest != null && patientTest.getId() != id)
+            throw new MyEntityExistsException("Patient with a health number of \"" + healthNo + "\" already exist");
+
+        patient.setEmail(email.trim());
+        patient.setName(name.trim());
+        patient.setGender(gender.trim());
         patient.setHealthNo(healthNo);
     }
 
-    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
         Patient patient = findPatient(id);
 
-        Administrator administratorOldPassword = new Administrator();
-        administratorOldPassword.setPassword(oldPassword);
+        //REQUIRED VALIDATION
+        if (oldPassword == null || oldPassword.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"oldPassword\" is required");
+        if (newPassword == null || newPassword.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"newPassword\" is required");
 
-        if (!patient.getPassword().equals(administratorOldPassword.getPassword()))
-            throw new MyIllegalArgumentException("Password does not match with the old one");
+        //CHECK VALUES
+        if (newPassword.trim().length() < 4)
+            throw new MyIllegalArgumentException("Field \"newPassword\" must have at least 4 characters");
 
-        patient.setPassword(newPassword);
+        if (!Person.validatePassword(oldPassword.trim(), patient.getPassword()))
+            throw new MyIllegalArgumentException("Field \"oldPassword\" does not match with the current password");
+
+        patient.setPassword(newPassword.trim());
     }
 
 }

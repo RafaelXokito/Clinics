@@ -7,17 +7,16 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Path("healthcareprofessionals") // relative url web path for this service
@@ -25,17 +24,18 @@ import java.util.stream.Collectors;
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 
 public class HealthcareProfessionalService {
-    private static final Logger log =
-            Logger.getLogger(HealthcareProfessionalService.class.getName());
-
     @EJB
     private HealthcareProfessionalBean healthcareProfessionalBean;
 
     @EJB
     private PersonBean personBean;
+
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllHealcareProfessionalsWS() {
+    public Response getAllHealthcareProfessionalsWS() {
         return Response.status(Response.Status.OK)
                 .entity(toDTOAllHealthcareProfessionals(healthcareProfessionalBean.getAllHealthcareProfessionals()))
                 .build();
@@ -46,11 +46,11 @@ public class HealthcareProfessionalService {
         List<HealthcareProfessionalDTO> healthcareProfessionalDTOList = new ArrayList<>();
         for (Object[] obj: allHealthcareProfessionals) {
             healthcareProfessionalDTOList.add(new HealthcareProfessionalDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString(),
-                    obj[3].toString(),
-                    obj[4].toString()
+                Long.parseLong(obj[0].toString()),
+                obj[1].toString(),
+                obj[2].toString(),
+                obj[3].toString(),
+                obj[4].toString()
             ));
         }
         return healthcareProfessionalDTOList;
@@ -58,7 +58,10 @@ public class HealthcareProfessionalService {
 
     @GET
     @Path("{id}")
-    public Response getHealthcareProfessionalWS(@PathParam("id") long id) throws Exception {
+    public Response getHealthcareProfessionalWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (!securityContext.isUserInRole("Administrators") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view this healthcare professional");
+
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
         return Response.status(Response.Status.OK)
@@ -69,36 +72,33 @@ public class HealthcareProfessionalService {
     @POST
     @Path("/")
     public Response createHealthcareProfessionalWS(HealthcareProfessionalDTO healthcareProfessionalDTO, @HeaderParam("Authorization") String auth) throws Exception {
-        try
-        {
-            long id = healthcareProfessionalBean.create(
-                healthcareProfessionalDTO.getEmail(),
-                healthcareProfessionalDTO.getPassword(),
-                healthcareProfessionalDTO.getName(),
-                healthcareProfessionalDTO.getGender(),
-                healthcareProfessionalDTO.getSpecialty(),
-                personBean.getPersonByAuthToken(auth).getId());
+        long id = healthcareProfessionalBean.create(
+            healthcareProfessionalDTO.getEmail(),
+            healthcareProfessionalDTO.getPassword(),
+            healthcareProfessionalDTO.getName(),
+            healthcareProfessionalDTO.getGender(),
+            healthcareProfessionalDTO.getSpecialty(),
+            personBean.getPersonByAuthToken(auth).getId());
 
-            HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
+        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(toDTO(healthcareProfessional))
-                    .build();
-        }catch(Exception e){
-            log.warning(e.toString());
-            return Response.status(400).build();
-        }
+        return Response.status(Response.Status.CREATED)
+                .entity(toDTO(healthcareProfessional))
+                .build();
     }
 
     @PUT
     @Path("{id}")
-    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO doctorDTO) throws Exception {
+    public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO healthcareProfessionalDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        if (!securityContext.isUserInRole("Administrators") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to modify this healthcare professional");
+
         healthcareProfessionalBean.update(
             id,
-            doctorDTO.getEmail(),
-            doctorDTO.getName(),
-            doctorDTO.getGender(),
-            doctorDTO.getSpecialty());
+            healthcareProfessionalDTO.getEmail(),
+            healthcareProfessionalDTO.getName(),
+            healthcareProfessionalDTO.getGender(),
+            healthcareProfessionalDTO.getSpecialty());
 
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
@@ -109,7 +109,10 @@ public class HealthcareProfessionalService {
 
     @PATCH
     @Path("{id}")
-    public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO) throws Exception {
+    public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        if (personBean.getPersonByAuthToken(auth).getId() != id)
+            throw new MyUnauthorizedException("You are not allowed to modify the password of this healthcare professional");
+
         healthcareProfessionalBean.updatePassword(
                 id,
                 newPasswordDTO.getOldPassword(),
@@ -127,36 +130,6 @@ public class HealthcareProfessionalService {
                     .build();
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .build();
-    }
-
-    @GET
-    @Path("{id}/prescriptions")
-    public Response getHealthcareProfessionalPrescriptionsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(prescriptionToDTOs(healthcareProfessional.getPrescriptions()))
-                .build();
-    }
-
-    @GET
-    @Path("{id}/observations")
-    public Response getHealthcareProfessionalObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(observationToDTOs(healthcareProfessional.getObservations()))
-                .build();
-    }
-
-    @GET
-    @Path("{id}/pacients")
-    public Response getHealthcareProfessionalPacientsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
-        HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
-
-        return Response.status(Response.Status.OK)
-                .entity(pacientToDTOs(healthcareProfessional.getPatients()))
                 .build();
     }
 
