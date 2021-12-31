@@ -39,49 +39,52 @@ public class StatisticService {
 
     @Context
     private SecurityContext securityContext;
+
     @GET
     @Path("/")
     public Response getStatistics(@HeaderParam("Authorization") String auth) throws ParseException {
         Person person = personBean.getPersonByAuthToken(auth);
         if (securityContext.isUserInRole("Administrator")) {
             /*
-            - Admin
-            numero total de administradores
-            numero total de healthcare professionals
-            numero total de pacientes
-            numero de biometric data types
+             * - Admin
+             * numero total de administradores
+             * numero total de healthcare professionals
+             * numero total de pacientes
+             * numero de biometric data types
              */
             long totalAdmin = administratorBean.getAllAdministratorsClass().size();
             long totalHealthcareProfessionals = healthcareProfessionalBean.getAllHealthcareProfessionalsClass().size();
             long totalPatients = patientBean.getAllPatientsClass().size();
             long totalBiometricDataTypes = biometricDataTypeBean.getAllBiometricDataTypes().size();
-            return Response.ok(getAdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients, totalBiometricDataTypes)).build();
+            return Response.ok(getAdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients,
+                    totalBiometricDataTypes)).build();
         }
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             /*
-            - Healthcare professionals
-            ultima observação
+             * - Healthcare professionals
+             * ultima observação
              */
-            List<Observation> observations = ((HealthcareProfessional)person).getObservations();
-            Observation lastObservation = observations.size() > 0 ? observations.get(observations.size()-1) : null;
+            List<Observation> observations = ((HealthcareProfessional) person).getObservations();
+            Observation lastObservation = observations.size() > 0 ? observations.get(observations.size() - 1) : null;
 
             return Response.ok(getHealthcareProfessionalStatisticsDTO(lastObservation)).build();
         }
         if (securityContext.isUserInRole("Patient")) {
             /*
-            - Paciente
-            prescrições ativas (Entre datas da prescrição coincida com a atual)
-            ultima biometric data
+             * - Paciente
+             * prescrições ativas (Entre datas da prescrição coincida com a atual)
+             * ultima biometric data
              */
-            List<BiometricData> biometricData = ((Patient)person).getBiometric_data();
-            BiometricData lastBiometricData = biometricData.get(biometricData.size()-1);
+            List<BiometricData> biometricData = ((Patient) person).getBiometric_data();
+            BiometricData lastBiometricData = biometricData.get(biometricData.size() - 1);
             List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
             return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
         }
-        return Response.status(204).build(); //no jwt means no claims to extract
+        return Response.status(204).build(); // no jwt means no claims to extract
     }
 
-    private PatientStatisticsDTO getPatientStatisticsDTO(BiometricData lastBiometricData, List<Prescription> prescriptions) {
+    private PatientStatisticsDTO getPatientStatisticsDTO(BiometricData lastBiometricData,
+            List<Prescription> prescriptions) {
         return new PatientStatisticsDTO(toDTOBiometricData(lastBiometricData), toDTOsPrescriptions(prescriptions));
     }
 
@@ -89,14 +92,17 @@ public class StatisticService {
         return new HealthcareProfessionalStatisticsDTO(toDTOObservation(lastObservation));
     }
 
-    private AdministratorStatisticsDTO getAdministratorStatisticsDTO(long totalAdmin, long totalHealthcareProfessionals, long totalPatients, long totalBiometricDataTypes) {
-        return new AdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients, totalBiometricDataTypes);
+    private AdministratorStatisticsDTO getAdministratorStatisticsDTO(long totalAdmin, long totalHealthcareProfessionals,
+            long totalPatients, long totalBiometricDataTypes) {
+        return new AdministratorStatisticsDTO(totalAdmin, totalHealthcareProfessionals, totalPatients,
+                totalBiometricDataTypes);
     }
 
     private PrescriptionDTO toDTOPrescription(Prescription prescription) {
         if (prescription == null)
             return new PrescriptionDTO();
-        boolean isGlobal = prescription.getBiometric_data_issue() != null && prescription.getBiometric_data_issue().size() > 0;
+        boolean isGlobal = prescription.getBiometric_data_issue() != null
+                && prescription.getBiometric_data_issue().size() > 0;
 
         if (isGlobal) {
             return new PrescriptionDTO(
@@ -145,8 +151,7 @@ public class StatisticService {
         return new DocumentDTO(
                 document.getId(),
                 document.getFilename(),
-                document.getFilepath()
-        );
+                document.getFilepath());
     }
 
     private List<DocumentDTO> documentsToDTOs(List<Document> documents) {

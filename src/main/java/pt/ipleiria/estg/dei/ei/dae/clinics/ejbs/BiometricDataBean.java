@@ -114,6 +114,7 @@ public class BiometricDataBean {
 
         BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person, source.trim(), biometricDataIssue, createdAt);
         entityManager.persist(newBiometricData);
+        patient.addBiometricData(newBiometricData);
         entityManager.flush();
 
         return newBiometricData;

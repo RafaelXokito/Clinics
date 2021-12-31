@@ -12,6 +12,32 @@ public class PersonDTO {
     private Date updated_at;
     private Date deleted_at;
     private String scope;
+    private int healthNo;
+    private String specialty;
+
+    public PersonDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String role, String specialty) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.scope = role;
+        this.specialty = specialty;
+    }
+
+    public PersonDTO(long id,String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String role, int healthNo) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.scope = role;
+        this.healthNo = healthNo;
+    }
 
     public PersonDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String scope) {
         this.id = id;
@@ -62,6 +88,22 @@ public class PersonDTO {
         this.email = email;
         this.name = name;
         this.gender = gender;
+    }
+
+    public int getHealthNo() {
+        return healthNo;
+    }
+
+    public void setHealthNo(int healthNo) {
+        this.healthNo = healthNo;
+    }
+
+    public String getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     public String getScope() {
