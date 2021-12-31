@@ -33,6 +33,10 @@ public class AdministratorBean {
         //return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
     }
 
+    public List<Administrator> getAllAdministratorsClass() {
+        return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
+    }
+
     /***
      * Find Administrator by given @Id:id
      * @param id @Id to find Administrator

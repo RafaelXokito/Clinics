@@ -28,6 +28,7 @@ public class ObservationDTO {
         this.created_at = created_at;
         this.prescription = prescription;
         this.documents = documents;
+        this.nDocuments = documents.size();
     }
 
     public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, String notes, Date created_at, PrescriptionDTO prescription) {

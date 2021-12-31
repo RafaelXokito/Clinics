@@ -29,6 +29,10 @@ public class PatientBean {
         // Patient.class).getResultList();
     }
 
+    public List<Patient> getAllPatientsClass() {
+        return entityManager.createNamedQuery("getAllPatients", Patient.class).getResultList();
+    }
+
     public Patient findPatient(long id) throws MyEntityNotFoundException {
         Patient patient = entityManager.find(Patient.class, id);
         if (patient == null)

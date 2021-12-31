@@ -87,4 +87,7 @@ public class ObservationBean {
         return entityManager.find(HealthcareProfessional.class, id) == null;
     }
 
+    public List<Observation> getAllObservation() {
+        return entityManager.createNamedQuery("getAllObservations", Observation.class).getResultList();
+    }
 }
