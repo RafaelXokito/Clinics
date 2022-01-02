@@ -96,7 +96,7 @@ public class ConfigBean {
                     altura.getId());
             BiometricDataIssue issue2 = biometricDataIssueBean.create("Pequeno", 1, 1.6,
                     altura.getId());
-            BiometricDataIssue issue3 = biometricDataIssueBean.create("Normal", 1.5, 1.75,
+            BiometricDataIssue issue3 = biometricDataIssueBean.create("Normal", 1.6, 1.75,
                     altura.getId());
             BiometricDataIssue issue4 = biometricDataIssueBean.create("Alto", 1.75, 1.85,
                     altura.getId());

@@ -47,7 +47,9 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
             <http-method>PUT</http-method>
         </web-resource-collection>
         <auth-constraint>
+            <role-name>Administrator</role-name>
             <role-name>HealthcareProfessional</role-name>
+            <role-name>Patient</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>

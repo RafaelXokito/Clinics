@@ -60,7 +60,7 @@ public class HealthcareProfessionalService {
     @GET
     @Path("{id}")
     public Response getHealthcareProfessionalWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
-        if (!securityContext.isUserInRole("Administrators") && id != personBean.getPersonByAuthToken(auth).getId())
+        if (!securityContext.isUserInRole("Administrator") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to view this healthcare professional");
 
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
@@ -91,7 +91,7 @@ public class HealthcareProfessionalService {
     @PUT
     @Path("{id}")
     public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO healthcareProfessionalDTO, @HeaderParam("Authorization") String auth) throws Exception {
-        if (!securityContext.isUserInRole("Administrators") && id != personBean.getPersonByAuthToken(auth).getId())
+        if (!securityContext.isUserInRole("Administrator") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to modify this healthcare professional");
 
         healthcareProfessionalBean.update(

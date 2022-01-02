@@ -119,10 +119,10 @@ public class BiometricDataTypeService {
     private BiometricDataTypeDTO toDTO(BiometricDataType biometricDataType) {
         return new BiometricDataTypeDTO(biometricDataType.getId(),
                 biometricDataType.getName(),
-                biometricDataType.getMin(),
-                biometricDataType.getMax(),
                 biometricDataType.getUnit(),
-                biometricDataType.getUnit_name());
+                biometricDataType.getUnit_name(),
+                biometricDataType.getMin(),
+                biometricDataType.getMax());
     }
 
     private List<BiometricDataIssueDTO> biometricDataIssueToDTOs(List<BiometricDataIssue> biometricDataIssues) {

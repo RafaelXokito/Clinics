@@ -10,6 +10,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -156,13 +158,18 @@ public class BiometricDataService {
     @PUT
     @Path("{id}")
     public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
+        long personId = personBean.getPersonByAuthToken(auth).getId();
+        BiometricData bioData = biometricDataBean.findBiometricData(id);
+
+        if (!securityContext.isUserInRole("HealthcareProfessional") && personId != bioData.getCreated_by().getId())
+            throw new MyUnauthorizedException("You are not allowed to modify this biometric data");
+
         BiometricData createdBiometricData = biometricDataBean.update(
                 id,
                 biometricDataDTO.getBiometricTypeId(),
                 biometricDataDTO.getValue(),
                 biometricDataDTO.getNotes(),
                 biometricDataDTO.getPatientId(),
-                personBean.getPersonByAuthToken(auth).getId(),
                 biometricDataDTO.getSource(),
                 biometricDataDTO.getCreated_at());
 
@@ -176,7 +183,13 @@ public class BiometricDataService {
     @DELETE
     @Path("{id}")
     public Response deleteBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
-        if (biometricDataBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
+        long personId = personBean.getPersonByAuthToken(auth).getId();
+        BiometricData bioData = biometricDataBean.findBiometricData(id);
+
+        if (!securityContext.isUserInRole("HealthcareProfessional") && personId != bioData.getCreated_by().getId())
+            throw new MyIllegalArgumentException("Biometric Data with id " + id + " does not belongs to you");
+
+        if (biometricDataBean.delete(id))
             return Response.status(Response.Status.OK)
                     .build();
 
@@ -218,7 +231,9 @@ public class BiometricDataService {
                 biometricData.getBiometric_data_type().getUnit_name(),
                 biometricData.getSource(),
                 biometricData.getBiometricDataIssue() == null ? 0 : biometricData.getBiometricDataIssue().getId(),
-                biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName());
+                biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName(),
+                biometricData.getBiometric_data_type().getMax(),
+                biometricData.getBiometric_data_type().getMin());
     }
 
     private String getFilename(MultivaluedMap<String, String> header) {

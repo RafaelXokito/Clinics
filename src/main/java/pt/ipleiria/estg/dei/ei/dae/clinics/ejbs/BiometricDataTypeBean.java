@@ -95,7 +95,7 @@ public class BiometricDataTypeBean {
         biometricDataType.setMin(min);
         biometricDataType.setMax(max);
         biometricDataType.setUnit(unit.trim());
-        biometricDataType.setUnit(unit_name.trim());
+        biometricDataType.setUnit_name(unit_name.trim());
 
         return biometricDataType;
     }

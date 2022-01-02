@@ -54,6 +54,10 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
             throw new MyIllegalArgumentException("Field \"created_at\" is required");
+        if (biometricDataTypeId == 0)
+            throw new MyIllegalArgumentException("Field \"biometricTypeId\" is required");
+        if (patientId == 0)
+            throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null)
@@ -124,11 +128,8 @@ public class BiometricDataBean {
      * Delete a Biometric Data by given @Id:id
      * @param id @Id to find the proposal delete Biometric Data
      */
-    public boolean delete(long id, long personId) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricData biometricData = findBiometricData(id);
-        
-        if (personId != biometricData.getCreated_by().getId())
-            throw new MyIllegalArgumentException("Biometric Data with id " + id + " does not belongs to you");
 
         biometricData.setDeleted_at();
         return true;
@@ -147,7 +148,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
 
         //REQUIRED VALIDATION
@@ -155,10 +156,11 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
             throw new MyIllegalArgumentException("Field \"created_at\" is required");
+        if (biometricTypeId == 0)
+            throw new MyIllegalArgumentException("Field \"biometricTypeId\" is required");
+        if (patientId == 0)
+            throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
-
-        if (personId != biometricData.getCreated_by().getId())
-            throw new MyUnauthorizedException("You are not allowed to modify this biometric data");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
         if (biometricDataType == null)
