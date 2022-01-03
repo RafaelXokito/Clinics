@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation</OriginalElement>
+  <nodes>
+    <node x="215.9910714285717" y="852.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData</node>
+    <node x="180.9910714285717" y="250.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional</node>
+    <node x="27.99107142857173" y="250.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document</node>
+    <node x="178.0" y="686.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue</node>
+    <node x="219.39926739926727" y="82.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee</node>
+    <node x="263.75" y="478.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient</node>
+    <node x="155.64926739926727" y="770.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType</node>
+    <node x="256.30700549450563" y="166.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator</node>
+    <node x="75.52426739926727" y="364.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation</node>
+    <node x="297.31593406593396" y="0.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person</node>
+    <node x="221.5" y="602.0">pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator" relationship="TO_ONE">
+      <point x="77.66666666666669" y="-15.0" />
+      <point x="39.5" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee" relationship="GENERALIZATION">
+      <point x="-77.66666666666669" y="-15.0" />
+      <point x="219.82440476190501" y="223.0" />
+      <point x="238.64926739926727" y="223.0" />
+      <point x="238.64926739926727" y="144.0" />
+      <point x="283.3992673992673" y="144.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" relationship="TO_ONE">
+      <point x="40.75" y="-15.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="393.5" y="831.0" />
+      <point x="393.5" y="821.0" />
+      <point x="304.8992673992673" y="821.0" />
+      <point x="49.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" relationship="GENERALIZATION">
+      <point x="35.666666666666686" y="-15.0" />
+      <point x="352.9166666666667" y="456.0" />
+      <point x="456.9166666666667" y="456.0" />
+      <point x="456.9166666666667" y="61.0" />
+      <point x="350.81593406593396" y="61.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document" relationship="DEPENDENCY">
+      <point x="0.0" y="-15.0" />
+      <point x="149.52426739926727" y="342.0" />
+      <point x="110.390338827839" y="342.0" />
+      <point x="110.390338827839" y="312.0" />
+      <point x="94.49107142857173" y="312.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="TO_MANY">
+      <point x="58.25" y="15.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="335.1492673992673" y="342.0" />
+      <point x="391.5359432234434" y="342.0" />
+      <point x="391.5359432234434" y="540.0" />
+      <point x="331.75" y="540.0" />
+      <point x="36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="TO_MANY">
+      <point x="49.75" y="-15.0" />
+      <point x="304.8992673992673" y="748.0" />
+      <point x="331.75" y="748.0" />
+      <point x="51.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.0" />
+      <point x="335.30700549450563" y="144.0" />
+      <point x="283.3992673992673" y="144.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee" relationship="DEPENDENCY">
+      <point x="-35.66666666666663" y="-15.0" />
+      <point x="281.58333333333337" y="456.0" />
+      <point x="121.5210622710623" y="456.0" />
+      <point x="121.5210622710623" y="426.0" />
+      <point x="17.4910714285717" y="426.0" />
+      <point x="17.4910714285717" y="134.0" />
+      <point x="240.73260073260064" y="134.0" />
+      <point x="-42.66666666666666" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="DEPENDENCY">
+      <point x="-36.75" y="-15.0" />
+      <point x="258.25" y="580.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="51.72939560439562" y="570.0" />
+      <point x="253.25" y="570.0" />
+      <point x="253.25" y="312.0" />
+      <point x="242.5" y="312.0" />
+      <point x="242.5" y="302.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="-58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="DEPENDENCY">
+      <point x="-58.25" y="15.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="242.5" y="302.0" />
+      <point x="242.5" y="312.0" />
+      <point x="253.25" y="312.0" />
+      <point x="253.25" y="570.0" />
+      <point x="51.72939560439562" y="570.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="258.25" y="580.0" />
+      <point x="-36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" relationship="DEPENDENCY">
+      <point x="-51.25" y="15.0" />
+      <point x="229.25" y="738.0" />
+      <point x="261.5" y="738.0" />
+      <point x="261.5" y="748.0" />
+      <point x="205.39926739926727" y="748.0" />
+      <point x="-49.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" relationship="TO_MANY">
+      <point x="35.66666666666663" y="15.0" />
+      <point x="386.4826007326006" y="51.0" />
+      <point x="492.0210622710623" y="51.0" />
+      <point x="492.0210622710623" y="821.0" />
+      <point x="393.5" y="821.0" />
+      <point x="393.5" y="831.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="40.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="DEPENDENCY">
+      <point x="-49.75" y="-15.0" />
+      <point x="205.39926739926727" y="748.0" />
+      <point x="261.5" y="748.0" />
+      <point x="261.5" y="738.0" />
+      <point x="229.25" y="738.0" />
+      <point x="-51.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="TO_MANY">
+      <point x="58.25" y="15.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="335.1492673992673" y="342.0" />
+      <point x="317.25" y="342.0" />
+      <point x="0.0" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="TO_MANY">
+      <point x="0.0" y="-15.0" />
+      <point x="317.25" y="342.0" />
+      <point x="335.1492673992673" y="342.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document" relationship="TO_MANY">
+      <point x="49.333333333333314" y="-15.0" />
+      <point x="198.8576007326006" y="342.0" />
+      <point x="156.7710622710623" y="342.0" />
+      <point x="156.7710622710623" y="312.0" />
+      <point x="138.8244047619051" y="312.0" />
+      <point x="44.33333333333337" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="TO_MANY">
+      <point x="58.25" y="15.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="335.1492673992673" y="332.0" />
+      <point x="156.7710622710623" y="332.0" />
+      <point x="156.7710622710623" y="342.0" />
+      <point x="198.8576007326006" y="342.0" />
+      <point x="49.333333333333314" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="DEPENDENCY">
+      <point x="-40.75" y="-15.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="114.27426739926727" y="821.0" />
+      <point x="114.27426739926727" y="550.0" />
+      <point x="290.5" y="550.0" />
+      <point x="-26.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" relationship="DEPENDENCY">
+      <point x="-26.75" y="15.0" />
+      <point x="290.5" y="550.0" />
+      <point x="114.27426739926727" y="550.0" />
+      <point x="114.27426739926727" y="821.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="-40.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="DEPENDENCY">
+      <point x="-39.5" y="15.0" />
+      <point x="295.80700549450563" y="223.0" />
+      <point x="297.4910714285717" y="223.0" />
+      <point x="-1.4210854715202004E-14" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="TO_MANY">
+      <point x="36.75" y="15.0" />
+      <point x="51.25" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="TO_MANY">
+      <point x="51.25" y="-15.0" />
+      <point x="36.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator" relationship="DEPENDENCY">
+      <point x="-1.4210854715202004E-14" y="-15.0" />
+      <point x="297.4910714285717" y="223.0" />
+      <point x="295.80700549450563" y="223.0" />
+      <point x="-39.5" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="TO_MANY">
+      <point x="36.75" y="-15.0" />
+      <point x="331.75" y="580.0" />
+      <point x="361.8992673992673" y="580.0" />
+      <point x="361.8992673992673" y="530.0" />
+      <point x="344.0" y="530.0" />
+      <point x="26.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="TO_MANY">
+      <point x="26.75" y="15.0" />
+      <point x="344.0" y="530.0" />
+      <point x="361.8992673992673" y="530.0" />
+      <point x="361.8992673992673" y="580.0" />
+      <point x="331.75" y="580.0" />
+      <point x="36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="TO_ONE">
+      <point x="49.333333333333314" y="-15.0" />
+      <point x="198.8576007326006" y="342.0" />
+      <point x="156.7710622710623" y="342.0" />
+      <point x="156.7710622710623" y="332.0" />
+      <point x="335.1492673992673" y="332.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" relationship="DEPENDENCY">
+      <point x="-35.666666666666686" y="15.0" />
+      <point x="315.1492673992673" y="51.0" />
+      <point x="0.0" y="51.0" />
+      <point x="0.0" y="821.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="-40.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" relationship="DEPENDENCY">
+      <point x="-40.75" y="-15.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="0.0" y="821.0" />
+      <point x="0.0" y="51.0" />
+      <point x="315.1492673992673" y="51.0" />
+      <point x="-35.666666666666686" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" relationship="TO_ONE">
+      <point x="51.25" y="15.0" />
+      <point x="331.75" y="748.0" />
+      <point x="304.8992673992673" y="748.0" />
+      <point x="49.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" relationship="TO_ONE">
+      <point x="40.75" y="-15.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="393.5" y="831.0" />
+      <point x="393.5" y="821.0" />
+      <point x="492.0210622710623" y="821.0" />
+      <point x="492.0210622710623" y="51.0" />
+      <point x="386.4826007326006" y="51.0" />
+      <point x="35.66666666666663" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="TO_ONE">
+      <point x="36.75" y="-15.0" />
+      <point x="331.75" y="540.0" />
+      <point x="391.5359432234434" y="540.0" />
+      <point x="391.5359432234434" y="342.0" />
+      <point x="335.1492673992673" y="342.0" />
+      <point x="335.1492673992673" y="322.0" />
+      <point x="355.7410714285717" y="322.0" />
+      <point x="58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee" relationship="TO_ONE">
+      <point x="0.0" y="-15.0" />
+      <point x="317.25" y="446.0" />
+      <point x="435.5" y="446.0" />
+      <point x="435.5" y="134.0" />
+      <point x="326.0659340659339" y="134.0" />
+      <point x="42.66666666666663" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="TO_ONE">
+      <point x="37.0" y="15.0" />
+      <point x="186.52426739926727" y="416.0" />
+      <point x="187.79166666666669" y="416.0" />
+      <point x="187.79166666666669" y="446.0" />
+      <point x="194.3960622710623" y="446.0" />
+      <point x="194.3960622710623" y="540.0" />
+      <point x="331.75" y="540.0" />
+      <point x="36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="TO_ONE">
+      <point x="36.75" y="-15.0" />
+      <point x="331.75" y="540.0" />
+      <point x="194.3960622710623" y="540.0" />
+      <point x="194.3960622710623" y="446.0" />
+      <point x="187.79166666666669" y="446.0" />
+      <point x="187.79166666666669" y="416.0" />
+      <point x="186.52426739926727" y="416.0" />
+      <point x="37.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="TO_ONE">
+      <point x="44.33333333333337" y="15.0" />
+      <point x="138.8244047619051" y="312.0" />
+      <point x="156.7710622710623" y="312.0" />
+      <point x="156.7710622710623" y="342.0" />
+      <point x="198.8576007326006" y="342.0" />
+      <point x="49.333333333333314" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="DEPENDENCY">
+      <point x="-40.75" y="-15.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="145.14926739926727" y="821.0" />
+      <point x="145.14926739926727" y="748.0" />
+      <point x="261.5" y="748.0" />
+      <point x="261.5" y="738.0" />
+      <point x="229.25" y="738.0" />
+      <point x="-51.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType" relationship="DEPENDENCY">
+      <point x="-40.75" y="-15.0" />
+      <point x="256.7410714285717" y="831.0" />
+      <point x="156.6160714285717" y="831.0" />
+      <point x="156.6160714285717" y="821.0" />
+      <point x="205.39926739926727" y="821.0" />
+      <point x="-49.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="DEPENDENCY">
+      <point x="-37.0" y="15.0" />
+      <point x="112.52426739926727" y="416.0" />
+      <point x="132.77426739926727" y="416.0" />
+      <point x="132.77426739926727" y="446.0" />
+      <point x="121.5210622710623" y="446.0" />
+      <point x="121.5210622710623" y="456.0" />
+      <point x="281.58333333333337" y="456.0" />
+      <point x="-35.66666666666663" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="DEPENDENCY">
+      <point x="-35.66666666666663" y="-15.0" />
+      <point x="281.58333333333337" y="456.0" />
+      <point x="121.5210622710623" y="456.0" />
+      <point x="121.5210622710623" y="446.0" />
+      <point x="132.77426739926727" y="446.0" />
+      <point x="132.77426739926727" y="416.0" />
+      <point x="112.52426739926727" y="416.0" />
+      <point x="-37.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="TO_ONE">
+      <point x="37.0" y="15.0" />
+      <point x="186.52426739926727" y="416.0" />
+      <point x="187.79166666666669" y="416.0" />
+      <point x="187.79166666666669" y="436.0" />
+      <point x="317.25" y="436.0" />
+      <point x="0.0" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="TO_MANY">
+      <point x="0.0" y="-15.0" />
+      <point x="317.25" y="436.0" />
+      <point x="187.79166666666669" y="436.0" />
+      <point x="187.79166666666669" y="416.0" />
+      <point x="186.52426739926727" y="416.0" />
+      <point x="37.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="DEPENDENCY">
+      <point x="-58.25" y="15.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="242.5" y="302.0" />
+      <point x="242.5" y="426.0" />
+      <point x="121.5210622710623" y="426.0" />
+      <point x="121.5210622710623" y="456.0" />
+      <point x="281.58333333333337" y="456.0" />
+      <point x="-35.66666666666663" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="TO_ONE">
+      <point x="40.75" y="-15.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="393.5" y="831.0" />
+      <point x="393.5" y="821.0" />
+      <point x="411.3992673992673" y="821.0" />
+      <point x="411.3992673992673" y="570.0" />
+      <point x="361.8992673992673" y="570.0" />
+      <point x="361.8992673992673" y="530.0" />
+      <point x="344.0" y="530.0" />
+      <point x="26.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="DEPENDENCY">
+      <point x="-35.66666666666663" y="-15.0" />
+      <point x="281.58333333333337" y="456.0" />
+      <point x="121.5210622710623" y="456.0" />
+      <point x="121.5210622710623" y="426.0" />
+      <point x="242.5" y="426.0" />
+      <point x="242.5" y="302.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="-58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="TO_ONE">
+      <point x="40.75" y="-15.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="393.5" y="831.0" />
+      <point x="393.5" y="821.0" />
+      <point x="365.1492673992673" y="821.0" />
+      <point x="365.1492673992673" y="748.0" />
+      <point x="331.75" y="748.0" />
+      <point x="51.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="DEPENDENCY">
+      <point x="0.0" y="-15.0" />
+      <point x="149.52426739926727" y="342.0" />
+      <point x="110.390338827839" y="342.0" />
+      <point x="110.390338827839" y="322.0" />
+      <point x="242.5" y="322.0" />
+      <point x="242.5" y="302.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="-58.25" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="DEPENDENCY">
+      <point x="-58.25" y="15.0" />
+      <point x="239.2410714285717" y="302.0" />
+      <point x="242.5" y="302.0" />
+      <point x="242.5" y="322.0" />
+      <point x="110.390338827839" y="322.0" />
+      <point x="110.390338827839" y="342.0" />
+      <point x="149.52426739926727" y="342.0" />
+      <point x="0.0" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData" relationship="TO_MANY">
+      <point x="26.75" y="15.0" />
+      <point x="344.0" y="530.0" />
+      <point x="361.8992673992673" y="530.0" />
+      <point x="361.8992673992673" y="570.0" />
+      <point x="411.3992673992673" y="570.0" />
+      <point x="411.3992673992673" y="821.0" />
+      <point x="393.5" y="821.0" />
+      <point x="393.5" y="831.0" />
+      <point x="338.2410714285717" y="831.0" />
+      <point x="40.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="DEPENDENCY">
+      <point x="-51.25" y="-15.0" />
+      <point x="229.25" y="659.0" />
+      <point x="258.25" y="659.0" />
+      <point x="-36.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue" relationship="DEPENDENCY">
+      <point x="-36.75" y="15.0" />
+      <point x="258.25" y="659.0" />
+      <point x="229.25" y="659.0" />
+      <point x="-51.25" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="DEPENDENCY">
+      <point x="-36.75" y="-15.0" />
+      <point x="258.25" y="580.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="51.72939560439562" y="436.0" />
+      <point x="132.77426739926727" y="436.0" />
+      <point x="132.77426739926727" y="416.0" />
+      <point x="112.52426739926727" y="416.0" />
+      <point x="-37.0" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="DEPENDENCY">
+      <point x="-37.0" y="15.0" />
+      <point x="112.52426739926727" y="416.0" />
+      <point x="132.77426739926727" y="416.0" />
+      <point x="132.77426739926727" y="436.0" />
+      <point x="51.72939560439562" y="436.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="258.25" y="580.0" />
+      <point x="-36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Document" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Observation" relationship="CREATE">
+      <point x="-44.33333333333334" y="15.0" />
+      <point x="50.157738095238386" y="342.0" />
+      <point x="100.19093406593393" y="342.0" />
+      <point x="-49.33333333333334" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional" relationship="TO_MANY">
+      <point x="39.5" y="15.0" />
+      <point x="77.66666666666669" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" relationship="DEPENDENCY">
+      <point x="-26.75" y="15.0" />
+      <point x="290.5" y="550.0" />
+      <point x="114.27426739926727" y="550.0" />
+      <point x="114.27426739926727" y="560.0" />
+      <point x="51.72939560439562" y="560.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="258.25" y="580.0" />
+      <point x="-36.75" y="-15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient" relationship="DEPENDENCY">
+      <point x="-36.75" y="-15.0" />
+      <point x="258.25" y="580.0" />
+      <point x="51.72939560439562" y="580.0" />
+      <point x="51.72939560439562" y="560.0" />
+      <point x="114.27426739926727" y="560.0" />
+      <point x="114.27426739926727" y="550.0" />
+      <point x="290.5" y="550.0" />
+      <point x="-26.75" y="15.0" />
+    </edge>
+    <edge source="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Employee" target="pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.0" />
+      <point x="283.3992673992673" y="61.0" />
+      <point x="350.81593406593396" y="61.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.5975609756097561" showDependencies="true" x="246.5" y="441.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
