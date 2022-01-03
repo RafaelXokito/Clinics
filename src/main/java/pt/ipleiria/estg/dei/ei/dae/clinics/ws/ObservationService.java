@@ -1,10 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
-import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
@@ -15,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +25,9 @@ public class ObservationService {
 
     @EJB
     private PersonBean personBean;
+
+    @EJB
+    private EmailBean emailBean;
 
     @Context
     private SecurityContext securityContext;
@@ -72,8 +73,13 @@ public class ObservationService {
                     observationDTO.getPrescription().getNotes());
 
             Observation observation = observationBean.findObservation(id);
-
-            return Response.status(Response.Status.CREATED)
+            emailBean.send(observation.getPatient().getEmail(), "You received a observation", observation.getNotes() + "\n");
+            if (observation.getPrescription() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                emailBean.send(observation.getPatient().getEmail(), "You received a prescription",
+                        observation.getPrescription().getNotes() + "\n" + observation.getPrescription().getStart_date().format(formatter) + " to " + observation.getPrescription().getEnd_date().format(formatter));
+            }
+        return Response.status(Response.Status.CREATED)
                     .entity(toDTO(observation))
                     .build();
     }

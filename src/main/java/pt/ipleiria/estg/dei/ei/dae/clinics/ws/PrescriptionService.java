@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.EmailBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PrescriptionBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +32,9 @@ public class PrescriptionService {
 
     @EJB
     private PersonBean personBean;
+
+    @EJB
+    private EmailBean emailBean;
 
     @Context
     private SecurityContext securityContext;
@@ -74,7 +79,7 @@ public class PrescriptionService {
     @Path("/")
     public Response createPrescriptionWS(PrescriptionDTO prescriptionDTO) throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
-        System.out.println(issues);
+
         long id = prescriptionBean.create(
                 prescriptionDTO.getHealthcareProfessionalId(),
                 prescriptionDTO.getStart_date(),
@@ -83,6 +88,12 @@ public class PrescriptionService {
                 issues);
 
         Prescription prescription = prescriptionBean.findPrescription(id);
+
+        for (Patient patient : prescription.getPatients()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            emailBean.send(patient.getEmail(), "You received a prescription",
+                    prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to " + prescription.getEnd_date().format(formatter));
+        }
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(prescription))
