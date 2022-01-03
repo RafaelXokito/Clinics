@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -42,8 +43,8 @@ public class Patient extends Person implements Serializable {
     private List<Prescription> prescriptions;
 
     public Patient(String email, String password, String name, String gender, int healthNo,
-            Employee created_by) {
-        super(email, password, name, gender);
+            Employee created_by, Date birthDate) {
+        super(email, password, name, gender, birthDate);
         this.healthNo = healthNo;
         this.observations = new ArrayList<>();
         this.created_by = created_by;

@@ -87,7 +87,6 @@ public class ObservationService {
     @PUT
     @Path("{id}")
     public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO, @HeaderParam("Authorization") String auth) throws Exception {
-        System.out.println(observationDTO.getId());
         observationBean.update(
                 id,
                 observationDTO.getNotes(),

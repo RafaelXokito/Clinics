@@ -49,6 +49,11 @@ public abstract class Person {
     @NotNull
     private String gender;
 
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "birth_date")
+    private Date birthDate;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
@@ -62,7 +67,7 @@ public abstract class Person {
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<BiometricData> biometricDatasCreated;
 
-    public Person(String email, String password, String name, String gender) {
+    public Person(String email, String password, String name, String gender, Date birthDate) {
         this.email = email;
         try {
             this.password = generateStrongPasswordHash(password);
@@ -71,6 +76,7 @@ public abstract class Person {
         }
         this.name = name;
         this.gender = gender;
+        this.birthDate = birthDate;
     }
 
     public Person() {
@@ -214,6 +220,14 @@ public abstract class Person {
 
     public void setDeleted_at() {
         this.deleted_at = new Date();
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     @PrePersist

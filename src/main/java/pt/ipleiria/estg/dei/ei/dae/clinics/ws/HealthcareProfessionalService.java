@@ -83,7 +83,8 @@ public class HealthcareProfessionalService {
             healthcareProfessionalDTO.getName(),
             healthcareProfessionalDTO.getGender(),
             healthcareProfessionalDTO.getSpecialty(),
-            personBean.getPersonByAuthToken(auth).getId());
+            personBean.getPersonByAuthToken(auth).getId(),
+            healthcareProfessionalDTO.getBirthDate());
 
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
@@ -103,7 +104,8 @@ public class HealthcareProfessionalService {
             healthcareProfessionalDTO.getEmail(),
             healthcareProfessionalDTO.getName(),
             healthcareProfessionalDTO.getGender(),
-            healthcareProfessionalDTO.getSpecialty());
+            healthcareProfessionalDTO.getSpecialty(),
+            healthcareProfessionalDTO.getBirthDate());
 
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
@@ -196,7 +198,8 @@ public class HealthcareProfessionalService {
                 healthcareProfessional.getCreated_by().getId(),
                 prescriptionToDTOs(healthcareProfessional.getPrescriptions()),
                 observationToDTOs(healthcareProfessional.getObservations()),
-                pacientToDTOs(healthcareProfessional.getPatients()));
+                pacientToDTOs(healthcareProfessional.getPatients()),
+                healthcareProfessional.getBirthDate());
     }
 
     private List<PatientDTO> pacientToDTOs(List<Patient> patients) {

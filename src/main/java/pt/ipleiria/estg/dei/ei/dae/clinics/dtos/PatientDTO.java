@@ -17,6 +17,7 @@ public class PatientDTO {
     private long created_by;
     private List<BiometricDataDTO> biometricDatas;
     private List<ObservationDTO> observations;
+    private Date birthDate;
 
     public PatientDTO(long id, String email, String password, String name, String gender, Date created_at,
             Date updated_at, Date deleted_at, int healthNo, long created_by, List<BiometricDataDTO> biometricDatas,
@@ -66,7 +67,7 @@ public class PatientDTO {
 
 
     public PatientDTO(long id, String email, String name, String gender, int healthNo, long created_by,
-                      List<BiometricDataDTO> biometricDatas, List<ObservationDTO> observations) {
+                      List<BiometricDataDTO> biometricDatas, List<ObservationDTO> observations, Date birthDate) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -75,6 +76,7 @@ public class PatientDTO {
         this.created_by = created_by;
         this.biometricDatas = biometricDatas;
         this.observations = observations;
+        this.birthDate = birthDate;
     }
 
 
@@ -203,5 +205,13 @@ public class PatientDTO {
 
     public void setCreated_by(long created_by) {
         this.created_by = created_by;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,27 +55,27 @@ public class ConfigBean {
             System.out.println("Config Bean - Here we are setting things up to test");
 
             System.out.println("Creating Some Administrators");
-            long aRafaelId = administratorBean.create("2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male");
+            long aRafaelId = administratorBean.create("2191266@my.ipleiria.pt", "1234", "Rafael Mendes Pererira","Male", getDate(1990, 5, 10));
 
-            long aGasparId = administratorBean.create("2191267@my.ipleiria.pt", "1234", "Gaspar Mendes Pererira","Male");
-            long aLeitaoId = administratorBean.create("2191268@my.ipleiria.pt", "1234", "Leitão Mendes Pererira","Male");
+            long aGasparId = administratorBean.create("2191267@my.ipleiria.pt", "1234", "Gaspar Mendes Pererira","Male", getDate(1982, 2, 14));
+            long aLeitaoId = administratorBean.create("2191268@my.ipleiria.pt", "1234", "Leitão Mendes Pererira","Male", getDate(1995, 9, 22));
 
             System.out.println("Creating Some HealthcareProfessionals");
             long hBrunaId = healthcareProfessionalBean.create("2191182@my.ipleiria.pt", "1234",
-                    "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId);
+                    "Bruna Alexandra Marques Leitão", "Female", "Cardiologist", aRafaelId, getDate(1991, 1, 11));
 
             long hJoseId = healthcareProfessionalBean.create("jose@mail.pt", "1234",
-                    "Jose Artur Bento", "Male", "Cardiologist", aRafaelId);
+                    "Jose Artur Bento", "Male", "Cardiologist", aRafaelId, getDate(1988, 3, 2));
 
             System.out.println("Creating Some Patients");
             long pDanielId = patientBean.create("219XXXX@my.ipleiria.pt", "1234", "Daniel Carreira", "Male", 123456789,
-                    hBrunaId);
+                    hBrunaId, getDate(2000, 6, 12));
             long pLeonelId = patientBean.create("219XXX1@my.ipleiria.pt", "1234", "Leonél Brás", "Male", 123456798,
-                    hJoseId);
+                    hJoseId, getDate(2001, 7, 2));
             long pAndreiaId = patientBean.create("219XXX2@my.ipleiria.pt", "1234", "Andreia Brás", "Female", 123456799,
-                    hBrunaId);
+                    hBrunaId, getDate(2002, 12, 7));
             long pSilviaId = patientBean.create("219XXX3@my.ipleiria.pt", "1234", "Silvia Brás", "Female", 123456788,
-                    hBrunaId);
+                    hBrunaId, getDate(2004, 11, 19));
 
             System.out.println("Creating some Biometric Data Types");
             BiometricDataType temperaturaCorporal = biometricDataTypeBean.create("Temperatura Corporal", 30, 45, "ºC",
@@ -97,7 +98,6 @@ public class ConfigBean {
             BiometricDataIssue issue5 = biometricDataIssueBean.create("Muito Alto", 1.85, 3,
                     altura.getId());
 
-            System.out.println(febre);
             List<BiometricDataIssue> issues = new ArrayList<BiometricDataIssue>();
             issues.add(febre);
             System.out.println("Creating some Prescriptions");
@@ -127,9 +127,12 @@ public class ConfigBean {
             observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
 
             administratorBean.delete(aGasparId);
-            System.out.println(personBean.getAllPersons().size());
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }
+    }
+
+    private Date getDate(int year, int month, int day) {
+        return Date.from(LocalDate.of(year, month, day).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

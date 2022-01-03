@@ -12,6 +12,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -62,7 +64,7 @@ public class PatientBean {
      * @param healthNo     of patient acc
      * @param created_byId Administrator Username that is creating the current Patient
      */
-    public long create(String email, String password, String name, String gender, int healthNo, long created_byId)
+    public long create(String email, String password, String name, String gender, int healthNo, long created_byId, Date birthDate)
             throws MyEntityExistsException, MyEntityNotFoundException, MyIllegalArgumentException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
@@ -73,6 +75,8 @@ public class PatientBean {
             throw new MyIllegalArgumentException("Field \"name\" is required");
         if (gender == null || gender.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"gender\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email.trim());
@@ -92,8 +96,10 @@ public class PatientBean {
         Patient patient = findPatientByHealthNo(healthNo);
         if (patient != null)
             throw new MyEntityExistsException("Patient with a health number of \"" + healthNo + "\" already exist");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
-        Patient newPatient = new Patient(email.trim(), password.trim(), name.trim(), gender.trim(), healthNo, employee);
+        Patient newPatient = new Patient(email.trim(), password.trim(), name.trim(), gender.trim(), healthNo, employee, birthDate);
         try {
             entityManager.persist(newPatient);
             entityManager.flush();
@@ -123,7 +129,7 @@ public class PatientBean {
      * @param gender   to update Patient
      * @param healthNo to update Patient
      */
-    public void update(long id, String email, String name, String gender, int healthNo) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
+    public void update(long id, String email, String name, String gender, int healthNo, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
         Patient patient = findPatient(id);
 
         //REQUIRED VALIDATION
@@ -133,6 +139,8 @@ public class PatientBean {
             throw new MyIllegalArgumentException("Field \"name\" is required");
         if (gender == null || gender.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"gender\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email.trim());
@@ -145,12 +153,14 @@ public class PatientBean {
         Patient patientTest = findPatientByHealthNo(healthNo);
         if (patientTest != null && patientTest.getId() != id)
             throw new MyEntityExistsException("Patient with a health number of \"" + healthNo + "\" already exist");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
         patient.setEmail(email.trim());
         patient.setName(name.trim());
         patient.setGender(gender.trim());
         patient.setHealthNo(healthNo);
-
+        patient.setBirthDate(birthDate);
         try {
             entityManager.flush();
         }catch (Exception ex){

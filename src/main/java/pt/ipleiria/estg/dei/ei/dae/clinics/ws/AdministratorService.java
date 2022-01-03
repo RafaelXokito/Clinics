@@ -63,7 +63,8 @@ public class AdministratorService {
             administratorDTO.getEmail(),
             administratorDTO.getPassword(),
             administratorDTO.getName(),
-            administratorDTO.getGender());
+            administratorDTO.getGender(),
+            administratorDTO.getBirthDate());
 
         Administrator administrator = administratorBean.findAdministrator(id);
 
@@ -79,7 +80,8 @@ public class AdministratorService {
             id,
             administratorDTO.getEmail(),
             administratorDTO.getName(),
-            administratorDTO.getGender());
+            administratorDTO.getGender(),
+            administratorDTO.getBirthDate());
 
         Administrator administrator = administratorBean.findAdministrator(id);
 
@@ -136,6 +138,7 @@ public class AdministratorService {
                 administrator.getGender(),
                 administrator.getCreated_at(),
                 administrator.getUpdated_at(),
-                administrator.getDeleted_at());
+                administrator.getDeleted_at(),
+                administrator.getBirthDate());
     }
 }

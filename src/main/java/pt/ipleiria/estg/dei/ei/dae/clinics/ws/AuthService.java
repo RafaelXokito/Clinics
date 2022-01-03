@@ -35,7 +35,6 @@ public class AuthService {
     @POST
     @Path("/login")
     public Response authenticateUser(AuthDTO authDTO) {
-        System.out.println(authDTO);
         try {
             Person user = personBean.authenticate(authDTO.getEmail(), authDTO.getPassword());
             System.out.println("Login Service");

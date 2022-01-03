@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -40,8 +41,8 @@ public class HealthcareProfessional extends Employee implements Serializable {
     private List<Patient> patients;
 
     public HealthcareProfessional(String email, String password, String name, String gender, String specialty,
-                                  Administrator created_by) {
-        super(email, password, name, gender);
+                                  Administrator created_by, Date birthDate) {
+        super(email, password, name, gender, birthDate);
         this.specialty = specialty;
         this.created_by = created_by;
         this.observations = new ArrayList<>();

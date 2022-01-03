@@ -80,7 +80,8 @@ public class PatientService {
                 patientDTO.getName(),
                 patientDTO.getGender(),
                 patientDTO.getHealthNo(),
-                personBean.getPersonByAuthToken(auth).getId());
+                personBean.getPersonByAuthToken(auth).getId(),
+                patientDTO.getBirthDate());
 
         Patient patient = patientBean.findPatient(id);
 
@@ -100,7 +101,8 @@ public class PatientService {
                 patientDTO.getEmail(),
                 patientDTO.getName(),
                 patientDTO.getGender(),
-                patientDTO.getHealthNo());
+                patientDTO.getHealthNo(),
+                patientDTO.getBirthDate());
 
         Patient patient = patientBean.findPatient(id);
 
@@ -187,7 +189,8 @@ public class PatientService {
                 patient.getHealthNo(),
                 patient.getCreated_by().getId(),
                 biometricDataToDTOs(patient.getBiometric_data()),
-                observationToDTOs(patient.getObservations()));
+                observationToDTOs(patient.getObservations()),
+                patient.getBirthDate());
     }
 
     private List<PatientDTO> toDTOsSimple(List<Patient> patients) {

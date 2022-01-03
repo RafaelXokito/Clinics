@@ -15,6 +15,8 @@ import javax.persistence.TypedQuery;
 import javax.validation.constraints.Email;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -77,7 +79,7 @@ public class AdministratorBean {
      * @param name of administrator acc
      * @param gender of administrator acc
      */
-    public long create(String email, String password, String name, String gender) throws MyEntityExistsException, MyIllegalArgumentException {
+    public long create(String email, String password, String name, String gender, Date birthDate) throws MyEntityExistsException, MyIllegalArgumentException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -87,6 +89,8 @@ public class AdministratorBean {
             throw new MyIllegalArgumentException("Field \"name\" is required");
         if (gender == null || gender.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"gender\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email);
@@ -98,8 +102,10 @@ public class AdministratorBean {
             throw new MyIllegalArgumentException("Field \"name\" must have at least 6 characters");
         if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
             throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
-        Administrator newAdministrator = new Administrator(email.trim(), password.trim(), name.trim(), gender.trim());
+        Administrator newAdministrator = new Administrator(email.trim(), password.trim(), name.trim(), gender.trim(), birthDate);
         try {
             entityManager.persist(newAdministrator);
             entityManager.flush();
@@ -127,7 +133,7 @@ public class AdministratorBean {
      * @param name to update Administrator
      * @param gender to update Administrator
      */
-    public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
+    public void update(long id, String email, String name, String gender, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
         Administrator administrator = findAdministrator(id);
 
         //REQUIRED VALIDATION
@@ -137,6 +143,8 @@ public class AdministratorBean {
             throw new MyIllegalArgumentException("Field \"name\" is required");
         if (gender == null || gender.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"gender\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email);
@@ -146,10 +154,13 @@ public class AdministratorBean {
             throw new MyIllegalArgumentException("Field \"name\" must have at least 6 characters");
         if (!gender.trim().equals("Male") && !gender.trim().equals("Female") && !gender.trim().equals("Other"))
             throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
         administrator.setEmail(email.trim());
         administrator.setName(name.trim());
         administrator.setGender(gender.trim());
+        administrator.setBirthDate(birthDate);
 
         try {
             entityManager.flush();

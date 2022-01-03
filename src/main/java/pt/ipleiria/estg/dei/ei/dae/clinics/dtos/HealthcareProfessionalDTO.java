@@ -18,6 +18,7 @@ public class HealthcareProfessionalDTO {
     private List<PrescriptionDTO> prescriptions;
     private List<ObservationDTO> observations;
     private List<PatientDTO> patients;
+    private Date birthDate;
 
     public HealthcareProfessionalDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations, List<PatientDTO> patients) {
         this.id = id;
@@ -35,7 +36,7 @@ public class HealthcareProfessionalDTO {
         this.patients = patients;
     }
 
-    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations, List<PatientDTO> patients) {
+    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, List<PrescriptionDTO> prescriptions, List<ObservationDTO> observations, List<PatientDTO> patients, Date birthDate) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -48,6 +49,7 @@ public class HealthcareProfessionalDTO {
         this.prescriptions = prescriptions;
         this.observations = observations;
         this.patients = patients;
+        this.birthDate = birthDate;
     }
 
     public HealthcareProfessionalDTO(long id, String email, String name, String gender, String specialty) {
@@ -178,5 +180,13 @@ public class HealthcareProfessionalDTO {
 
     public void setPatients(List<PatientDTO> patients) {
         this.patients = patients;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

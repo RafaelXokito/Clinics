@@ -65,7 +65,6 @@ public class BiometricDataIssueBean {
             throw new MyIllegalArgumentException("Both min \"" + min + "\"  and max \"" + max + "\" must be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
 
         for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            System.out.println("("+min+" >= "+issue.getMin()+" && "+min+" < "+issue.getMax()+") || ("+max+" > "+issue.getMin()+" && "+max+" <= "+issue.getMax()+")");
             if ((min >= issue.getMin() && min < issue.getMax()) || (max > issue.getMin() && max <= issue.getMax()))
                 throw new MyIllegalArgumentException("Interval [" + min + ", " + max + "[ collide with \"" + issue.getName() + "\" biometric data issue");
         }

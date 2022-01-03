@@ -46,6 +46,9 @@ public class BiometricDataTypeDTO {
         this.unit_name = unit_name;
     }
 
+    public BiometricDataTypeDTO() {
+    }
+
     public Date getDeleted_at() {
         return deleted_at;
     }

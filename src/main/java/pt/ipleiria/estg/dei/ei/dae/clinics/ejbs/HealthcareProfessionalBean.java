@@ -12,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -55,7 +57,7 @@ public class HealthcareProfessionalBean {
      * @param specialty of doctor acc
      * @param created_ById Administrator Username that is creating the current Doctor
      */
-    public long create(String email, String password, String name, String gender, String specialty, long created_ById) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
+    public long create(String email, String password, String name, String gender, String specialty, long created_ById, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -67,6 +69,8 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Field \"gender\" is required");
         if (specialty == null || specialty.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"specialty\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email.trim());
@@ -85,8 +89,10 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
         if (specialty.trim().length() < 3)
             throw new MyIllegalArgumentException("Field \"specialty\" must have at least 3 characters");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
-        HealthcareProfessional newHealthcareProfessional = new HealthcareProfessional(email.trim(), password.trim(), name.trim(), gender.trim(), specialty.trim(), created_by);
+        HealthcareProfessional newHealthcareProfessional = new HealthcareProfessional(email.trim(), password.trim(), name.trim(), gender.trim(), specialty.trim(), created_by, birthDate);
         try {
             entityManager.persist(newHealthcareProfessional);
             entityManager.flush();
@@ -113,7 +119,7 @@ public class HealthcareProfessionalBean {
      * @param gender to update Doctor
      * @param specialty to update Doctor
      */
-    public void update(long id, String email, String name, String gender, String specialty) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
+    public void update(long id, String email, String name, String gender, String specialty, Date birthDate) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 
         //REQUIRED VALIDATION
@@ -125,6 +131,8 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Field \"gender\" is required");
         if (specialty == null || specialty.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"specialty\" is required");
+        if (birthDate == null)
+            throw new MyIllegalArgumentException("Field \"birthDate\" is required");
 
         //CHECK VALUES
         Person person = findPerson(email.trim());
@@ -136,11 +144,14 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
         if (specialty.trim().length() < 3)
             throw new MyIllegalArgumentException("Field \"specialty\" must have at least 3 characters");
+        if (Date.from(Instant.now()).compareTo(birthDate) < 0)
+            throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
         healthcareProfessional.setEmail(email.trim());
         healthcareProfessional.setName(name.trim());
         healthcareProfessional.setGender(gender.trim());
         healthcareProfessional.setSpecialty(specialty.trim());
+        healthcareProfessional.setBirthDate(birthDate);
         try {
             entityManager.flush();
         }catch (Exception ex){

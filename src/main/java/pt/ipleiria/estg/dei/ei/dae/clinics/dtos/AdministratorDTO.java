@@ -11,6 +11,7 @@ public class AdministratorDTO {
     private Date created_at;
     private Date updated_at;
     private Date deleted_at;
+    private Date birthDate;
 
     public AdministratorDTO(long id, String email, String password, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
         this.id = id;
@@ -23,7 +24,7 @@ public class AdministratorDTO {
         this.deleted_at = deleted_at;
     }
 
-    public AdministratorDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at) {
+    public AdministratorDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, Date birthDate) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -31,6 +32,7 @@ public class AdministratorDTO {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.deleted_at = deleted_at;
+        this.birthDate = birthDate;
     }
 
     public AdministratorDTO() {
@@ -108,5 +110,13 @@ public class AdministratorDTO {
 
     public void setDeleted_at(Date deleted_at) {
         this.deleted_at = deleted_at;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

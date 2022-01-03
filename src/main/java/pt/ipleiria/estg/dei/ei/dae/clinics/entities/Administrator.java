@@ -5,6 +5,7 @@ import io.smallrye.common.constraint.NotNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,8 +26,8 @@ public class Administrator extends Employee implements Serializable {
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<HealthcareProfessional> healthcareProfessionals;
 
-    public Administrator(String email, String password, String name, String gender) {
-        super(email, password, name, gender);
+    public Administrator(String email, String password, String name, String gender, Date birthDate) {
+        super(email, password, name, gender, birthDate);
         this.healthcareProfessionals = new ArrayList<>();
     }
 
