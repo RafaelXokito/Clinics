@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -86,39 +87,49 @@ public class BiometricDataBean {
             }
         }
 
-        //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
-        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            for (Prescription prescription : issue.getPrescriptions()) {
-                LocalDateTime startDate = prescription.getStart_date();
-                LocalDateTime endDate = prescription.getEnd_date();
-                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
+        //THE LATEST BIOMETRIC DATA OF THAT TYPE
+        TypedQuery<BiometricData> query = entityManager.createQuery("SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC", BiometricData.class);
+        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId);
+        List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
 
-                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
-                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                    patient.removePrescription(prescription);
+        //IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
+        if (latestBioDatas.size() == 0 || latestBioDatas.get(0).getCreated_at().compareTo(createdAt) < 0) {
+
+            //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+                for (Prescription prescription : issue.getPrescriptions()) {
+                    LocalDateTime startDate = prescription.getStart_date();
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
+                        patient.removePrescription(prescription);
+                        prescription.removePatient(patient);
+                    }
                 }
             }
-        }
 
-        if (biometricDataIssue != null) {
-            //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
-            for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+            if (biometricDataIssue != null) {
+                //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+                for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+                    LocalDateTime startDate = prescription.getStart_date();
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
-                LocalDateTime startDate = prescription.getStart_date();
-                LocalDateTime endDate = prescription.getEnd_date();
-                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
-
-                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
-                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                    //ADD PRESCRIPTION TO PATIENT
-                    patient.addPrescription(prescription);
+                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
+                        //ADD PRESCRIPTION TO PATIENT
+                        patient.addPrescription(prescription);
+                        prescription.addPatient(patient);
+                    }
                 }
             }
         }
 
         BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person, source.trim(), biometricDataIssue, createdAt);
-        entityManager.persist(newBiometricData);
         patient.addBiometricData(newBiometricData);
+        entityManager.persist(newBiometricData);
         entityManager.flush();
 
         return newBiometricData;

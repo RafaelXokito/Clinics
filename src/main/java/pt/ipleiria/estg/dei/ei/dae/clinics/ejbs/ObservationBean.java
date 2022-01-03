@@ -44,7 +44,7 @@ public class ObservationBean {
         healthcareProfessional.addPatient(patient);
         patient.addObservation(newObservation);
 
-        boolean hasPrescription = notesPrescription != null && notesPrescription.trim().isEmpty();
+        boolean hasPrescription = notesPrescription != null && !notesPrescription.trim().isEmpty();
         if (hasPrescription) {
             if (start_date == null)
                 throw new MyIllegalArgumentException("Field \"start_date\" is required");

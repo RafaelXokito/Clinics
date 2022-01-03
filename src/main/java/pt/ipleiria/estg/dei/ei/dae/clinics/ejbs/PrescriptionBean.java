@@ -71,6 +71,10 @@ public class PrescriptionBean {
 
         Prescription prescription = new Prescription(healthcareProfessional, start_date.trim(), end_date.trim(), notes.trim(), biometricDataIssues);
 
+        for (BiometricDataIssue issue : biometricDataIssues) {
+            issue.addPrescription(prescription);
+        }
+
         healthcareProfessional.addPrescription(prescription);
 
         entityManager.persist(prescription);

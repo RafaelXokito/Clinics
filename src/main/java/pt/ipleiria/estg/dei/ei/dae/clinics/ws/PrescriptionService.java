@@ -62,7 +62,7 @@ public class PrescriptionService {
                 break;
             }
         }
-        if (prescription.getHealthcareProfessional().getId() != authId || isPresPatient)
+        if (prescription.getHealthcareProfessional().getId() != authId && !isPresPatient)
             throw new MyUnauthorizedException("You are not allowed to view this prescription");
 
         return Response.status(Response.Status.OK)
