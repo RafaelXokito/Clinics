@@ -7,13 +7,16 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +25,9 @@ import java.util.List;
 public class BiometricDataBean {
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private EmailBean emailBean;
 
     public List<Object[]> getAllBiometricData() {
         Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit, b.created_at FROM BiometricData b ORDER BY b.created_at DESC");
@@ -58,7 +64,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
         //REQUIRED VALIDATION
         if (source == null || source.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"source\" is required");
@@ -120,6 +126,7 @@ public class BiometricDataBean {
             }
 
             if (biometricDataIssue != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
                 for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
                     LocalDateTime startDate = prescription.getStart_date();
@@ -131,6 +138,9 @@ public class BiometricDataBean {
                         //ADD PRESCRIPTION TO PATIENT
                         patient.addPrescription(prescription);
                         prescription.addPatient(patient);
+
+                        emailBean.send(patient.getEmail(), "You received a prescription",
+                                prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to " + prescription.getEnd_date().format(formatter));
                     }
                 }
             }

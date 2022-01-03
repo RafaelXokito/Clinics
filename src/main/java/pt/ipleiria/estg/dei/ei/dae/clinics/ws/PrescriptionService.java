@@ -33,9 +33,6 @@ public class PrescriptionService {
     @EJB
     private PersonBean personBean;
 
-    @EJB
-    private EmailBean emailBean;
-
     @Context
     private SecurityContext securityContext;
 
@@ -88,12 +85,6 @@ public class PrescriptionService {
                 issues);
 
         Prescription prescription = prescriptionBean.findPrescription(id);
-
-        for (Patient patient : prescription.getPatients()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            emailBean.send(patient.getEmail(), "You received a prescription",
-                    prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to " + prescription.getEnd_date().format(formatter));
-        }
 
         return Response.status(Response.Status.CREATED)
                 .entity(toDTO(prescription))
