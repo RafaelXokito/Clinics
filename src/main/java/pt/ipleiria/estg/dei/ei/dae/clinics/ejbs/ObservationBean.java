@@ -10,6 +10,8 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,7 +23,7 @@ public class ObservationBean {
 
     public Observation findObservation(long id) throws MyEntityNotFoundException {
         Observation observation = entityManager.find(Observation.class, id);
-        if (observation == null)
+        if (observation == null || observation.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Observation \"" + id + "\" does not exist");
 
         return observation;
@@ -57,6 +59,7 @@ public class ObservationBean {
             newObservation.setPrescription(prescription);
             patient.addPrescription(prescription);
             prescription.addPatient(patient);
+            prescription.setObservation(newObservation);
 
             entityManager.persist(prescription);
         }
@@ -84,6 +87,9 @@ public class ObservationBean {
             throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
         Prescription prescription = entityManager.find(Prescription.class, observation.getPrescription().getId());
+        if (prescription == null || prescription.getDeleted_at() != null)
+            throw new MyEntityNotFoundException("Prescription \"" + id + "\" does not exist");
+
         prescription.setStart_date(start_date.trim());
         prescription.setEnd_date(end_date.trim());
         prescription.setNotes(notesPrescription);
@@ -98,21 +104,44 @@ public class ObservationBean {
         if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + observation.getHealthcareProfessional().getId() + "\" does not exist");
 
-        healthcareProfessional.removeObservation(observation);
-
         Patient patient = entityManager.find(Patient.class, observation.getPatient().getId());
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + observation.getPatient().getId() + "\" does not exist");
 
-        patient.removeObservation(observation);
 
-        entityManager.remove(observation);
+        Prescription prescription = observation.getPrescription();
+        if (prescription != null)
+            prescription.setDeleted_at();
 
-        return entityManager.find(HealthcareProfessional.class, id) == null;
+        observation.setDeleted_at();
+
+        return true;
     }
 
-    public List<Observation> getAllObservation() {
-        return entityManager.createNamedQuery("getAllObservations", Observation.class).getResultList();
+    /***
+     * Restore a Observation by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Observation
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        Observation observation = entityManager.find(Observation.class, id);
+        if (observation == null)
+            throw new MyEntityNotFoundException("Observation \"" + id + "\" does not exist");
+        if (observation.getDeleted_at() == null)
+            throw new MyEntityExistsException("Observation \"" + id + "\" already exist");
+        observation.setDeleted_at(null);
+
+        Prescription prescription = observation.getPrescription();
+        if (prescription != null)
+            prescription.setDeleted_at();
+        return true;
+    }
+
+    public List<Observation> getAllObservationByPatient(long id) {
+        return entityManager.createNamedQuery("getAllObservationsByPatient", Observation.class).setParameter("id", id).getResultList();
+    }
+
+    public List<Observation> getAllObservationByHealthcareProfessional(long id) {
+        return entityManager.createNamedQuery("getAllObservationsByHealthcareProfessional", Observation.class).setParameter("id", id).getResultList();
     }
 
     /**
@@ -128,4 +157,5 @@ public class ObservationBean {
 
         return d1.compareTo(d2); // -1 -> date1 < date2 | 0 -> date1 = date2 | 1 -> date1 > date2
     }
+
 }

@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.PrescriptionDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
@@ -25,6 +26,14 @@ public class BiometricDataBean {
         Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit, b.created_at FROM BiometricData b ORDER BY b.created_at DESC");
         List<Object[]> biometricDataList = query.getResultList();
         return biometricDataList;
+    }
+
+    public List<BiometricData> getAllBiometricDatasClass() {
+        return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class).getResultList();
+    }
+
+    public List<BiometricData> getAllBiometricDatasClassWithTrashed() {
+        return entityManager.createNamedQuery("getAllBiometricDataWithTrashed", BiometricData.class).getResultList();
     }
 
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
@@ -56,7 +65,7 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"created_at\" is required");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
-        if (biometricDataType == null)
+        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);
@@ -135,6 +144,20 @@ public class BiometricDataBean {
     }
 
     /***
+     * Restore a Biometric Data by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Biometric Data
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        BiometricData biometricData = entityManager.find(BiometricData.class, id);
+        if (biometricData == null)
+            throw new MyEntityNotFoundException("Biometric Data \"" + id + "\" does not exist");
+        if (biometricData.getDeleted_at() == null)
+            throw new MyEntityExistsException("Biometric Data \"" + id + "\" already exist");
+        biometricData.setDeleted_at(null);
+        return true;
+    }
+
+    /***
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
      * @param id @Id of Biometric_Data to be updated
      * @param biometricTypeId @Id of Biometric_Data_Type
@@ -161,7 +184,7 @@ public class BiometricDataBean {
             throw new MyUnauthorizedException("You are not allowed to modify this biometric data");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
-        if (biometricDataType == null)
+        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);

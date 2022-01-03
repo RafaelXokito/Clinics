@@ -14,7 +14,10 @@ import java.util.List;
 @Entity
 @Table(name = "OBSERVATIONS")
 @NamedQueries({
-        @NamedQuery(name = "getAllObservations", query = "SELECT o FROM Observation o ORDER BY o.id"),
+        @NamedQuery(name = "getAllObservations", query = "SELECT o FROM Observation o WHERE o.deleted_at IS NULL ORDER BY o.id"),
+        @NamedQuery(name = "getAllObservationsWithTrashed", query = "SELECT o FROM Observation o ORDER BY o.id"),
+        @NamedQuery(name= "getAllObservationsByPatient", query = "SELECT o FROM Observation o WHERE o.deleted_at IS NULL AND o.patient.id = :id ORDER BY o.id"),
+        @NamedQuery(name= "getAllObservationsByHealthcareProfessional", query = "SELECT o FROM Observation o WHERE o.healthcareProfessional.id = :id ORDER BY o.id")
 })
 public class Observation implements Serializable {
     @Id
@@ -37,11 +40,15 @@ public class Observation implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleted_at;
+
     @OneToOne
     private Prescription prescription;
 
     @OneToMany(mappedBy = "observation", cascade = CascadeType.REMOVE)
     private List<Document> documents;
+
 
     public Observation(HealthcareProfessional healthcareProfessional, Patient patient, String notes, Prescription prescription) {
         this.healthcareProfessional = healthcareProfessional;
@@ -135,5 +142,17 @@ public class Observation implements Serializable {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

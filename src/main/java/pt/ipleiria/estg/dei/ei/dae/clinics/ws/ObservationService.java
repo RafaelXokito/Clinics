@@ -1,7 +1,9 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.ObservationBean;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
@@ -36,12 +38,12 @@ public class ObservationService {
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(toDTOs(((HealthcareProfessional) person).getObservations()))
+                    .entity(toDTOs(observationBean.getAllObservationByHealthcareProfessional(person.getId())))
                     .build();
         }
 
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(((Patient) person).getObservations()))
+                .entity(toDTOs(observationBean.getAllObservationByPatient(person.getId())))
                 .build();
     }
 
@@ -106,6 +108,17 @@ public class ObservationService {
                 .build();
     }
 
+    @POST
+    @Path("{id}/restore")
+    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+        if (observationBean.restore(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
+
     private List<ObservationDTO> toDTOs(List<Observation> observations) {
         return observations.stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -116,7 +129,8 @@ public class ObservationService {
                 observation.getHealthcareProfessional().getName(),
                 observation.getPatient().getId(),
                 observation.getPatient().getName(),
-                observation.getCreated_at());
+                observation.getCreated_at(),
+                observation.getDeleted_at());
     }
 
     private ObservationDTO fullToDTO(Observation observation) {

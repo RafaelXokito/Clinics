@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PrescriptionDTO {
@@ -12,9 +13,25 @@ public class PrescriptionDTO {
     private String notes;
     private List<PatientDTO> patients;
     private List<BiometricDataIssueDTO> issues;
+    private Date created_at;
+    private Date deleted_at;
+    private Boolean isGlobal;
+
+    public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, String start_date, String end_date, String notes, List<PatientDTO> patients, List<BiometricDataIssueDTO> issues, Date created_at, Date deleted_at) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.notes = notes;
+        this.patients = patients;
+        this.issues = issues;
+        this.created_at = created_at;
+        this.deleted_at = deleted_at;
+    }
 
     public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, String start_date,
-            String end_date, String notes, List<BiometricDataIssueDTO> issues) {
+                           String end_date, String notes, List<BiometricDataIssueDTO> issues) {
         this.id = id;
         this.healthcareProfessionalId = healthcareProfessionalId;
         this.healthcareProfessionalName = healthcareProfessionalName;
@@ -32,6 +49,18 @@ public class PrescriptionDTO {
         this.start_date = start_date;
         this.end_date = end_date;
         this.notes = notes;
+    }
+
+    public PrescriptionDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, String start_date, String end_date, String notes, Date created_at, Date deleted_at, Boolean isGlobal) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.notes = notes;
+        this.created_at = created_at;
+        this.deleted_at = deleted_at;
+        this.isGlobal = isGlobal;
     }
 
     public PrescriptionDTO() {
@@ -136,5 +165,29 @@ public class PrescriptionDTO {
 
     public void setPatients(List<PatientDTO> patients) {
         this.patients = patients;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
+    public Boolean getIsGlobal() {
+        return isGlobal;
+    }
+
+    public void setIsGlobal(Boolean global) {
+        isGlobal = global;
     }
 }

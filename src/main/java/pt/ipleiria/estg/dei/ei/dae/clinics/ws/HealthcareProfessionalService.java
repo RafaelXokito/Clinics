@@ -37,8 +37,12 @@ public class HealthcareProfessionalService {
     @GET
     @Path("/")
     public Response getAllHealthcareProfessionalsWS() {
+        if (securityContext.isUserInRole("Administrator"))
+            return Response.status(Response.Status.OK)
+                    .entity(toDTOs(healthcareProfessionalBean.getAllHealthcareProfessionalsClassWithTrashed()))
+                    .build();
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(healthcareProfessionalBean.getAllHealthcareProfessionalsClassWithTrashed()))
+                .entity(toDTOs(healthcareProfessionalBean.getAllHealthcareProfessionalsClass()))
                 .build();
     }
 
@@ -136,7 +140,7 @@ public class HealthcareProfessionalService {
 
     @POST
     @Path("{id}/restore")
-    public Response restoreAdministratorWS(@PathParam("id") long id) throws Exception {
+    public Response restoreHealthCareProfessionalWS(@PathParam("id") long id) throws Exception {
         if (healthcareProfessionalBean.restore(id))
             return Response.status(Response.Status.OK)
                     .build();

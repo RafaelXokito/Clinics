@@ -7,13 +7,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "prescriptions")
 @NamedQueries({
         @NamedQuery(name = "getAllPrescriptions", query = "SELECT p FROM Prescription p ORDER BY p.id"),
-        @NamedQuery(name = "getActivePrescriptions", query = "SELECT p FROM Prescription p WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id")
+        @NamedQuery(name = "getActivePrescriptions", query = "SELECT p FROM Prescription p WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id"),
+        @NamedQuery(name = "getActivePrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date AND p2.id = :id ORDER BY p.id"),
+        @NamedQuery(name= "getAllPrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.deleted_at IS NULL AND p2.id = :id ORDER BY p.id"),
+        @NamedQuery(name= "getAllPrescriptionsByHealthcareProfessional", query = "SELECT p FROM Prescription p WHERE p.healthcareProfessional.id = :id ORDER BY p.id")
 })
 public class Prescription implements Serializable {
     @Id
@@ -28,6 +32,9 @@ public class Prescription implements Serializable {
     @JoinColumn(name = "HEALTHCAREPROFESSIONAL_ID")
     @NotNull
     private HealthcareProfessional healthcareProfessional;
+
+    @OneToOne(mappedBy = "prescription")
+    private Observation observation;
 
     @NotNull
     @ManyToMany
@@ -46,6 +53,13 @@ public class Prescription implements Serializable {
 
     private String notes;
 
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created_at;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleted_at;
+
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Prescription(HealthcareProfessional healthcareProfessional, Patient patient, String start_date, String end_date, String notes) {
@@ -54,6 +68,8 @@ public class Prescription implements Serializable {
         this.end_date = LocalDateTime.parse(end_date, formatter);
 
         this.notes = notes;
+
+        this.created_at = new Date();
 
         this.biometricDataIssues = new ArrayList<>();
         this.patients = new ArrayList<>();
@@ -70,6 +86,8 @@ public class Prescription implements Serializable {
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
         this.notes = notes;
+
+        this.created_at = new Date();
 
         this.biometricDataIssues = new ArrayList<>();
         this.patients = new ArrayList<>();
@@ -157,5 +175,33 @@ public class Prescription implements Serializable {
         if (patient == null) return;
 
         this.patients.remove(patient);
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
+    public Observation getObservation() {
+        return observation;
+    }
+
+    public void setObservation(Observation observation) {
+        this.observation = observation;
     }
 }

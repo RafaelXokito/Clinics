@@ -17,7 +17,7 @@ public class DocumentBean {
 
     public Document create(long observation_id, String filepath, String filename) throws MyEntityNotFoundException, MyIllegalArgumentException {
         Observation observation = entityManager.find(Observation.class, observation_id);
-        if (observation == null)
+        if (observation == null || observation.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Observation \"" + observation_id + "\" does not exist");
 
         if (filepath == null || filepath.trim().isEmpty())
@@ -51,7 +51,7 @@ public class DocumentBean {
     public boolean deleteDocument(Document document) throws MyIllegalArgumentException, MyEntityNotFoundException {
         long observationId = document.getObservation().getId();
         Observation observation = entityManager.find(Observation.class, observationId);
-        if (observation == null)
+        if (observation == null || observation.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Observation \"" + observationId + "\" does not exist");
 
         if (!entityManager.contains(document)) {

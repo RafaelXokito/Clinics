@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
+import java.util.Date;
+
 public class BiometricDataIssueDTO {
     private long id;
     private String name;
@@ -8,6 +10,20 @@ public class BiometricDataIssueDTO {
     private long biometricDataTypeId;
     private String biometricDataTypeName;
     private String biometricDataTypeUnitName;
+    private Date created_at;
+    private Date deleted_at;
+
+    public BiometricDataIssueDTO(long id, String name, double min, double max, long biometricDataTypeId, String biometricDataTypeName, String biometricDataTypeUnitName, Date created_at, Date deleted_at) {
+        this.id = id;
+        this.name = name;
+        this.min = min;
+        this.max = max;
+        this.biometricDataTypeId = biometricDataTypeId;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.biometricDataTypeUnitName = biometricDataTypeUnitName;
+        this.created_at = created_at;
+        this.deleted_at = deleted_at;
+    }
 
     public BiometricDataIssueDTO(long id, String name, double min, double max, long biometricDataTypeId, String biometricDataTypeName, String biometricDataTypeUnitName) {
         this.id = id;
@@ -104,5 +120,21 @@ public class BiometricDataIssueDTO {
 
     public void setBiometricDataTypeUnitName(String biometricDataTypeUnitName) {
         this.biometricDataTypeUnitName = biometricDataTypeUnitName;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

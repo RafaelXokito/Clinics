@@ -12,10 +12,13 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricData",
+                query = "SELECT bioData FROM BiometricData bioData WHERE bioData.deleted_at IS NULL ORDER BY bioData.id"
+        ),
+        @NamedQuery(
+                name = "getAllBiometricDataWithTrashed",
                 query = "SELECT bioData FROM BiometricData bioData ORDER BY bioData.id"
         )
 })
-@AdditionalCriteria("this.deleted_at is null")
 public class BiometricData implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -145,5 +148,9 @@ public class BiometricData implements Serializable {
 
     public void setDeleted_at() {
         this.deleted_at = new Date();
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

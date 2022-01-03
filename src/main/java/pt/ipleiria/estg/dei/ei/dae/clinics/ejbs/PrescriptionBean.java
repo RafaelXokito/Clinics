@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
@@ -22,7 +23,7 @@ public class PrescriptionBean {
 
     public Prescription findPrescription(long id) throws MyEntityNotFoundException {
         Prescription prescription = entityManager.find(Prescription.class, id);
-        if (prescription == null)
+        if (prescription == null || prescription.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Prescription \"" + id + "\" does not exist");
 
         return prescription;
@@ -30,6 +31,14 @@ public class PrescriptionBean {
 
     public BiometricDataIssue findBiometricDataIssue(long id) {
         return entityManager.find(BiometricDataIssue.class, id);
+    }
+
+    public List<Prescription> getAllPrescriptionByPatient(long id) {
+        return entityManager.createNamedQuery("getAllPrescriptionsByPatient", Prescription.class).setParameter("id", id).getResultList();
+    }
+
+    public List<Prescription> getAllPrescriptionByHealthcareProfessional(long id) {
+        return entityManager.createNamedQuery("getAllPrescriptionsByHealthcareProfessional", Prescription.class).setParameter("id", id).getResultList();
     }
 
     /***
@@ -88,7 +97,7 @@ public class PrescriptionBean {
             throw new MyUnauthorizedException("You are not allowed to delete this prescription");
 
         //REMOVE DEPENDENCIES
-        HealthcareProfessional healthcareProfessional = prescription.getHealthcareProfessional();
+        /*HealthcareProfessional healthcareProfessional = prescription.getHealthcareProfessional();
         List<Patient> patients = prescription.getPatients();
         List<BiometricDataIssue> biometricDataIssues = prescription.getBiometric_data_issue();
 
@@ -99,9 +108,27 @@ public class PrescriptionBean {
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.removePrescription(prescription);
         }
-
         entityManager.remove(prescription);
         return entityManager.find(Prescription.class, id) == null;
+        */
+
+        prescription.setDeleted_at();
+        return true;
+    }
+
+    /***
+     * Restore a Prescription by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Observation
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        Prescription prescription = entityManager.find(Prescription.class, id);
+        if (prescription == null)
+            throw new MyEntityNotFoundException("Prescription \"" + id + "\" does not exist");
+        if (prescription.getDeleted_at() == null)
+            throw new MyEntityExistsException("Prescription \"" + id + "\" already exist");
+        prescription.setDeleted_at(null);
+
+        return true;
     }
 
     /***
@@ -168,10 +195,6 @@ public class PrescriptionBean {
     }
 
     public List<Prescription> getActivePrescriptionsByPatient(long patientId) {
-        TypedQuery<Prescription> query = entityManager.createQuery("SELECT p FROM Prescription p JOIN p.patients p2 WHERE p2.id = :patientId AND p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.start_date DESC", Prescription.class)
-                .setParameter("patientId", patientId);
-        entityManager.flush();
-        return query.getResultList();
-
+        return entityManager.createNamedQuery("getActivePrescriptionsByPatient", Prescription.class).setParameter("id", patientId).getResultList();
     }
 }

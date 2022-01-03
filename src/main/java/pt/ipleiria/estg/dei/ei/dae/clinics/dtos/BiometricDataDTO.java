@@ -9,6 +9,7 @@ public class BiometricDataDTO {
     private String notes;
     private long patientId;
     private Date created_at;
+    private Date deleted_at;
     private long created_by;
     private String patientName;
     private String healthNo;
@@ -72,6 +73,18 @@ public class BiometricDataDTO {
         this.value = value;
         this.valueUnit = valueUnit;
         this.created_at = createdAt;
+    }
+
+    public BiometricDataDTO(long id, String patientName, String healthNo, String biometricDataTypeName, double value, String valueUnit,long created_by, Date createdAt, Date deleted_at) {
+        this.id = id;
+        this.patientName = patientName;
+        this.healthNo = healthNo;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.value = value;
+        this.valueUnit = valueUnit;
+        this.created_at = createdAt;
+        this.deleted_at = deleted_at;
+        this.created_by = created_by;
     }
 
     public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, long createdBy, Date createdAt) {
@@ -208,5 +221,13 @@ public class BiometricDataDTO {
 
     public void setBiometricDataIssueName(String biometricDataIssueName) {
         this.biometricDataIssueName = biometricDataIssueName;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

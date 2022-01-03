@@ -100,9 +100,12 @@ public class AdministratorBean {
             throw new MyIllegalArgumentException("Field \"gender\" needs to be one of the following \"Male\", \"Female\", \"Other\"");
 
         Administrator newAdministrator = new Administrator(email.trim(), password.trim(), name.trim(), gender.trim());
-        //personRepository.save(newAdministrator);
-        entityManager.persist(newAdministrator);
-        entityManager.flush();
+        try {
+            entityManager.persist(newAdministrator);
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error persisting your data");
+        }
         return newAdministrator.getId();
     }
 
@@ -147,6 +150,12 @@ public class AdministratorBean {
         administrator.setEmail(email.trim());
         administrator.setName(name.trim());
         administrator.setGender(gender.trim());
+
+        try {
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error updating Administrator");
+        }
     }
 
     /***

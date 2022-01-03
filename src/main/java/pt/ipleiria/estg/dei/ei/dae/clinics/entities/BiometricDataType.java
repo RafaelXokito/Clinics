@@ -1,10 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 
 import io.smallrye.common.constraint.NotNull;
+import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,6 +14,10 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataTypes",
+                query = "SELECT b FROM BiometricDataType b WHERE b.deleted_at IS NULL ORDER BY b.id DESC"
+        ),
+        @NamedQuery(
+                name = "getAllBiometricDataTypesWithTrashed",
                 query = "SELECT b FROM BiometricDataType b ORDER BY b.id DESC"
         )
 })
@@ -38,6 +44,9 @@ public class BiometricDataType implements Serializable {
     @NotNull
     @OneToMany(mappedBy = "biometric_data_type")
     private List<BiometricDataIssue> issues;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleted_at;
 
     public BiometricDataType(String name, double min, double max, String unit, String unit_name) {
         this.name = name;
@@ -116,5 +125,17 @@ public class BiometricDataType implements Serializable {
             return;
 
         issues.remove(biometricDataIssue);
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
     }
 }

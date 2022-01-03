@@ -36,8 +36,12 @@ public class PatientService {
     @GET
     @Path("/")
     public Response getAllPatientsWS() {
-        return Response.status(Response.Status.OK)
+        if (securityContext.isUserInRole("Administrator"))
+            return Response.status(Response.Status.OK)
                 .entity(toDTOsSimple(patientBean.getAllPatientsClassWithTrashed()))
+                .build();
+        return Response.status(Response.Status.OK)
+                .entity(toDTOsSimple(patientBean.getAllPatientsClass()))
                 .build();
     }
 

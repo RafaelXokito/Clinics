@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.dtos;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class BiometricDataTypeDTO {
@@ -9,6 +10,7 @@ public class BiometricDataTypeDTO {
     private double max;
     private String unit;
     private String unit_name;
+    private Date deleted_at;
 
     public BiometricDataTypeDTO(long id, String name, double min, double max, String unit, String unit_name) {
         this.id = id;
@@ -26,6 +28,7 @@ public class BiometricDataTypeDTO {
         max = 0;
         unit = "";
         unit_name = "";
+        deleted_at = null;
     }
 
     public BiometricDataTypeDTO(long id, String name,String unit, String unit_name, double min, double max) {
@@ -37,11 +40,29 @@ public class BiometricDataTypeDTO {
         this.max = max;
     }
 
+    public BiometricDataTypeDTO(long id, String name, double min, double max, String unit, String unit_name, Date deleted_at) {
+        this.id = id;
+        this.name = name;
+        this.min = min;
+        this.max = max;
+        this.unit = unit;
+        this.unit_name = unit_name;
+        this.deleted_at = deleted_at;
+    }
+
     public BiometricDataTypeDTO(long id, String name, String unit, String unit_name) {
         this.id = id;
         this.name = name;
         this.unit = unit;
         this.unit_name = unit_name;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 
     public long getId() {

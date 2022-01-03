@@ -94,8 +94,12 @@ public class PatientBean {
             throw new MyEntityExistsException("Patient with a health number of \"" + healthNo + "\" already exist");
 
         Patient newPatient = new Patient(email.trim(), password.trim(), name.trim(), gender.trim(), healthNo, employee);
-        entityManager.persist(newPatient);
-        entityManager.flush();
+        try {
+            entityManager.persist(newPatient);
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error persisting your data");
+        }
         return newPatient.getId();
     }
 
@@ -146,6 +150,12 @@ public class PatientBean {
         patient.setName(name.trim());
         patient.setGender(gender.trim());
         patient.setHealthNo(healthNo);
+
+        try {
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error updating Administrator");
+        }
     }
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {

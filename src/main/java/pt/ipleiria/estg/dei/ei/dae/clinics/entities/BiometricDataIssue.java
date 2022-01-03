@@ -5,6 +5,7 @@ import io.smallrye.common.constraint.NotNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,11 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getAllBiometricDataIssues",
-                query = "SELECT b FROM BiometricDataIssue b ORDER BY b.id"
+                query = "SELECT b FROM BiometricDataIssue b WHERE b.deleted_at IS NULL AND b.biometric_data_type.deleted_at IS NULL ORDER BY b.id"
+        ),
+        @NamedQuery(
+                name = "getAllBiometricDataIssuesWithTrashed",
+                query = "SELECT b FROM BiometricDataIssue b WHERE b.biometric_data_type.deleted_at IS NULL ORDER BY b.id"
         )
 })
 public class BiometricDataIssue implements Serializable {
@@ -30,6 +35,12 @@ public class BiometricDataIssue implements Serializable {
     @NotNull
     private double max;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created_at;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleted_at;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "biometric_data_type_id")
@@ -45,7 +56,12 @@ public class BiometricDataIssue implements Serializable {
         this.name = name;
         this.min = min;
         this.max = max;
+        this.created_at = new Date();
         this.biometric_data_type = biometric_data_type;
+        this.prescriptions = new ArrayList<>();
+    }
+
+    public BiometricDataIssue() {
         this.prescriptions = new ArrayList<>();
     }
 
@@ -59,10 +75,6 @@ public class BiometricDataIssue implements Serializable {
 
     public Prescription removePrescription(Prescription prescription){
         return prescription != null && prescriptions.remove(prescription) ? prescription : null;
-    }
-
-    public BiometricDataIssue() {
-        this.prescriptions = new ArrayList<>();
     }
 
     public List<Prescription> getPrescriptions() {
@@ -107,5 +119,25 @@ public class BiometricDataIssue implements Serializable {
 
     public void setBiometric_data_type(BiometricDataType biometric_data_type) {
         this.biometric_data_type = biometric_data_type;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at() {
+        this.deleted_at = new Date();
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
     }
 }

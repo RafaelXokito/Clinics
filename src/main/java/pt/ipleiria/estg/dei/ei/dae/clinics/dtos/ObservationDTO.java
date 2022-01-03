@@ -14,6 +14,7 @@ public class ObservationDTO {
     private Date created_at;
     private PrescriptionDTO prescription;
     private List<DocumentDTO> documents;
+    private Date deleted_at;
 
     private boolean hasPrescription;
     private long nDocuments;
@@ -66,7 +67,16 @@ public class ObservationDTO {
         this.documents = new ArrayList<>();
     }
 
-
+    public ObservationDTO(long id, long healthcareProfessionalId, String healthcareProfessionalName, long patientId, String patientName, Date created_at, Date deleted_at) {
+        this.id = id;
+        this.healthcareProfessionalId = healthcareProfessionalId;
+        this.healthcareProfessionalName = healthcareProfessionalName;
+        this.patientId = patientId;
+        this.patientName = patientName;
+        this.created_at = created_at;
+        this.deleted_at = deleted_at;
+        this.documents = new ArrayList<>();
+    }
 
     public ObservationDTO() {
         this.id = -1;
@@ -166,5 +176,13 @@ public class ObservationDTO {
 
     public void setnDocuments(long nDocuments) {
         this.nDocuments = nDocuments;
+    }
+
+    public Date getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(Date deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

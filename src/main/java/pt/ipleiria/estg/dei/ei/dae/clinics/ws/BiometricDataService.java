@@ -44,7 +44,7 @@ public class BiometricDataService {
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(toDTOAllBiometricDatas(biometricDataBean.getAllBiometricData()))
+                    .entity(biometricDataToDTOs(biometricDataBean.getAllBiometricDatasClassWithTrashed()))
                     .build();
         }
 
@@ -184,6 +184,17 @@ public class BiometricDataService {
                 .build();
     }
 
+    @POST
+    @Path("{id}/restore")
+    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+        if (biometricDataBean.restore(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
+
     private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
         return biometricData.stream().map(this::biometricDataToDTO).collect(Collectors.toList());
     }
@@ -196,7 +207,9 @@ public class BiometricDataService {
                 biometricData.getBiometric_data_type().getName(),
                 biometricData.getValue(),
                 biometricData.getBiometric_data_type().getUnit_name(),
-                biometricData.getCreated_at());
+                biometricData.getCreated_by().getId(),
+                biometricData.getCreated_at(),
+                biometricData.getDeleted_at());
     }
 
     private List<BiometricDataDTO> toDTOs(List<BiometricData> biometricData) {

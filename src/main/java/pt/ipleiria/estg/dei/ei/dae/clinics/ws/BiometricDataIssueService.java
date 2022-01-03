@@ -6,8 +6,10 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +22,19 @@ public class BiometricDataIssueService {
     @EJB
     private BiometricDataIssueBean biometricDataIssueBean;
 
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     @Path("/")
-    public Response getAllBiometricDataIssuesWS() {
+    public Response getAllBiometricDataIssuesWS(@DefaultValue("false") @QueryParam("trashed") Boolean trashed) {
+        if (securityContext.isUserInRole("HealthcareProfessional") && trashed)
+            return Response.status(Response.Status.OK)
+                    .entity(toDTOs(biometricDataIssueBean.getAllBiometricDataIssuesClassWithTrashed()))
+                    .build();
+
         return Response.status(Response.Status.OK)
-                .entity(toDTOAllBiometricDataIssues(biometricDataIssueBean.getAllBiometricDataIssues()))
+                .entity(toDTOs(biometricDataIssueBean.getAllBiometricDataIssuesClass()))
                 .build();
     }
 
@@ -93,6 +103,16 @@ public class BiometricDataIssueService {
                 .build();
     }
 
+    @POST
+    @Path("{id}/restore")
+    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+        if (biometricDataIssueBean.restore(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
 
     private List<BiometricDataIssueDTO> toDTOs(List<BiometricDataIssue> biometricDataIssues) {
         return biometricDataIssues.stream().map(this::toDTO).collect(Collectors.toList());
@@ -105,6 +125,8 @@ public class BiometricDataIssueService {
                 biometricDataIssue.getMax(),
                 biometricDataIssue.getBiometric_data_type().getId(),
                 biometricDataIssue.getBiometric_data_type().getName(),
-                biometricDataIssue.getBiometric_data_type().getUnit_name());
+                biometricDataIssue.getBiometric_data_type().getUnit_name(),
+                biometricDataIssue.getCreated_at(),
+                biometricDataIssue.getDeleted_at());
     }
 }

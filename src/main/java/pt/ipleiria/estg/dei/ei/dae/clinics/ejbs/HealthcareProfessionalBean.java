@@ -87,8 +87,12 @@ public class HealthcareProfessionalBean {
             throw new MyIllegalArgumentException("Field \"specialty\" must have at least 3 characters");
 
         HealthcareProfessional newHealthcareProfessional = new HealthcareProfessional(email.trim(), password.trim(), name.trim(), gender.trim(), specialty.trim(), created_by);
-        entityManager.persist(newHealthcareProfessional);
-        entityManager.flush();
+        try {
+            entityManager.persist(newHealthcareProfessional);
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error persisting your data");
+        }
         return newHealthcareProfessional.getId();
     }
 
@@ -137,6 +141,11 @@ public class HealthcareProfessionalBean {
         healthcareProfessional.setName(name.trim());
         healthcareProfessional.setGender(gender.trim());
         healthcareProfessional.setSpecialty(specialty.trim());
+        try {
+            entityManager.flush();
+        }catch (Exception ex){
+            throw new MyIllegalArgumentException("Error updating Administrator");
+        }
     }
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {

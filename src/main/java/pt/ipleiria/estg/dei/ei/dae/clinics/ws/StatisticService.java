@@ -76,7 +76,7 @@ public class StatisticService {
              * ultima biometric data
              */
             List<BiometricData> biometricData = ((Patient) person).getBiometric_data();
-            BiometricData lastBiometricData = biometricData.get(biometricData.size() - 1);
+            BiometricData lastBiometricData = biometricData.size() > 0 ? biometricData.get(biometricData.size() - 1) : null;
             List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
             return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
         }
@@ -174,6 +174,8 @@ public class StatisticService {
     }
 
     private BiometricDataDTO toDTOBiometricData(BiometricData biometricData) {
+        if (biometricData == null)
+            return new BiometricDataDTO();
         return new BiometricDataDTO(
                 biometricData.getId(),
                 biometricData.getBiometric_data_type().getId(),

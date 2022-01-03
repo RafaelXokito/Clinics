@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
@@ -21,9 +22,17 @@ public class BiometricDataIssueBean {
         return biometricDataIssueList;
     }
 
+    public List<BiometricDataIssue> getAllBiometricDataIssuesClass() {
+        return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).getResultList();
+    }
+
+    public List<BiometricDataIssue> getAllBiometricDataIssuesClassWithTrashed() {
+        return entityManager.createNamedQuery("getAllBiometricDataIssuesWithTrashed", BiometricDataIssue.class).getResultList();
+    }
+
     public BiometricDataIssue findBiometricDataIssue(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = entityManager.find(BiometricDataIssue.class, id);
-        if (biometricDataIssue == null)
+        if (biometricDataIssue == null || biometricDataIssue.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataIssue \"" + id + "\" does not exist");
         return biometricDataIssue;
     }
@@ -40,7 +49,7 @@ public class BiometricDataIssueBean {
      */
     public BiometricDataIssue create(String name, double min, double max, long biometric_data_type) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometric_data_type);
-        if (biometricDataType == null)
+        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometric_data_type + "\" does not exist");
 
         if (name == null || name.trim().isEmpty())
@@ -73,9 +82,25 @@ public class BiometricDataIssueBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
-        biometricDataIssue.getBiometric_data_type().removeIssue(biometricDataIssue);
-        entityManager.remove(biometricDataIssue);
-        return entityManager.find(BiometricDataIssue.class, id) == null;
+        biometricDataIssue.setDeleted_at();
+        return true;
+    }
+
+    /***
+     * Restore a Biometric Data Issue by given @Id:id - Change deleted_at field to null date
+     * @param id @Id to find the proposal restore Observation
+     */
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+        BiometricDataIssue biometricDataIssue = entityManager.find(BiometricDataIssue.class, id);
+        if (biometricDataIssue == null)
+            throw new MyEntityNotFoundException("Biometric Data Issue \"" + id + "\" does not exist");
+        if (biometricDataIssue.getDeleted_at() == null)
+            throw new MyEntityExistsException("Biometric Data Issue \"" + id + "\" already exist");
+        if (biometricDataIssue.getBiometric_data_type().getDeleted_at() != null)
+            throw new MyEntityNotFoundException("Biometric Data Type \"" + biometricDataIssue.getBiometric_data_type().getName() + "\" does not exist");
+
+        biometricDataIssue.setDeleted_at(null);
+        return true;
     }
 
     /***
@@ -91,7 +116,7 @@ public class BiometricDataIssueBean {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
-        if (biometricDataType == null)
+        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
         if (name == null || name.trim().isEmpty())

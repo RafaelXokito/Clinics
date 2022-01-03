@@ -41,12 +41,12 @@ public class PrescriptionService {
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(toDTOs(((HealthcareProfessional) person).getPrescriptions()))
+                    .entity(toDTOsSimple(prescriptionBean.getAllPrescriptionByHealthcareProfessional(person.getId())))
                     .build();
         }
 
         return Response.status(Response.Status.OK)
-                .entity(toDTOs(((Patient) person).getPrescriptions()))
+                .entity(toDTOsSimple(prescriptionBean.getAllPrescriptionByPatient(person.getId())))
                 .build();
     }
 
@@ -119,6 +119,17 @@ public class PrescriptionService {
                 .build();
     }
 
+    @POST
+    @Path("{id}/restore")
+    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+        if (prescriptionBean.restore(id))
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
+
     private List<BiometricDataIssue> fromDTOs(List<BiometricDataIssueDTO> issueDTOS) {
         List<BiometricDataIssue> issues = new ArrayList<>();
         for (BiometricDataIssueDTO issueDTO : issueDTOS) {
@@ -126,6 +137,23 @@ public class PrescriptionService {
             issues.add(issue);
         }
         return issues;
+    }
+
+    private List<PrescriptionDTO> toDTOsSimple(List<Prescription> prescriptions) {
+        return prescriptions.stream().map(this::toDTOSimple).collect(Collectors.toList());
+    }
+
+    private PrescriptionDTO toDTOSimple(Prescription prescription) {
+        return new PrescriptionDTO(
+                prescription.getId(),
+                prescription.getHealthcareProfessional().getId(),
+                prescription.getHealthcareProfessional().getName(),
+                prescription.getStart_date().toString(),
+                prescription.getEnd_date().toString(),
+                prescription.getNotes(),
+                prescription.getCreated_at(),
+                prescription.getDeleted_at(),
+                prescription.getObservation() == null);
     }
 
     private List<PrescriptionDTO> toDTOs(List<Prescription> prescriptions) {
