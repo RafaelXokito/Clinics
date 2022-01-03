@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -63,6 +64,10 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
             throw new MyIllegalArgumentException("Field \"created_at\" is required");
+        if (biometricDataTypeId == 0)
+            throw new MyIllegalArgumentException("Field \"biometricTypeId\" is required");
+        if (patientId == 0)
+            throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
@@ -91,39 +96,49 @@ public class BiometricDataBean {
             }
         }
 
-        //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
-        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            for (Prescription prescription : issue.getPrescriptions()) {
-                LocalDateTime startDate = prescription.getStart_date();
-                LocalDateTime endDate = prescription.getEnd_date();
-                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
+        //THE LATEST BIOMETRIC DATA OF THAT TYPE
+        TypedQuery<BiometricData> query = entityManager.createQuery("SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC", BiometricData.class);
+        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId);
+        List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
 
-                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
-                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                    patient.removePrescription(prescription);
+        //IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
+        if (latestBioDatas.size() == 0 || latestBioDatas.get(0).getCreated_at().compareTo(createdAt) < 0) {
+
+            //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+                for (Prescription prescription : issue.getPrescriptions()) {
+                    LocalDateTime startDate = prescription.getStart_date();
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
+                        patient.removePrescription(prescription);
+                        prescription.removePatient(patient);
+                    }
                 }
             }
-        }
 
-        if (biometricDataIssue != null) {
-            //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
-            for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+            if (biometricDataIssue != null) {
+                //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+                for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+                    LocalDateTime startDate = prescription.getStart_date();
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
-                LocalDateTime startDate = prescription.getStart_date();
-                LocalDateTime endDate = prescription.getEnd_date();
-                LocalDateTime date = LocalDateTime.ofInstant(createdAt.toInstant(), ZoneId.systemDefault());
-
-                //IF BIOMETRIC DATA DATE IS IN BETWEEN START DATE AND END DATE OF PRESCRIPTION
-                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                    //ADD PRESCRIPTION TO PATIENT
-                    patient.addPrescription(prescription);
+                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
+                        //ADD PRESCRIPTION TO PATIENT
+                        patient.addPrescription(prescription);
+                        prescription.addPatient(patient);
+                    }
                 }
             }
         }
 
         BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person, source.trim(), biometricDataIssue, createdAt);
-        entityManager.persist(newBiometricData);
         patient.addBiometricData(newBiometricData);
+        entityManager.persist(newBiometricData);
         entityManager.flush();
 
         return newBiometricData;
@@ -133,11 +148,8 @@ public class BiometricDataBean {
      * Delete a Biometric Data by given @Id:id
      * @param id @Id to find the proposal delete Biometric Data
      */
-    public boolean delete(long id, long personId) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricData biometricData = findBiometricData(id);
-        
-        if (personId != biometricData.getCreated_by().getId())
-            throw new MyIllegalArgumentException("Biometric Data with id " + id + " does not belongs to you");
 
         biometricData.setDeleted_at();
         return true;
@@ -170,7 +182,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
 
         //REQUIRED VALIDATION
@@ -178,10 +190,11 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
             throw new MyIllegalArgumentException("Field \"created_at\" is required");
+        if (biometricTypeId == 0)
+            throw new MyIllegalArgumentException("Field \"biometricTypeId\" is required");
+        if (patientId == 0)
+            throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
-
-        if (personId != biometricData.getCreated_by().getId())
-            throw new MyUnauthorizedException("You are not allowed to modify this biometric data");
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)

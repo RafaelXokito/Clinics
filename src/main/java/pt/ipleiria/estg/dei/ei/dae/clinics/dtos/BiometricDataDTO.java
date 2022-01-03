@@ -14,6 +14,8 @@ public class BiometricDataDTO {
     private String patientName;
     private String healthNo;
     private String biometricDataTypeName;
+    private double biometricDataTypeMax;
+    private double biometricDataTypeMin;
     private String valueUnit;
     private String source;
     private long biometricDataIssueId;
@@ -29,7 +31,7 @@ public class BiometricDataDTO {
         this.created_by = created_by;
     }
 
-    public BiometricDataDTO(long id, long biometricTypeId, String biometricDataTypeName, double value, String notes, long patientId, String patientName, Date created_at, long created_by, String healthNo, String valueUnit, String source, long biometricDataIssueId, String biometricDataIssueName) {
+    public BiometricDataDTO(long id, long biometricTypeId, String biometricDataTypeName, double value, String notes, long patientId, String patientName, Date created_at, long created_by, String healthNo, String valueUnit, String source, long biometricDataIssueId, String biometricDataIssueName, double biometricDataTypeMax, double biometricDataTypeMin) {
         this.id = id;
         this.biometricTypeId = biometricTypeId;
         this.biometricDataTypeName = biometricDataTypeName;
@@ -44,6 +46,8 @@ public class BiometricDataDTO {
         this.source = source;
         this.biometricDataIssueId = biometricDataIssueId;
         this.biometricDataIssueName = biometricDataIssueName;
+        this.biometricDataTypeMax = biometricDataTypeMax;
+        this.biometricDataTypeMin = biometricDataTypeMin;
     }
 
     public BiometricDataDTO(long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
@@ -229,5 +233,19 @@ public class BiometricDataDTO {
 
     public void setDeleted_at(Date deleted_at) {
         this.deleted_at = deleted_at;
+    public double getBiometricDataTypeMax() {
+        return biometricDataTypeMax;
+    }
+
+    public void setBiometricDataTypeMax(double biometricDataTypeMax) {
+        this.biometricDataTypeMax = biometricDataTypeMax;
+    }
+
+    public double getBiometricDataTypeMin() {
+        return biometricDataTypeMin;
+    }
+
+    public void setBiometricDataTypeMin(double biometricDataTypeMin) {
+        this.biometricDataTypeMin = biometricDataTypeMin;
     }
 }

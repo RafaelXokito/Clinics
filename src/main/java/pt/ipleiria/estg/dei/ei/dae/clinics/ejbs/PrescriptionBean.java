@@ -71,12 +71,18 @@ public class PrescriptionBean {
             throw new MyIllegalArgumentException("Field \"end_date\" is required");
         if (biometricDataIssues == null || biometricDataIssues.size() == 0)
             throw new MyIllegalArgumentException("You need to have at least 1 biometric data issue");
+        if (notes == null || notes.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"notes\" is required");
 
         //CHECK VALUES
         if (compareDates(start_date.trim(), end_date.trim()) >= 0)
             throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
-        Prescription prescription = new Prescription(healthcareProfessional, start_date.trim(), end_date.trim(), notes, biometricDataIssues);
+        Prescription prescription = new Prescription(healthcareProfessional, start_date.trim(), end_date.trim(), notes.trim(), biometricDataIssues);
+
+        for (BiometricDataIssue issue : biometricDataIssues) {
+            issue.addPrescription(prescription);
+        }
 
         healthcareProfessional.addPrescription(prescription);
 
@@ -152,6 +158,8 @@ public class PrescriptionBean {
             throw new MyIllegalArgumentException("Field \"start_date\" is required");
         if (end_date == null || end_date.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"end_date\" is required");
+        if (notes == null || notes.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"notes\" is required");
 
         //CHECK VALUES
         if (compareDates(start_date.trim(), end_date.trim()) >= 0)
@@ -165,7 +173,7 @@ public class PrescriptionBean {
 
         prescription.setStart_date(start_date.trim());
         prescription.setEnd_date(end_date.trim());
-        prescription.setNotes(notes);
+        prescription.setNotes(notes.trim());
 
         if (!isGlobalPrescription)
             return;

@@ -38,13 +38,15 @@ public class ObservationBean {
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
-        boolean hasPrescription = start_date != null || end_date != null || notes != null;
+        if (notes == null || notes.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"notes\" of observation is required");
 
-        Observation newObservation = new Observation(healthcareProfessional, patient, notes);
+        Observation newObservation = new Observation(healthcareProfessional, patient, notes.trim());
         healthcareProfessional.addObservation(newObservation);
         healthcareProfessional.addPatient(patient);
         patient.addObservation(newObservation);
 
+        boolean hasPrescription = notesPrescription != null && !notesPrescription.trim().isEmpty();
         if (hasPrescription) {
             if (start_date == null)
                 throw new MyIllegalArgumentException("Field \"start_date\" is required");
@@ -54,7 +56,7 @@ public class ObservationBean {
             if (compareDates(start_date, end_date) >= 0)
                 throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
-            Prescription prescription = new Prescription(healthcareProfessional, patient, start_date.trim(), end_date.trim(), notesPrescription);
+            Prescription prescription = new Prescription(healthcareProfessional, patient, start_date.trim(), end_date.trim(), notesPrescription.trim());
             healthcareProfessional.addPrescription(prescription);
             newObservation.setPrescription(prescription);
             patient.addPrescription(prescription);
@@ -74,7 +76,10 @@ public class ObservationBean {
         if (observation.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to modify this observation");
 
-        observation.setNotes(notesObservation);
+        if (notesObservation == null || notesObservation.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"notes\" of observation is required");
+
+        observation.setNotes(notesObservation.trim());
 
         if (observation.getPrescription() == null) return;
 
@@ -82,6 +87,8 @@ public class ObservationBean {
             throw new MyIllegalArgumentException("Field \"start_date\" is required");
         if (end_date == null)
             throw new MyIllegalArgumentException("Field \"end_date\" is required");
+        if (notesPrescription == null || notesPrescription.trim().isEmpty())
+            throw new MyIllegalArgumentException("Field \"notes\" of prescription is required");
 
         if (compareDates(start_date.trim(), end_date.trim()) >= 0)
             throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
@@ -92,7 +99,7 @@ public class ObservationBean {
 
         prescription.setStart_date(start_date.trim());
         prescription.setEnd_date(end_date.trim());
-        prescription.setNotes(notesPrescription);
+        prescription.setNotes(notesPrescription.trim());
     }
 
     public boolean delete(long id, long personId) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {

@@ -84,19 +84,13 @@ public class ConfigBean {
             System.out.println("Creating some Biometric Data Issues");
             BiometricDataIssue febre = biometricDataIssueBean.create("Febre", 38, 45, temperaturaCorporal.getId());
 
-            System.out.println("Creating some Biometric Data");
-            BiometricData biometricData1 = biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
-            BiometricData biometricData2 = biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
-                    pDanielId, pDanielId, "Sensor", new Date());
-
             BiometricDataIssue hipotermia = biometricDataIssueBean.create("Hipotermia", 30, 35,
                     temperaturaCorporal.getId());
             BiometricDataIssue issue1 = biometricDataIssueBean.create("Muito Pequeno", 0, 1,
                     altura.getId());
             BiometricDataIssue issue2 = biometricDataIssueBean.create("Pequeno", 1, 1.6,
                     altura.getId());
-            BiometricDataIssue issue3 = biometricDataIssueBean.create("Normal", 1.5, 1.75,
+            BiometricDataIssue issue3 = biometricDataIssueBean.create("Normal", 1.6, 1.75,
                     altura.getId());
             BiometricDataIssue issue4 = biometricDataIssueBean.create("Alto", 1.75, 1.85,
                     altura.getId());
@@ -115,6 +109,18 @@ public class ConfigBean {
                     "Para todos os doentes com febre", issues);
             prescriptionBean.create(hBrunaId, "2021-12-29 11:30", "2022-01-03 23:30",
                     "Prescrição 1", issues);
+
+            System.out.println("Creating some Biometric Data");
+            biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+            biometricDataBean.create(temperaturaCorporal.getId(), 40.5,
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+            biometricDataBean.create(temperaturaCorporal.getId(), 36.3,
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+            biometricDataBean.create(temperaturaCorporal.getId(), 35.9,
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+            biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
+                    pDanielId, pDanielId, "Sensor", new Date());
 
             observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
             observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");

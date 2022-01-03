@@ -190,7 +190,9 @@ public class StatisticService {
                 biometricData.getBiometric_data_type().getUnit_name(),
                 biometricData.getSource(),
                 biometricData.getBiometricDataIssue() == null ? 0 : biometricData.getBiometricDataIssue().getId(),
-                biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName());
+                biometricData.getBiometricDataIssue() == null ? null : biometricData.getBiometricDataIssue().getName(),
+                biometricData.getBiometric_data_type().getMax(),
+                biometricData.getBiometric_data_type().getMin());
     }
 
     private List<PrescriptionDTO> toDTOsPrescriptions(List<Prescription> prescriptions) {
