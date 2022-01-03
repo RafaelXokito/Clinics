@@ -233,6 +233,8 @@ public class BiometricDataDTO {
 
     public void setDeleted_at(Date deleted_at) {
         this.deleted_at = deleted_at;
+    }
+
     public double getBiometricDataTypeMax() {
         return biometricDataTypeMax;
     }
