@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.BiometricDataIssueDTO;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.BiometricDataIssueBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataIssue;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -40,6 +41,7 @@ public class BiometricDataIssueService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response getBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
         BiometricDataIssue biometricDataIssue = biometricDataIssueBean.findBiometricDataIssue(id);
 
@@ -66,6 +68,7 @@ public class BiometricDataIssueService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response updateBiometricDataIssueWS(@PathParam("id") long id, BiometricDataIssueDTO biometricDataIssueDTO) throws Exception {
         biometricDataIssueBean.update(id,
             biometricDataIssueDTO.getName(),
@@ -82,6 +85,7 @@ public class BiometricDataIssueService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response deleteBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
         if (biometricDataIssueBean.delete(id))
             return Response.status(Response.Status.OK)
@@ -93,7 +97,8 @@ public class BiometricDataIssueService {
 
     @POST
     @Path("{id}/restore")
-    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+    @RolesAllowed({"HealthcareProfessional"})
+    public Response restoreBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
         if (biometricDataIssueBean.restore(id))
             return Response.status(Response.Status.OK)
                     .build();

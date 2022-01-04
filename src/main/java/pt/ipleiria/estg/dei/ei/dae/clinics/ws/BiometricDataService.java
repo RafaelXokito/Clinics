@@ -13,6 +13,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -57,10 +58,11 @@ public class BiometricDataService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response getBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         BiometricData biometricData = biometricDataBean.findBiometricData(id);
         if (!securityContext.isUserInRole("HealthcareProfessional") && biometricData.getPatient().getId() != personBean.getPersonByAuthToken(auth).getId())
-            throw new MyUnauthorizedException("You are not allowed to view this patient");
+            throw new MyUnauthorizedException("You are not allowed to view this biometric data");
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(biometricData))
@@ -99,6 +101,7 @@ public class BiometricDataService {
     @POST
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response importFile(MultipartFormDataInput input, @HeaderParam("Authorization") String auth) throws Exception {
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
@@ -142,6 +145,7 @@ public class BiometricDataService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response updateBiometricDataWS(@PathParam("id") long id, BiometricDataDTO biometricDataDTO, @HeaderParam("Authorization") String auth) throws Exception {
         long personId = personBean.getPersonByAuthToken(auth).getId();
         BiometricData bioData = biometricDataBean.findBiometricData(id);
@@ -167,6 +171,7 @@ public class BiometricDataService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response deleteBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         long personId = personBean.getPersonByAuthToken(auth).getId();
         BiometricData bioData = biometricDataBean.findBiometricData(id);
@@ -184,6 +189,7 @@ public class BiometricDataService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response restoreBiometricDataTypeWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         long personId = personBean.getPersonByAuthToken(auth).getId();
         BiometricData bioData = biometricDataBean.find(id);

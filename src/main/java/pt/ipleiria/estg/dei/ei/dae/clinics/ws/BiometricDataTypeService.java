@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricDataType;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -44,6 +45,7 @@ public class BiometricDataTypeService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response getBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(id);
 
@@ -54,6 +56,7 @@ public class BiometricDataTypeService {
 
     @POST
     @Path("/")
+    @RolesAllowed({"Administrator"})
     public Response createBiometricDataTypeWS(BiometricDataTypeDTO biometricDataTypeDTO) throws Exception {
         BiometricDataType createdBiometricDataType = biometricDataTypeBean.create(
                 biometricDataTypeDTO.getName(),
@@ -71,6 +74,7 @@ public class BiometricDataTypeService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response updateBiometricDataTypeWS(@PathParam("id") long id, BiometricDataTypeDTO biometricDataTypeDTO) throws Exception {
         biometricDataTypeBean.update(
             biometricDataTypeDTO.getId(),
@@ -89,6 +93,7 @@ public class BiometricDataTypeService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response deleteBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         if (biometricDataTypeBean.delete(id))
             return Response.status(Response.Status.OK)
@@ -100,6 +105,7 @@ public class BiometricDataTypeService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"Administrator"})
     public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         if (biometricDataTypeBean.restore(id))
             return Response.status(Response.Status.OK)
@@ -111,6 +117,7 @@ public class BiometricDataTypeService {
 
     @GET
     @Path("{id}/biometricdataissues")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response getBiometricDataTypeBiometricDataIssuesWS(@PathParam("id") long id) throws Exception {
         BiometricDataType biometricDataType = biometricDataTypeBean.findBiometricDataType(id);
 

@@ -35,6 +35,7 @@ public class AdministratorService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response getAdministratorWS(@PathParam("id") long id) throws Exception {
         Administrator administrator = administratorBean.findAdministrator(id);
 
@@ -62,6 +63,7 @@ public class AdministratorService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response updateAdministratorWS(@PathParam("id") long id,AdministratorDTO administratorDTO) throws Exception {
         administratorBean.update(
             id,
@@ -79,6 +81,7 @@ public class AdministratorService {
 
     @PATCH
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response updateAdministratorPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
         administratorBean.updatePassword(
             id,
@@ -92,6 +95,7 @@ public class AdministratorService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response deleteAdministratorWS(@PathParam("id") long id) throws Exception {
         if (administratorBean.delete(id))
             return Response.status(Response.Status.OK)
@@ -103,6 +107,7 @@ public class AdministratorService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"Administrator"})
     public Response restoreAdministratorWS(@PathParam("id") long id) throws Exception {
         if (administratorBean.restore(id))
             return Response.status(Response.Status.OK)

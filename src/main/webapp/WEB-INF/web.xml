@@ -65,38 +65,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Create Administrator</web-resource-name>
-            <url-pattern>/api/administrators/*</url-pattern>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Update Administrator Password</web-resource-name>
-            <url-pattern>/api/administrators/*</url-pattern>
-            <http-method>PATCH</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete Administrator</web-resource-name>
-            <url-pattern>/api/administrators/*</url-pattern>
-            <http-method>DELETE</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get Administrators</web-resource-name>
             <url-pattern>/api/administrators</url-pattern>
-            <http-method>GET</http-method>
+            <http-method>POST</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>Administrator</role-name>
@@ -111,16 +81,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         <auth-constraint>
             <role-name>HealthcareProfessional</role-name>
             <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get BiometricDataIssue</web-resource-name>
-            <url-pattern>/api/biometricdataissues/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -135,37 +95,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Update BiometricDataIssue</web-resource-name>
-            <url-pattern>/api/biometricdataissues/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete BiometricDataIssue</web-resource-name>
-            <url-pattern>/api/biometricdataissues/*</url-pattern>
-            <http-method>DELETE</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get BiometricDataIssues</web-resource-name>
-            <url-pattern>/api/biometricdataissues</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get BiometricData</web-resource-name>
+            <web-resource-name>Get All BiometricData</web-resource-name>
             <url-pattern>/api/biometricdata</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
@@ -176,31 +106,9 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Get a BiometricData</web-resource-name>
-            <url-pattern>/api/biometricdata/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Create BiometricData</web-resource-name>
-            <url-pattern>/api/biometricdata/*</url-pattern>
+            <url-pattern>/api/biometricdata</url-pattern>
             <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete BiometricData</web-resource-name>
-            <url-pattern>/api/biometricdata/*</url-pattern>
-            <http-method>DELETE</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>HealthcareProfessional</role-name>
@@ -221,41 +129,9 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Get BiometricDataType</web-resource-name>
-            <url-pattern>/api/biometricdatatypes/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Create BiometricDataType</web-resource-name>
             <url-pattern>/api/biometricdatatypes</url-pattern>
             <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Update BiometricDataType</web-resource-name>
-            <url-pattern>/api/biometricdatatypes/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete BiometricDataType</web-resource-name>
-            <url-pattern>/api/biometricdatatypes/*</url-pattern>
-            <http-method>DELETE</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>Administrator</role-name>
