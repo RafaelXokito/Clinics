@@ -28,14 +28,17 @@ public class BiometricDataBean {
     private EmailBean emailBean;
 
     public List<BiometricData> getAllBiometricDatasClass() {
-        return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class)
+                .setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<BiometricData> getAllBiometricDatasClassWithTrashed(long healthcareProfessionalId) {
         List<BiometricData> biometricDataList = new ArrayList<>();
-        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId, LockModeType.OPTIMISTIC);
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class,
+                healthcareProfessionalId, LockModeType.OPTIMISTIC);
 
-        if (healthcareProfessional == null) return biometricDataList;
+        if (healthcareProfessional == null)
+            return biometricDataList;
 
         for (Patient patient : healthcareProfessional.getPatients()) {
             biometricDataList.addAll(patient.getBiometric_data());
@@ -46,27 +49,40 @@ public class BiometricDataBean {
 
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
-        if (biometricData == null)
+        if (biometricData == null || biometricData.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricData \"" + id + "\" does not exist");
 
         return biometricData;
     }
 
+    public BiometricData find(long id) throws MyEntityNotFoundException {
+        BiometricData biometricData = entityManager.find(BiometricData.class, id);
+
+        if (biometricData == null)
+            throw new MyEntityNotFoundException("Biometric Data \"" + id + "\" does not exist");
+        return biometricData;
+    }
+
     /***
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
+     * 
      * @param biometricDataTypeId @Id of Biometric_Data_Type
-     * @param value that Patient got in this Biometric_Data_Type
-     * @param notes given by healthcare professional about this specific Biometric Data
-     * @param patientId @Id of Patient
-     * @param personId @Id of Person who is creating this biometric data
+     * @param value               that Patient got in this Biometric_Data_Type
+     * @param notes               given by healthcare professional about this
+     *                            specific Biometric Data
+     * @param patientId           @Id of Patient
+     * @param personId            @Id of Person who is creating this biometric data
      * @return BiometricData created
      *         null if Not found Biometric_Data_Type with this id
      *         null if Not found Patient with this username
-     *         null if Not found Person with this username (Who is trying to create this biometric data)
+     *         null if Not found Person with this username (Who is trying to create
+     *         this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
-        //REQUIRED VALIDATION
+    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId,
+            String source, Date createdAt)
+            throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
+        // REQUIRED VALIDATION
         if (source == null || source.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
@@ -76,7 +92,8 @@ public class BiometricDataBean {
         if (patientId == 0)
             throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId, LockModeType.OPTIMISTIC);
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId,
+                LockModeType.OPTIMISTIC);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
@@ -89,36 +106,41 @@ public class BiometricDataBean {
             throw new MyEntityNotFoundException("Person \"" + personId + "\" does not exist");
 
         if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
-            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
+            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds ["
+                    + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
 
-        //CHECK VALUES
+        // CHECK VALUES
         if (!source.trim().equals("Exam") && !source.trim().equals("Sensor") && !source.trim().equals("Wearable"))
-            throw new MyIllegalArgumentException("Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
+            throw new MyIllegalArgumentException(
+                    "Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
 
         BiometricDataIssue biometricDataIssue = null;
         for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            if (value >= issue.getMin() && value <= issue.getMax()) {
+            if (value >= issue.getMin() && value <= issue.getMax() && issue.getDeleted_at() == null) {
                 biometricDataIssue = issue;
                 break;
             }
         }
 
-        //THE LATEST BIOMETRIC DATA OF THAT TYPE
-        TypedQuery<BiometricData> query = entityManager.createQuery("SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC", BiometricData.class);
-        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId).setLockMode(LockModeType.OPTIMISTIC);
+        // THE LATEST BIOMETRIC DATA OF THAT TYPE
+        TypedQuery<BiometricData> query = entityManager.createQuery(
+                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC",
+                BiometricData.class);
+        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId)
+                .setLockMode(LockModeType.OPTIMISTIC);
         List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
 
-        //IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
+        // IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
         if (latestBioDatas.size() == 0 || latestBioDatas.get(0).getCreated_at().compareTo(createdAt) < 0) {
 
-            //REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            // REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
             for (BiometricDataIssue issue : biometricDataType.getIssues()) {
                 for (Prescription prescription : issue.getPrescriptions()) {
                     LocalDateTime startDate = prescription.getStart_date();
                     LocalDateTime endDate = prescription.getEnd_date();
                     LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
-                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
                     if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
                         patient.removePrescription(prescription);
                         prescription.removePatient(patient);
@@ -128,26 +150,28 @@ public class BiometricDataBean {
 
             if (biometricDataIssue != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                //FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+                // FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
                 for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
                     LocalDateTime startDate = prescription.getStart_date();
                     LocalDateTime endDate = prescription.getEnd_date();
                     LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
-                    //ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
                     if (now.compareTo(startDate) >= 0 && now.compareTo(endDate) <= 0) {
-                        //ADD PRESCRIPTION TO PATIENT
+                        // ADD PRESCRIPTION TO PATIENT
                         patient.addPrescription(prescription);
                         prescription.addPatient(patient);
 
                         emailBean.send(patient.getEmail(), "You received a prescription",
-                                prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to " + prescription.getEnd_date().format(formatter));
+                                prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to "
+                                        + prescription.getEnd_date().format(formatter));
                     }
                 }
             }
         }
 
-        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person, source.trim(), biometricDataIssue, createdAt);
+        BiometricData newBiometricData = new BiometricData(biometricDataType, value, notes.trim(), patient, person,
+                source.trim(), biometricDataIssue, createdAt);
         patient.addBiometricData(newBiometricData);
         entityManager.persist(newBiometricData);
         entityManager.flush();
@@ -157,6 +181,7 @@ public class BiometricDataBean {
 
     /***
      * Delete a Biometric Data by given @Id:id
+     * 
      * @param id @Id to find the proposal delete Biometric Data
      */
     public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException {
@@ -167,7 +192,9 @@ public class BiometricDataBean {
     }
 
     /***
-     * Restore a Biometric Data by given @Id:id - Change deleted_at field to null date
+     * Restore a Biometric Data by given @Id:id - Change deleted_at field to null
+     * date
+     * 
      * @param id @Id to find the proposal restore Biometric Data
      */
     public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
@@ -182,21 +209,26 @@ public class BiometricDataBean {
 
     /***
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
-     * @param id @Id of Biometric_Data to be updated
+     * 
+     * @param id              @Id of Biometric_Data to be updated
      * @param biometricTypeId @Id of Biometric_Data_Type
-     * @param value that Patient got in this Biometric_Data_Type
-     * @param notes given by doctor about this specific Biometric Data
-     * @param patientId @Id of Patient
+     * @param value           that Patient got in this Biometric_Data_Type
+     * @param notes           given by doctor about this specific Biometric Data
+     * @param patientId       @Id of Patient
      * @return BiometricData created
      *         null if Not found Biometric_Data_Type with this id
      *         null if Not found Patient with this username
-     *         null if Not found Person with this username (Who is trying to create this biometric data)
+     *         null if Not found Person with this username (Who is trying to create
+     *         this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
-        BiometricData biometricData = entityManager.find(BiometricData.class, id, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+    public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId,
+            String source, Date createdAt)
+            throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
+        BiometricData biometricData = entityManager.find(BiometricData.class, id,
+                LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
-        //REQUIRED VALIDATION
+        // REQUIRED VALIDATION
         if (source == null || source.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"source\" is required");
         if (createdAt == null)
@@ -206,9 +238,10 @@ public class BiometricDataBean {
         if (patientId == 0)
             throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
-
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId, LockModeType.OPTIMISTIC);
-        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId,
+                LockModeType.OPTIMISTIC);
+        if (biometricDataType == null || (biometricDataType.getDeleted_at() != null
+                && biometricData.getBiometric_data_type().getId() != biometricDataType.getId()))
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId, LockModeType.OPTIMISTIC);
@@ -216,11 +249,13 @@ public class BiometricDataBean {
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
         if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
-            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
+            throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds ["
+                    + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");
 
-        //CHECK VALUES
+        // CHECK VALUES
         if (!source.trim().equals("Exam") && !source.trim().equals("Sensor") && !source.trim().equals("Wearable"))
-            throw new MyIllegalArgumentException("Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
+            throw new MyIllegalArgumentException(
+                    "Field \"source\" needs to be one of the following \"Exam\", \"Sensor\", \"Wearable\"");
 
         biometricData.setBiometric_data_type(biometricDataType);
         biometricData.setValue(value);

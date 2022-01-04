@@ -41,8 +41,6 @@ public class PersonBean {
     }
 
     public Person authenticate(final String email, final String password) throws Exception {
-        System.out.println("Entrou no auth");
-
         Person person = findPerson(email);
         Thread.sleep(10);
         if (person != null && Person.validatePassword(password, person.getPassword())) {

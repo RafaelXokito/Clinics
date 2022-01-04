@@ -226,7 +226,8 @@ public class HealthcareProfessionalService {
                     prescription.getId(),
                     prescription.getHealthcareProfessional().getName(),
                     prescription.getStart_date().toString(),
-                    prescription.getEnd_date().toString());
+                    prescription.getEnd_date().toString(),
+                    true);
         }
 
         return new PrescriptionDTO(

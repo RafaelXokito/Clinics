@@ -10,6 +10,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
+import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
@@ -74,8 +75,10 @@ public class BiometricDataService {
 
     @GET
     @Path("{id}")
-    public Response getBiometricDataWS(@PathParam("id") long id) throws Exception {
+    public Response getBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         BiometricData biometricData = biometricDataBean.findBiometricData(id);
+        if (!securityContext.isUserInRole("HealthcareProfessional") && biometricData.getPatient().getId() != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(biometricData))
@@ -199,7 +202,13 @@ public class BiometricDataService {
 
     @POST
     @Path("{id}/restore")
-    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+    public Response restoreBiometricDataTypeWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        long personId = personBean.getPersonByAuthToken(auth).getId();
+        BiometricData bioData = biometricDataBean.find(id);
+
+        if (!securityContext.isUserInRole("HealthcareProfessional") && personId != bioData.getCreated_by().getId())
+            throw new MyIllegalArgumentException("Biometric Data with id " + id + " does not belongs to you");
+
         if (biometricDataBean.restore(id))
             return Response.status(Response.Status.OK)
                     .build();
