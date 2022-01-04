@@ -32,18 +32,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Update Patient</web-resource-name>
-            <url-pattern>/api/patients/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Get Administrators</web-resource-name>
             <url-pattern>/api/administrators</url-pattern>
             <http-method>GET</http-method>
@@ -181,40 +169,9 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Get Prescription</web-resource-name>
-            <url-pattern>/api/prescriptions/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Create Prescription</web-resource-name>
             <url-pattern>/api/prescriptions</url-pattern>
             <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Update Prescription</web-resource-name>
-            <url-pattern>/api/prescriptions/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete Prescription</web-resource-name>
-            <url-pattern>/api/prescriptions/*</url-pattern>
-            <http-method>DELETE</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>HealthcareProfessional</role-name>

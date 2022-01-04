@@ -10,6 +10,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -54,6 +55,7 @@ public class PrescriptionService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional","Patient"})
     public Response getPrescriptionWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Prescription prescription = prescriptionBean.findPrescription(id);
         long authId = personBean.getPersonByAuthToken(auth).getId();
@@ -93,6 +95,7 @@ public class PrescriptionService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response updatePrescriptionWS(@PathParam("id") long id, PrescriptionDTO prescriptionDTO, @HeaderParam("Authorization") String auth) throws Exception {
         List<BiometricDataIssue> issues = fromDTOs(prescriptionDTO.getIssues());
 
@@ -112,6 +115,7 @@ public class PrescriptionService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response deletePrescriptionWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         if (prescriptionBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
             return Response.status(Response.Status.OK)
@@ -123,6 +127,7 @@ public class PrescriptionService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
         if (prescriptionBean.restore(id))
             return Response.status(Response.Status.OK)
