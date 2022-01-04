@@ -14,7 +14,9 @@ import javax.persistence.TypedQuery;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -76,6 +78,8 @@ public class PrescriptionBean {
             throw new MyIllegalArgumentException("Field \"notes\" is required");
 
         //CHECK VALUES
+        if (compareDates(start_date.trim(), LocalDateTime.now().atZone(ZoneId.systemDefault()).minusMinutes(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))) < 0)
+            throw new MyIllegalArgumentException("Field \"start_date\" should be higher or equal than the current date");
         if (compareDates(start_date.trim(), end_date.trim()) >= 0)
             throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
@@ -154,6 +158,8 @@ public class PrescriptionBean {
         Prescription prescription = findPrescription(id);
         if (prescription.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to modify this prescription");
+        if (prescription.getEnd_date().compareTo(LocalDateTime.now()) < 0)
+            throw new MyIllegalArgumentException("This prescription is from the past, so you are not allowed to modify it");
 
         entityManager.lock(prescription, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
@@ -182,13 +188,21 @@ public class PrescriptionBean {
         if (!isGlobalPrescription)
             return;
 
-        for (BiometricDataIssue biometricDataIssue : prescription.getBiometric_data_issue()) {
-            biometricDataIssue.removePrescription(prescription);
+        for (BiometricDataIssue oldBiometricDataIssue : prescription.getBiometric_data_issue()) {
+            //IF THERE IS ANY REMOVAL OF ISSUES FROM GLOBAL PRESCRIPTION, ALL PATIENT ARE UNLINKED TO THE PRESCRIPTION
+            if (!biometricDataIssues.contains(oldBiometricDataIssue)) {
+                oldBiometricDataIssue.removePrescription(prescription);
+                for (Patient patient : prescription.getPatients()) {
+                    patient.removePrescription(prescription);
+                    prescription.removePatient(patient);
+                }
+                break;
+            }
         }
 
-        prescription.setBiometricDataIssues(biometricDataIssues);
         for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
             biometricDataIssue.addPrescription(prescription);
+            prescription.addBiometricDataIssue(biometricDataIssue);
         }
     }
 

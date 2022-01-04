@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "HEALTHCARE_PROFESSIONALS")
@@ -136,4 +137,17 @@ public class HealthcareProfessional extends Employee implements Serializable {
         patients.remove(patient);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        HealthcareProfessional that = (HealthcareProfessional) o;
+        return getId() == that.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getId());
+    }
 }

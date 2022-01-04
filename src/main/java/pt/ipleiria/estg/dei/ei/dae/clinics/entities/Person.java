@@ -253,11 +253,11 @@ public abstract class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return this.id == person.id && this.email.equals(person.email) && this.password.equals(person.password) && this.name.equals(person.name) && this.gender.equals(person.gender);
+        return this.id == person.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, name, gender);
+        return Objects.hash(id);
     }
 }

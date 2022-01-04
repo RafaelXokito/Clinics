@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="Biometric_Data_Issues")
@@ -142,5 +143,18 @@ public class BiometricDataIssue implements Serializable {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BiometricDataIssue issue = (BiometricDataIssue) o;
+        return id == issue.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

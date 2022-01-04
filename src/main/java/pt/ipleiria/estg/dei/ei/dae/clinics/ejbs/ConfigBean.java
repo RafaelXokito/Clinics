@@ -9,6 +9,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,13 +102,13 @@ public class ConfigBean {
             List<BiometricDataIssue> issues = new ArrayList<BiometricDataIssue>();
             issues.add(febre);
             System.out.println("Creating some Prescriptions");
-            prescriptionBean.create(hBrunaId, "2021-12-25 11:30", "2022-01-01 23:30",
+            prescriptionBean.create(hBrunaId, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-02-01 23:30",
                     "Para todos os doentes com febre, repousem e tomam ben-u-ron", issues);
-            prescriptionBean.create(hBrunaId, "2021-12-20 11:30", "2022-01-10 23:30",
+            prescriptionBean.create(hBrunaId, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-03-10 23:30",
                     "Repousem e tomam ben-u-ron", issues);
-            prescriptionBean.create(hBrunaId, "2021-12-22 11:30", "2022-01-02 23:30",
+            prescriptionBean.create(hBrunaId, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-02-02 23:30",
                     "Para todos os doentes com febre", issues);
-            prescriptionBean.create(hBrunaId, "2021-12-29 11:30", "2022-01-03 23:30",
+            prescriptionBean.create(hBrunaId, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-02-03 23:30",
                     "Prescrição 1", issues);
 
             System.out.println("Associate Patients to Healthcare Professionals");
@@ -131,11 +132,11 @@ public class ConfigBean {
                     pLeonelId, hJoseId, "Sensor", new Date());
 
             System.out.println("Creating some Observations");
-            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
-            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
-            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes1234");
-            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
-            observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
+            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "more notes");
+            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "more notes");
+            observationBean.create(hBrunaId, pDanielId, "yesyesyes", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "more notes1234");
+            observationBean.create(hBrunaId, pDanielId, "yesyesyes", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "more notes");
+            observationBean.create(hJoseId, pLeonelId, "nice one", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "more notes");
 
             administratorBean.delete(aGasparId);
         } catch (Exception e) {
