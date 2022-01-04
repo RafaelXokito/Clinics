@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Administrators")
@@ -53,5 +54,19 @@ public class Administrator extends Employee implements Serializable {
 
     public void setCreated_who(List<HealthcareProfessional> healthcareProfessionals) {
         this.healthcareProfessionals = healthcareProfessionals;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Administrator that = (Administrator) o;
+        return getId() == that.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getId());
     }
 }

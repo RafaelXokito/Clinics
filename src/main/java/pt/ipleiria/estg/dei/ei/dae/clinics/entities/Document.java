@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Objects;
 
 @NamedQuery(name = "getObservationDocuments", query = "SELECT doc FROM Document doc WHERE doc.observation.id = :id")
 
@@ -68,5 +69,18 @@ public class Document implements Serializable {
 
     public void setFilepath(String filepath) {
         this.filepath = filepath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Document document = (Document) o;
+        return id == document.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

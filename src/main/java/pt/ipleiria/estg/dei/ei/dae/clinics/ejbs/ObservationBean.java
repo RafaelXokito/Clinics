@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -53,9 +54,10 @@ public class ObservationBean {
         if (hasPrescription) {
             if (start_date == null)
                 throw new MyIllegalArgumentException("Field \"start_date\" is required");
+            if (compareDates(start_date, LocalDateTime.now().atZone(ZoneId.systemDefault()).minusMinutes(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))) < 0)
+                throw new MyIllegalArgumentException("Field \"start_date\" should be higher or equal than the current date " + LocalDateTime.now().atZone(ZoneId.systemDefault()).minusMinutes(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " | "+start_date);
             if (end_date == null)
                 throw new MyIllegalArgumentException("Field \"end_date\" is required");
-
             if (compareDates(start_date, end_date) >= 0)
                 throw new MyIllegalArgumentException("Fields \"start_date\" and \"end_date\" need to have a valid time difference");
 
@@ -155,7 +157,7 @@ public class ObservationBean {
      * @param date2
      * @return 0 if @date1 is equals @date2, 1 if @d1 is greater then @d2, -1 if @d2 is greater then @d1
      */
-    private int compareDates(String date1,String date2) {
+    private int compareDates(String date1, String date2) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime d1 = LocalDateTime.parse(date1,formatter);
         LocalDateTime d2 = LocalDateTime.parse(date2,formatter);

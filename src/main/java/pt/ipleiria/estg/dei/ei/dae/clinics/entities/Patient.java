@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PATIENTS", uniqueConstraints = @UniqueConstraint(columnNames = {"healthNo"}))
@@ -158,5 +159,19 @@ public class Patient extends Person implements Serializable {
         if (prescription == null) return;
 
         this.prescriptions.remove(prescription);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Patient patient = (Patient) o;
+        return getId() == patient.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getId());
     }
 }
