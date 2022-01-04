@@ -15,8 +15,8 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "getAllPrescriptions", query = "SELECT p FROM Prescription p ORDER BY p.id"),
         @NamedQuery(name = "getActivePrescriptions", query = "SELECT p FROM Prescription p WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date ORDER BY p.id"),
-        @NamedQuery(name = "getActivePrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date AND p2.id = :id ORDER BY p.id"),
-        @NamedQuery(name= "getAllPrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.deleted_at IS NULL AND p2.id = :id ORDER BY p.id"),
+        @NamedQuery(name = "getActivePrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.start_date < CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP < p.end_date AND p2.id = :id AND p.deleted_at IS NULL ORDER BY p.id"),
+        @NamedQuery(name= "getAllPrescriptionsByPatient", query = "SELECT p FROM Prescription p JOIN p.patients p2 WHERE p.deleted_at IS NULL AND p2.id = :id AND p.deleted_at IS NULL ORDER BY p.id"),
         @NamedQuery(name= "getAllPrescriptionsByHealthcareProfessional", query = "SELECT p FROM Prescription p WHERE p.healthcareProfessional.id = :id ORDER BY p.id")
 })
 public class Prescription implements Serializable {

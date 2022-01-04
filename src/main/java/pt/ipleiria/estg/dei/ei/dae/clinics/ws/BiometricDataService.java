@@ -52,7 +52,7 @@ public class BiometricDataService {
         }
 
         return Response.status(Response.Status.OK)
-                .entity(biometricDataToDTOs(((Patient) person).getBiometric_data()))
+                .entity(biometricDataToDTOs(biometricDataBean.getAllBiometricDatasClassByPatient(person.getId())))
                 .build();
     }
 

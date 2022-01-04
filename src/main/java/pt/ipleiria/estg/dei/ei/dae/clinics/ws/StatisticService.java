@@ -35,6 +35,9 @@ public class StatisticService {
     private BiometricDataTypeBean biometricDataTypeBean;
 
     @EJB
+    private BiometricDataBean biometricDataBean;
+
+    @EJB
     private PrescriptionBean prescriptionBean;
 
     @Context
@@ -76,7 +79,7 @@ public class StatisticService {
              * healthcare professionals
              * ultima biometric data
              */
-            List<BiometricData> biometricData = ((Patient) person).getBiometric_data();
+            List<BiometricData> biometricData = biometricDataBean.getAllBiometricDatasClassByPatient(person.getId());
             BiometricData lastBiometricData = biometricData.size() > 0 ? biometricData.get(biometricData.size() - 1) : null;
             List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
             return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions, ((Patient) person).getHealthcareProfessionals())).build();

@@ -51,6 +51,10 @@ public class BiometricDataBean {
         return entityManager.createNamedQuery("getAllBiometricDatasClassWithTrashedByHealthcareProfessional", BiometricData.class).setParameter("id", id).getResultList();
     }
 
+    public List<BiometricData> getAllBiometricDatasClassByPatient(long id) {
+        return entityManager.createNamedQuery("getAllBiometricDatasClassByPatient", BiometricData.class).setParameter("id", id).getResultList();
+    }
+
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
         if (biometricData == null || biometricData.getDeleted_at() != null)
