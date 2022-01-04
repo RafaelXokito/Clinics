@@ -275,6 +275,7 @@ public class BiometricDataBean {
             }
         }
 
+        BiometricDataType oldBiometricDataType = biometricData.getBiometric_data_type();
         biometricData.setBiometric_data_type(biometricDataType);
         biometricData.setValue(value);
         biometricData.setPatient(patient);
@@ -284,51 +285,63 @@ public class BiometricDataBean {
         biometricData.setBiometricDataIssue(biometricDataIssue);
         entityManager.flush();
 
-        // THE LATEST BIOMETRIC DATA OF THAT TYPE
-        TypedQuery<BiometricData> query = entityManager.createQuery(
-                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC",
-                BiometricData.class);
-        query.setParameter("type_id", biometricTypeId).setParameter("patient_id", patientId)
-                .setLockMode(LockModeType.OPTIMISTIC);
-        List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
-        if (latestBioDatas.size() == 0)
-            return biometricData;
+        List<BiometricDataType> list = new ArrayList<>();
+        list.add(biometricDataType);
+        if (oldBiometricDataType.getId() != biometricTypeId) {
+            list.add(oldBiometricDataType);
+        }
 
-        BiometricData latestBioData = latestBioDatas.get(0);
-        if (latestBioData.getBiometricDataIssue() == null)
-            return biometricData;
+        for (BiometricDataType biometricType : list) {
 
-        // REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
-        for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            for (Prescription prescription : issue.getPrescriptions()) {
+            // THE LATEST BIOMETRIC DATA OF THAT TYPE
+            TypedQuery<BiometricData> query = entityManager.createQuery(
+                    "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC",
+                    BiometricData.class);
+            query.setParameter("type_id", biometricType.getId()).setParameter("patient_id", patientId)
+                    .setLockMode(LockModeType.OPTIMISTIC);
+            List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
+            if (latestBioDatas.size() == 0)
+                return biometricData;
+
+            // REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            for (BiometricDataIssue issue : biometricType.getIssues()) {
+                for (Prescription prescription : issue.getPrescriptions()) {
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(endDate) <= 0) {
+                        patient.removePrescription(prescription);
+                        prescription.removePatient(patient);
+                    }
+                }
+            }
+
+            BiometricData latestBioData = latestBioDatas.get(0);
+            if (latestBioData.getBiometricDataIssue() == null) {
+                continue;
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            // FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+            for (Prescription prescription : latestBioData.getBiometricDataIssue().getPrescriptions()) {
                 LocalDateTime endDate = prescription.getEnd_date();
                 LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
                 // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
                 if (now.compareTo(endDate) <= 0) {
-                    patient.removePrescription(prescription);
-                    prescription.removePatient(patient);
+                    // ADD PRESCRIPTION TO PATIENT
+                    patient.addPrescription(prescription);
+                    prescription.addPatient(patient);
+
+                    emailBean.send(patient.getEmail(), "You received a prescription",
+                            prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to "
+                                    + prescription.getEnd_date().format(formatter));
                 }
             }
+
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        // FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
-        for (Prescription prescription : latestBioData.getBiometricDataIssue().getPrescriptions()) {
-            LocalDateTime endDate = prescription.getEnd_date();
-            LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
-
-            // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
-            if (now.compareTo(endDate) <= 0) {
-                // ADD PRESCRIPTION TO PATIENT
-                patient.addPrescription(prescription);
-                prescription.addPatient(patient);
-
-                emailBean.send(patient.getEmail(), "You received a prescription",
-                        prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to "
-                                + prescription.getEnd_date().format(formatter));
-            }
-        }
 
         return biometricData;
     }
