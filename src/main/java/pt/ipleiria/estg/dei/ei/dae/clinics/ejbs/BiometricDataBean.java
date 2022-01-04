@@ -51,6 +51,14 @@ public class BiometricDataBean {
         return biometricData;
     }
 
+    public BiometricData find(long id) throws MyEntityNotFoundException {
+        BiometricData biometricData =  entityManager.find(BiometricData.class, id);
+
+        if (biometricData == null)
+            throw new MyEntityNotFoundException("Biometric Data \"" + id + "\" does not exist");
+        return biometricData;
+    }
+
     /***
      * Creating a Biometric Data of a Biometric_Data_Type for a Patient
      * @param biometricDataTypeId @Id of Biometric_Data_Type
@@ -96,7 +104,7 @@ public class BiometricDataBean {
 
         BiometricDataIssue biometricDataIssue = null;
         for (BiometricDataIssue issue : biometricDataType.getIssues()) {
-            if (value >= issue.getMin() && value <= issue.getMax()) {
+            if (value >= issue.getMin() && value <= issue.getMax() && issue.getDeleted_at() == null) {
                 biometricDataIssue = issue;
                 break;
             }
@@ -207,7 +215,7 @@ public class BiometricDataBean {
 
 
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
-        if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
+        if (biometricDataType == null || (biometricDataType.getDeleted_at() != null && biometricData.getBiometric_data_type().getId() != biometricDataType.getId()))
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
 
         Patient patient = entityManager.find(Patient.class, patientId);

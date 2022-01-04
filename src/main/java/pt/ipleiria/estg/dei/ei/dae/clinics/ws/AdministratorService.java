@@ -6,6 +6,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.AdministratorBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +18,6 @@ import java.util.stream.Collectors;
 @Path("administrators") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
-
 public class AdministratorService {
     @EJB
     private AdministratorBean administratorBean;
