@@ -78,6 +78,19 @@ public class HealthcareProfessionalDTO {
         this.patients = new ArrayList<>();
     }
 
+    public HealthcareProfessionalDTO(long id, String email, String name, String gender, Date created_at, Date updated_at, Date deleted_at, String specialty, long created_by, Date birthDate) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.deleted_at = deleted_at;
+        this.specialty = specialty;
+        this.created_by = created_by;
+        this.birthDate = birthDate;
+    }
+
     public long getId() {
         return id;
     }

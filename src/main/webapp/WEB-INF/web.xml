@@ -21,6 +21,16 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
+            <web-resource-name>Delete Patient</web-resource-name>
+            <url-pattern>/api/patients/*</url-pattern>
+            <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>Administrator</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
             <web-resource-name>Create Patient</web-resource-name>
             <url-pattern>/api/patients</url-pattern>
             <http-method>POST</http-method>
@@ -28,16 +38,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         <auth-constraint>
             <role-name>Administrator</role-name>
             <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete Patient</web-resource-name>
-            <url-pattern>/api/patients/*</url-pattern>
-            <http-method>DELETE</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -305,12 +305,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Update HealthcareProfessional Password</web-resource-name>
-            <url-pattern>/api/healthcareprofessionals/*</url-pattern>
+            <web-resource-name>Associate and Desassociate Patient to HealthcareProfessional</web-resource-name>
+            <url-pattern>/api/healthcareprofessionals/*/patients/*</url-pattern>
             <http-method>PATCH</http-method>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
+            <role-name>Administrator</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>

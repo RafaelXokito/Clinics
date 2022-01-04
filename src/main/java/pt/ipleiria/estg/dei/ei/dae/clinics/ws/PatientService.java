@@ -43,7 +43,7 @@ public class PatientService {
                 .build();
 
         return Response.status(Response.Status.OK)
-                .entity(toDTOsSimple(patientBean.getAllPatientsClassByHealthcareProfessional(personBean.getPersonByAuthToken(auth).getId())))
+                .entity(toDTOsSimple( ( (HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients() ) )
                 .build();
     }
 

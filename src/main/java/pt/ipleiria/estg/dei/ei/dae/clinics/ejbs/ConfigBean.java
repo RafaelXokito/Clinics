@@ -110,6 +110,12 @@ public class ConfigBean {
             prescriptionBean.create(hBrunaId, "2021-12-29 11:30", "2022-01-03 23:30",
                     "Prescrição 1", issues);
 
+            System.out.println("Associate Patients to Healthcare Professionals");
+            healthcareProfessionalBean.associatePatient(hBrunaId,pDanielId);
+            healthcareProfessionalBean.associatePatient(hBrunaId,pAndreiaId);
+            healthcareProfessionalBean.associatePatient(hBrunaId,pSilviaId);
+            healthcareProfessionalBean.associatePatient(hJoseId,pLeonelId);
+
             System.out.println("Creating some Biometric Data");
             biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
                     "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
@@ -121,8 +127,13 @@ public class ConfigBean {
                     "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
             biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
                     pDanielId, pDanielId, "Sensor", new Date());
+            biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
+                    pLeonelId, hJoseId, "Sensor", new Date());
 
-            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
+            System.out.println("Creating some Observations");
+            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
+            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
+            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes1234");
             observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
             observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
 

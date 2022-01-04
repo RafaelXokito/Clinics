@@ -10,6 +10,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Prescription;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Path("healthcareprofessionals") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
-
+@RolesAllowed({"Administrator"})
 public class HealthcareProfessionalService {
     @EJB
     private HealthcareProfessionalBean healthcareProfessionalBean;
@@ -71,6 +72,22 @@ public class HealthcareProfessionalService {
 
         return Response.status(Response.Status.OK)
                 .entity(toDTO(healthcareProfessional))
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}/patients/{patientId}/associate")
+    public Response postAssociatePatient(@PathParam("id") long id, @PathParam("patientId") long patientId) throws Exception {
+        healthcareProfessionalBean.associatePatient(id, patientId);
+        return Response.status(Response.Status.OK)
+                .build();
+    }
+
+    @PATCH
+    @Path("{id}/patients/{patientId}/desassociate")
+    public Response postDesassociatePatient(@PathParam("id") long id, @PathParam("patientId") long patientId) throws Exception {
+        healthcareProfessionalBean.deassociatePatient(id, patientId);
+        return Response.status(Response.Status.OK)
                 .build();
     }
 
@@ -179,6 +196,24 @@ public class HealthcareProfessionalService {
         return Response.status(Response.Status.OK)
                 .entity(pacientToDTOs(healthcareProfessional.getPatients()))
                 .build();
+    }
+
+    private List<HealthcareProfessionalDTO> toDTOsSimple(List<HealthcareProfessional> healthcareProfessionals) {
+        return healthcareProfessionals.stream().map(this::toDTOSimple).collect(Collectors.toList());
+    }
+
+    private HealthcareProfessionalDTO toDTOSimple(HealthcareProfessional healthcareProfessional) {
+        return new HealthcareProfessionalDTO(
+                healthcareProfessional.getId(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getCreated_at(),
+                healthcareProfessional.getUpdated_at(),
+                healthcareProfessional.getDeleted_at(),
+                healthcareProfessional.getSpecialty(),
+                healthcareProfessional.getCreated_by().getId(),
+                healthcareProfessional.getBirthDate());
     }
 
     private List<HealthcareProfessionalDTO> toDTOs(List<HealthcareProfessional> healthcareProfessionals) {
