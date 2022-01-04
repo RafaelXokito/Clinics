@@ -82,14 +82,14 @@ public class StatisticService {
             List<BiometricData> biometricData = biometricDataBean.getAllBiometricDatasClassByPatient(person.getId());
             BiometricData lastBiometricData = biometricData.size() > 0 ? biometricData.get(biometricData.size() - 1) : null;
             List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
-            return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions, ((Patient) person).getHealthcareProfessionals())).build();
+            return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions, ((Patient) person).getHealthcareProfessionals(),biometricData)).build();
         }
         return Response.status(204).build(); // no jwt means no claims to extract
     }
 
     private PatientStatisticsDTO getPatientStatisticsDTO(BiometricData lastBiometricData,
-            List<Prescription> prescriptions, List<HealthcareProfessional> healthcareProfessionals) {
-        return new PatientStatisticsDTO(toDTOBiometricData(lastBiometricData), toDTOsPrescriptions(prescriptions), toDTOsHealthcareProfessional(healthcareProfessionals));
+                                                         List<Prescription> prescriptions, List<HealthcareProfessional> healthcareProfessionals, List<BiometricData> biometricData) {
+        return new PatientStatisticsDTO(toDTOBiometricData(lastBiometricData), toDTOsPrescriptions(prescriptions), toDTOsHealthcareProfessional(healthcareProfessionals), biometricDataToDTOs(biometricData));
     }
 
     private HealthcareProfessionalStatisticsDTO getHealthcareProfessionalStatisticsDTO(Observation lastObservation) {
@@ -175,6 +175,10 @@ public class StatisticService {
                 observation.getCreated_at(),
                 toDTOPrescription(observation.getPrescription()),
                 documentsToDTOs(observation.getDocuments()));
+    }
+
+    private List<BiometricDataDTO> biometricDataToDTOs(List<BiometricData> biometricData) {
+        return biometricData.stream().map(this::toDTOBiometricData).collect(Collectors.toList());
     }
 
     private BiometricDataDTO toDTOBiometricData(BiometricData biometricData) {
