@@ -24,6 +24,11 @@ public class PersonBean {
     @PersistenceContext
     EntityManager em;
 
+    /***
+     * Find Person by given unique email
+     * @param email unique mail to find Person
+     * @return founded Person or Null if dont
+     */
     public Person findPerson(String email) {
         TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.email = '" + email + "'",
                 Person.class);
@@ -31,11 +36,20 @@ public class PersonBean {
         return query.getResultList().size() > 0 ? query.getSingleResult() : null;
     }
 
+    /***
+     * Find Person by given @Id:id
+     * @param id @Id to find Person
+     * @return founded Person or Null if dont
+     */
     public Person findPerson(long id) {
         Person person = em.find(Person.class, id);
         return person.getDeleted_at() == null ? person : null;
     }
 
+    /***
+     * Execute Person query getAllPersons getting all Person Class
+     * @return a list of All Person
+     */
     public List<Person> getAllPersons() {
         return em.createNamedQuery("getAllPersons", Person.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
@@ -50,6 +64,12 @@ public class PersonBean {
                 "Failed logging in with Person email '" + email + "':unknown Person email or wrong password");
     }
 
+    /***
+     *
+     * @param auth token received by api
+     * @return Person founded by given auth token
+     * @throws ParseException
+     */
     public Person getPersonByAuthToken(String auth) throws ParseException {
         if (auth != null && auth.startsWith("Bearer ")) {
             try {
@@ -99,6 +119,13 @@ public class PersonBean {
         person.setGender(gender.trim());
     }
 
+    /***
+     * Update a Person password by given @Id:username
+     * @param id @Id to find the proposal update Person
+     * @param oldPassword to update Person
+     * @param newPassword to update Person
+     * @throws MyEntityNotFoundException
+     */
     public void updatePassword(long id, String oldPassword, String newPassword) throws
             MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException, MyEntityExistsException {
         Person person = findPerson(id);

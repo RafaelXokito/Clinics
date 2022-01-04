@@ -33,19 +33,6 @@ public class AdministratorService {
                 .build();
     }
 
-    private List<AdministratorDTO> toDTOAllAdministrators(List<Object[]> allAdministrators) {
-        List<AdministratorDTO> administratorDTOList = new ArrayList<>();
-        for (Object[] obj: allAdministrators) {
-            administratorDTOList.add(new AdministratorDTO(
-                Long.parseLong(obj[0].toString()),
-                obj[1].toString(),
-                obj[2].toString(),
-                obj[3].toString()
-            ));
-        }
-        return administratorDTOList;
-    }
-
     @GET
     @Path("{id}")
     public Response getAdministratorWS(@PathParam("id") long id) throws Exception {

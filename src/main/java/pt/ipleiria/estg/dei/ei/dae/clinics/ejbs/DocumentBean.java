@@ -16,6 +16,13 @@ public class DocumentBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /***
+     * Creating Document
+     * @param observation_id @Id:id of the Observation
+     * @param filepath file path where file was gonna be stored
+     * @param filename file name
+     * @return Document created
+     */
     public Document create(long observation_id, String filepath, String filename) throws MyEntityNotFoundException, MyIllegalArgumentException {
         Observation observation = entityManager.find(Observation.class, observation_id);
 
@@ -37,6 +44,11 @@ public class DocumentBean {
         return newDocument;
     }
 
+    /***
+     * Find Document by given @Id:id
+     * @param id @Id to find Document
+     * @return founded Document or Null if dont
+     */
     public Document findDocument(long id) throws MyEntityNotFoundException {
         Document document = entityManager.find(Document.class, id);
         if (document == null)
@@ -45,10 +57,20 @@ public class DocumentBean {
         return document;
     }
 
+    /***
+     * Execute Document query getObservationDocuments getting all Document Class by Observation @Id:id
+     * @param id Observation @Id:id
+     * @return List of documents based on given Observation @Id:id
+     */
     public List<Document> getObservationDocuments(long id){
         return (List<Document>) entityManager.createNamedQuery("getObservationDocuments").setParameter("id",id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Delete a Document by given @Id:id
+     * @param document Document to be removed
+     * @return true or exceptions
+     */
     public boolean deleteDocument(Document document) throws MyIllegalArgumentException, MyEntityNotFoundException {
         long observationId = document.getObservation().getId();
         Observation observation = entityManager.find(Observation.class, observationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);

@@ -10,7 +10,6 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.BiometricData;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
-import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
@@ -56,23 +55,6 @@ public class BiometricDataService {
                 .build();
     }
 
-    private List<BiometricDataDTO> toDTOAllBiometricDatas(List<Object[]> allBiometricDatas) {
-        List<BiometricDataDTO> BiometricDataDTOList = new ArrayList<>();
-        for (Object[] obj : allBiometricDatas) {
-            BiometricDataDTOList.add(new BiometricDataDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString(),
-                    obj[3].toString(),
-                    Double.parseDouble(obj[4].toString()),
-                    obj[5].toString(),
-                    (Date) obj[6]
-                )
-            );
-        }
-        return BiometricDataDTOList;
-    }
-
     @GET
     @Path("{id}")
     public Response getBiometricDataWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
@@ -99,7 +81,7 @@ public class BiometricDataService {
         }
 
         BiometricData createdBiometricData = biometricDataBean.create(
-            biometricDataDTO.getBiometricTypeId(),
+            biometricDataDTO.getBiometricDataTypeId(),
             biometricDataDTO.getValue(),
             biometricDataDTO.getNotes(),
             patientId,
@@ -169,7 +151,7 @@ public class BiometricDataService {
 
         BiometricData createdBiometricData = biometricDataBean.update(
                 id,
-                biometricDataDTO.getBiometricTypeId(),
+                biometricDataDTO.getBiometricDataTypeId(),
                 biometricDataDTO.getValue(),
                 biometricDataDTO.getNotes(),
                 biometricDataDTO.getPatientId(),
@@ -226,6 +208,7 @@ public class BiometricDataService {
                 biometricData.getId(),
                 biometricData.getPatient().getName(),
                 String.valueOf(biometricData.getPatient().getHealthNo()),
+                biometricData.getBiometric_data_type().getId(),
                 biometricData.getBiometric_data_type().getName(),
                 biometricData.getValue(),
                 biometricData.getBiometric_data_type().getUnit_name(),

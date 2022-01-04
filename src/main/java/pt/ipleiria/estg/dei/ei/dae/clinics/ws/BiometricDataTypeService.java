@@ -42,21 +42,6 @@ public class BiometricDataTypeService {
                 .build();
     }
 
-    private List<BiometricDataTypeDTO> toDTOAllBiometricDataTypes(List<Object[]> allBiometricDataTypes) {
-        List<BiometricDataTypeDTO> BiometricDataTypeDTOList = new ArrayList<>();
-        for (Object[] obj: allBiometricDataTypes) {
-            BiometricDataTypeDTOList.add(new BiometricDataTypeDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString(),
-                    obj[3].toString(),
-                    Double.parseDouble(obj[4].toString()),
-                    Double.parseDouble(obj[5].toString())
-            ));
-        }
-        return BiometricDataTypeDTOList;
-    }
-
     @GET
     @Path("{id}")
     public Response getBiometricDataTypeWS(@PathParam("id") long id) throws Exception {

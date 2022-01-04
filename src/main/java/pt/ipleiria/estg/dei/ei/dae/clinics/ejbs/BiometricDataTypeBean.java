@@ -20,20 +20,37 @@ public class BiometricDataTypeBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /***
+     * Execute BiometricDataType types query getting all BiometricDataIssue
+     * @return a list of All BiometricDataType as Object Array
+     */
     public List<Object[]> getAllBiometricDataTypes() {
         Query query = entityManager.createQuery("SELECT b.id, b.name, b.unit, b.unit_name, b.min, b.max FROM BiometricDataType b ORDER BY b.id DESC");
         List<Object[]> biometricDataTypeList = query.getResultList();
         return biometricDataTypeList;
     }
 
+    /***
+     * Execute BiometricDataType query getAllBiometricDataTypes getting all BiometricDataType Class
+     * @return a list of All BiometricDataType
+     */
     public List<BiometricDataType> getAllBiometricDataTypeClass() {
         return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Execute BiometricDataType query getAllBiometricDataTypesWithTrashed getting all BiometricDataType Class
+     * @return a list of All BiometricDataType
+     */
     public List<BiometricDataType> getAllBiometricDataTypeClassWithTrashed() {
         return entityManager.createNamedQuery("getAllBiometricDataTypesWithTrashed", BiometricDataType.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Find BiometricDataType by given @Id:id
+     * @param id @Id to find BiometricDataType
+     * @return founded BiometricDataType or Null if dont
+     */
     public BiometricDataType findBiometricDataType(long id) throws MyEntityNotFoundException {
         BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, id);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)

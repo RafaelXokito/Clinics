@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class BiometricDataDTO {
     private long id;
-    private long biometricTypeId;
+    private long biometricDataTypeId;
     private double value;
     private String notes;
     private long patientId;
@@ -21,9 +21,9 @@ public class BiometricDataDTO {
     private long biometricDataIssueId;
     private String biometricDataIssueName;
 
-    public BiometricDataDTO(long id, long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
+    public BiometricDataDTO(long id, long biometricDataTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
         this.id = id;
-        this.biometricTypeId = biometricTypeId;
+        this.biometricDataTypeId = biometricDataTypeId;
         this.value = value;
         this.notes = notes;
         this.patientId = patientId;
@@ -31,9 +31,9 @@ public class BiometricDataDTO {
         this.created_by = created_by;
     }
 
-    public BiometricDataDTO(long id, long biometricTypeId, String biometricDataTypeName, double value, String notes, long patientId, String patientName, Date created_at, long created_by, String healthNo, String valueUnit, String source, long biometricDataIssueId, String biometricDataIssueName, double biometricDataTypeMax, double biometricDataTypeMin) {
+    public BiometricDataDTO(long id, long biometricDataTypeId, String biometricDataTypeName, double value, String notes, long patientId, String patientName, Date created_at, long created_by, String healthNo, String valueUnit, String source, long biometricDataIssueId, String biometricDataIssueName, double biometricDataTypeMax, double biometricDataTypeMin) {
         this.id = id;
-        this.biometricTypeId = biometricTypeId;
+        this.biometricDataTypeId = biometricDataTypeId;
         this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.notes = notes;
@@ -50,8 +50,8 @@ public class BiometricDataDTO {
         this.biometricDataTypeMin = biometricDataTypeMin;
     }
 
-    public BiometricDataDTO(long biometricTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
-        this.biometricTypeId = biometricTypeId;
+    public BiometricDataDTO(long biometricDataTypeId, double value, String notes, long patientId, Date created_at, long created_by) {
+        this.biometricDataTypeId = biometricDataTypeId;
         this.value = value;
         this.notes = notes;
         this.patientId = patientId;
@@ -61,7 +61,7 @@ public class BiometricDataDTO {
 
     public BiometricDataDTO() {
         id = -1;
-        biometricTypeId = -1;
+        biometricDataTypeId = -1;
         value = 0;
         notes = "";
         patientId = -1;
@@ -91,6 +91,19 @@ public class BiometricDataDTO {
         this.created_by = created_by;
     }
 
+    public BiometricDataDTO(long id, String patientName, String healthNo, long biometricDataTypeId, String biometricDataTypeName, double value, String valueUnit, long created_by, Date createdAt, Date deleted_at) {
+        this.id = id;
+        this.patientName = patientName;
+        this.healthNo = healthNo;
+        this.biometricDataTypeId = biometricDataTypeId;
+        this.biometricDataTypeName = biometricDataTypeName;
+        this.value = value;
+        this.valueUnit = valueUnit;
+        this.created_at = createdAt;
+        this.deleted_at = deleted_at;
+        this.created_by = created_by;
+    }
+
     public BiometricDataDTO(double value, String valueUnit, String biometricDataTypeName, long createdBy, Date createdAt) {
         this.value = value;
         this.valueUnit = valueUnit;
@@ -105,7 +118,7 @@ public class BiometricDataDTO {
         this.patientId = patientId;
         this.patientName = patientName;
         this.healthNo = healthNo;
-        this.biometricTypeId = biometricDataTypeId;
+        this.biometricDataTypeId = biometricDataTypeId;
         this.biometricDataTypeName = biometricDataTypeName;
         this.value = value;
         this.valueUnit = valueUnit;
@@ -155,12 +168,12 @@ public class BiometricDataDTO {
         this.id = id;
     }
 
-    public long getBiometricTypeId() {
-        return biometricTypeId;
+    public long getBiometricDataTypeId() {
+        return biometricDataTypeId;
     }
 
-    public void setBiometricTypeId(long biometricTypeId) {
-        this.biometricTypeId = biometricTypeId;
+    public void setBiometricDataTypeId(long biometricDataTypeId) {
+        this.biometricDataTypeId = biometricDataTypeId;
     }
 
     public double getValue() {

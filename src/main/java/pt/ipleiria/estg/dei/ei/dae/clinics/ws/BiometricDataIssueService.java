@@ -38,18 +38,6 @@ public class BiometricDataIssueService {
                 .build();
     }
 
-    private List<BiometricDataIssueDTO> toDTOAllBiometricDataIssues(List<Object[]> allBiometricDataIssues) {
-        List<BiometricDataIssueDTO> BiometricDataIssueDTOList = new ArrayList<>();
-        for (Object[] obj: allBiometricDataIssues) {
-            BiometricDataIssueDTOList.add(new BiometricDataIssueDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString()
-            ));
-        }
-        return BiometricDataIssueDTOList;
-    }
-
     @GET
     @Path("{id}")
     public Response getBiometricDataIssueWS(@PathParam("id") long id) throws Exception {
