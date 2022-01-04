@@ -17,14 +17,27 @@ public class BiometricDataIssueBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /***
+     * Execute BiometricDataIssue query getAllBiometricDataIssues getting all BiometricDataIssue Class
+     * @return a list of All BiometricDataIssue
+     */
     public List<BiometricDataIssue> getAllBiometricDataIssuesClass() {
         return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Execute BiometricDataIssue query getAllBiometricDataIssuesWithTrashed getting all BiometricDataIssue Class
+     * @return a list of All BiometricDataIssue
+     */
     public List<BiometricDataIssue> getAllBiometricDataIssuesClassWithTrashed() {
         return entityManager.createNamedQuery("getAllBiometricDataIssuesWithTrashed", BiometricDataIssue.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Find BiometricDataIssue by given @Id:id
+     * @param id @Id to find BiometricDataIssue
+     * @return founded BiometricDataIssue or Null if dont
+     */
     public BiometricDataIssue findBiometricDataIssue(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = entityManager.find(BiometricDataIssue.class, id);
         if (biometricDataIssue == null || biometricDataIssue.getDeleted_at() != null)

@@ -27,34 +27,45 @@ public class BiometricDataBean {
     @EJB
     private EmailBean emailBean;
 
+    /***
+     * Execute BiometricData query getAllBiometricData getting all BiometricData Class
+     * @return a list of All BiometricData
+     */
     public List<BiometricData> getAllBiometricDatasClass() {
         return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class)
                 .setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Execute BiometricData query getAllBiometricDatasClassWithTrashedByHealthcareProfessional getting all BiometricData Class
+     * @return a list of All BiometricData
+     */
     public List<BiometricData> getAllBiometricDatasClassWithTrashed(long healthcareProfessionalId) {
-        List<BiometricData> biometricDataList = new ArrayList<>();
-        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class,
-                healthcareProfessionalId, LockModeType.OPTIMISTIC);
-
-        if (healthcareProfessional == null)
-            return biometricDataList;
-
-        for (Patient patient : healthcareProfessional.getPatients()) {
-            biometricDataList.addAll(patient.getBiometric_data());
-        }
-
-        return biometricDataList;
+        return entityManager.createNamedQuery("getAllBiometricDatasClassWithTrashedByHealthcareProfessional", BiometricData.class).setParameter("id",healthcareProfessionalId)
+                .setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Execute BiometricData query getAllBiometricDatasClassWithTrashedByHealthcareProfessional getting all BiometricData Class
+     * @return a list of All BiometricData
+     */
     public List<BiometricData> getAllBiometricDatasClassWithTrashedByHealthcareProfessional(long id) {
         return entityManager.createNamedQuery("getAllBiometricDatasClassWithTrashedByHealthcareProfessional", BiometricData.class).setParameter("id", id).getResultList();
     }
 
+    /***
+     * Execute BiometricData query getAllBiometricDatasClassByPatient getting all BiometricData Class
+     * @return a list of All BiometricData
+     */
     public List<BiometricData> getAllBiometricDatasClassByPatient(long id) {
         return entityManager.createNamedQuery("getAllBiometricDatasClassByPatient", BiometricData.class).setParameter("id", id).getResultList();
     }
 
+    /***
+     * Find BiometricData by given @Id:id
+     * @param id @Id to find BiometricData
+     * @return founded BiometricData or Null if dont
+     */
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
         if (biometricData == null || biometricData.getDeleted_at() != null)

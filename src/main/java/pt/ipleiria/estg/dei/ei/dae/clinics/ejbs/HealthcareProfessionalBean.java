@@ -27,14 +27,27 @@ public class HealthcareProfessionalBean {
     @EJB
     private EmailBean emailBean;
 
+    /***
+     * Execute HealthcareProfessional query getAllHealthcareProfessionals getting all HealthcareProfessional Class
+     * @return a list of All HealthcareProfessional
+     */
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {
         return entityManager.createNamedQuery("getAllHealthcareProfessionals", HealthcareProfessional.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Execute HealthcareProfessional query getAllHealthcareProfessionalsWithTrashed getting all HealthcareProfessional Class
+     * @return a list of All HealthcareProfessional
+     */
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClassWithTrashed() {
         return entityManager.createNamedQuery("getAllHealthcareProfessionalsWithTrashed", HealthcareProfessional.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
+    /***
+     * Find HealthcareProfessional by given @Id:id
+     * @param id @Id to find HealthcareProfessional
+     * @return founded HealthcareProfessional or Null if dont
+     */
     public HealthcareProfessional findHealthcareProfessional(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
         if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
@@ -43,6 +56,11 @@ public class HealthcareProfessionalBean {
         return healthcareProfessional;
     }
 
+    /***
+     * Find Person by given @Id:id
+     * @param email @Id to find Person
+     * @return founded Person or Null if dont
+     */
     public Person findPerson(String email) {
         TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '" + email + "'", Person.class);
         return query.getResultList().size() > 0 ? query.getSingleResult() : null;
@@ -202,6 +220,14 @@ public class HealthcareProfessionalBean {
         return true;
     }
 
+    /***
+     * Associate a patient to a given HealthcareProfessional @Id:id
+     * @param id HealthcareProfessional @Id:id
+     * @param patientId Patient @Id:id
+     * @return  True if associate, false if dont
+     * @throws MyEntityNotFoundException If some of the entities was not found
+     * @throws MessagingException If Email of association was not sent
+     */
     public Boolean associatePatient(long id, long patientId) throws MyEntityNotFoundException, MessagingException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 
@@ -216,6 +242,13 @@ public class HealthcareProfessionalBean {
         return true;
     }
 
+    /***
+     * Desassociate a patient to a given HealthcareProfessional @Id:id
+     * @param id HealthcareProfessional @Id:id
+     * @param patientId Patient @Id:id
+     * @return True if desassociate, false if dont
+     * @throws MyEntityNotFoundException If some of the entities was not found
+     */
     public Boolean deassociatePatient(long id, long patientId) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 

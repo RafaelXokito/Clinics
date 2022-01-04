@@ -20,6 +20,13 @@ public class EmailBean {
 
     private static final Logger logger = Logger.getLogger("EmailBean.logger");
 
+    /***
+     * Send email
+     * @param to who will receive email
+     * @param subject subject of email
+     * @param text body of email
+     * @throws MessagingException error sending email
+     */
     public void send(String to, String subject, String text) throws MessagingException {
         Thread emailJob = new Thread(() -> {
             Message message = new MimeMessage(mailSession);
