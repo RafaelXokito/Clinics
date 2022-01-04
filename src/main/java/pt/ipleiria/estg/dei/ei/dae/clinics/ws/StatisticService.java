@@ -73,19 +73,20 @@ public class StatisticService {
             /*
              * - Paciente
              * prescrições ativas (Entre datas da prescrição coincida com a atual)
+             * healthcare professionals
              * ultima biometric data
              */
             List<BiometricData> biometricData = ((Patient) person).getBiometric_data();
             BiometricData lastBiometricData = biometricData.size() > 0 ? biometricData.get(biometricData.size() - 1) : null;
             List<Prescription> prescriptions = prescriptionBean.getActivePrescriptionsByPatient(person.getId());
-            return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions)).build();
+            return Response.ok(getPatientStatisticsDTO(lastBiometricData, prescriptions, ((Patient) person).getHealthcareProfessionals())).build();
         }
         return Response.status(204).build(); // no jwt means no claims to extract
     }
 
     private PatientStatisticsDTO getPatientStatisticsDTO(BiometricData lastBiometricData,
-            List<Prescription> prescriptions) {
-        return new PatientStatisticsDTO(toDTOBiometricData(lastBiometricData), toDTOsPrescriptions(prescriptions));
+            List<Prescription> prescriptions, List<HealthcareProfessional> healthcareProfessionals) {
+        return new PatientStatisticsDTO(toDTOBiometricData(lastBiometricData), toDTOsPrescriptions(prescriptions), toDTOsHealthcareProfessional(healthcareProfessionals));
     }
 
     private HealthcareProfessionalStatisticsDTO getHealthcareProfessionalStatisticsDTO(Observation lastObservation) {
@@ -197,5 +198,23 @@ public class StatisticService {
 
     private List<PrescriptionDTO> toDTOsPrescriptions(List<Prescription> prescriptions) {
         return prescriptions.stream().map(this::toDTOPrescription).collect(Collectors.toList());
+    }
+
+    private List<HealthcareProfessionalDTO> toDTOsHealthcareProfessional(List<HealthcareProfessional> healthcareProfessionals) {
+        return healthcareProfessionals.stream().map(this::toDTOHealthcareProfessional).collect(Collectors.toList());
+    }
+
+    private HealthcareProfessionalDTO toDTOHealthcareProfessional(HealthcareProfessional healthcareProfessional) {
+        return new HealthcareProfessionalDTO(
+                healthcareProfessional.getId(),
+                healthcareProfessional.getEmail(),
+                healthcareProfessional.getName(),
+                healthcareProfessional.getGender(),
+                healthcareProfessional.getCreated_at(),
+                healthcareProfessional.getUpdated_at(),
+                healthcareProfessional.getDeleted_at(),
+                healthcareProfessional.getSpecialty(),
+                healthcareProfessional.getCreated_by().getId(),
+                healthcareProfessional.getBirthDate());
     }
 }
