@@ -45,7 +45,7 @@ public class BiometricDataBean {
 
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
-        if (biometricData == null)
+        if (biometricData == null || biometricData.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricData \"" + id + "\" does not exist");
 
         return biometricData;
