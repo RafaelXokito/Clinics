@@ -8,6 +8,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -53,6 +54,14 @@ public class PatientService {
         if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to view this patient");
 
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            for (Patient patient:((HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients()) {
+                if (patient.getId() == id)
+                    break;
+            }
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
+        }
+
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
@@ -81,6 +90,7 @@ public class PatientService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"Administrator","HealthcareProfessional","Patient"})
     public Response updatePatientWS(@PathParam("id") long id, PatientDTO patientDTO, @HeaderParam("Authorization") String auth) throws Exception {
         if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to modify this patient");
@@ -102,6 +112,7 @@ public class PatientService {
 
     @PATCH
     @Path("{id}")
+    @RolesAllowed({"Patient"})
     public Response updatePatientPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
         if (!securityContext.isUserInRole("Patient") || securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to modify the password of this patient");
@@ -117,6 +128,7 @@ public class PatientService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response deletePatientWS(@PathParam("id") long id) throws Exception {
         if (patientBean.delete(id))
             return Response.status(Response.Status.OK)
@@ -127,6 +139,7 @@ public class PatientService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"Administrator"})
     public Response restorePatientWS(@PathParam("id") long id) throws Exception {
         if (patientBean.restore(id))
             return Response.status(Response.Status.OK)
@@ -138,7 +151,19 @@ public class PatientService {
 
     @GET
     @Path("{id}/observations")
-    public Response getPatientObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    @RolesAllowed({"Administrator","HealthcareProfessional","Patient"})
+    public Response getPatientObservationsWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view observations for this patient");
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            for (Patient patient:((HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients()) {
+                if (patient.getId() == id)
+                    break;
+            }
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
+        }
+
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
@@ -148,7 +173,18 @@ public class PatientService {
 
     @GET
     @Path("{id}/biometricdata")
-    public Response getPatientBiometricDatasWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    @RolesAllowed({"Administrator","HealthcareProfessional","Patient"})
+    public Response getPatientBiometricDatasWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view biometric datas for this patient");
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            for (Patient patient:((HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients()) {
+                if (patient.getId() == id)
+                    break;
+            }
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
+        }
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)
@@ -158,7 +194,18 @@ public class PatientService {
 
     @GET
     @Path("{id}/healthcareprofessionals")
-    public Response getPatientHealthcareProfessionalsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
+    @RolesAllowed({"Administrator","HealthcareProfessional","Patient"})
+    public Response getPatientHealthcareProfessionalsWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
+        if (securityContext.isUserInRole("Patient") && id != personBean.getPersonByAuthToken(auth).getId())
+            throw new MyUnauthorizedException("You are not allowed to view healthcare professional for this patient");
+
+        if (securityContext.isUserInRole("HealthcareProfessional")) {
+            for (Patient patient:((HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients()) {
+                if (patient.getId() == id)
+                    break;
+            }
+            throw new MyUnauthorizedException("You are not allowed to view this patient");
+        }
         Patient patient = patientBean.findPatient(id);
 
         return Response.status(Response.Status.OK)

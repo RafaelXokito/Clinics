@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @Path("healthcareprofessionals") // relative url web path for this service
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
-@RolesAllowed({"Administrator"})
 public class HealthcareProfessionalService {
     @EJB
     private HealthcareProfessionalBean healthcareProfessionalBean;
@@ -47,23 +46,9 @@ public class HealthcareProfessionalService {
                 .build();
     }
 
-
-    private List<HealthcareProfessionalDTO> toDTOAllHealthcareProfessionals(List<Object[]> allHealthcareProfessionals) {
-        List<HealthcareProfessionalDTO> healthcareProfessionalDTOList = new ArrayList<>();
-        for (Object[] obj: allHealthcareProfessionals) {
-            healthcareProfessionalDTOList.add(new HealthcareProfessionalDTO(
-                Long.parseLong(obj[0].toString()),
-                obj[1].toString(),
-                obj[2].toString(),
-                obj[3].toString(),
-                obj[4].toString()
-            ));
-        }
-        return healthcareProfessionalDTOList;
-    }
-
     @GET
     @Path("{id}")
+    @RolesAllowed({"Administrator","HealthcareProfessional"})
     public Response getHealthcareProfessionalWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         if (!securityContext.isUserInRole("Administrator") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to view this healthcare professional");
@@ -77,6 +62,7 @@ public class HealthcareProfessionalService {
 
     @PATCH
     @Path("{id}/patients/{patientId}/associate")
+    @RolesAllowed({"Administrator"})
     public Response postAssociatePatient(@PathParam("id") long id, @PathParam("patientId") long patientId) throws Exception {
         healthcareProfessionalBean.associatePatient(id, patientId);
         return Response.status(Response.Status.OK)
@@ -85,6 +71,7 @@ public class HealthcareProfessionalService {
 
     @PATCH
     @Path("{id}/patients/{patientId}/desassociate")
+    @RolesAllowed({"Administrator"})
     public Response postDesassociatePatient(@PathParam("id") long id, @PathParam("patientId") long patientId) throws Exception {
         healthcareProfessionalBean.deassociatePatient(id, patientId);
         return Response.status(Response.Status.OK)
@@ -112,6 +99,7 @@ public class HealthcareProfessionalService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"Administrator", "HealthcareProfessional"})
     public Response updateHealthcareProfessionalWS(@PathParam("id") long id , HealthcareProfessionalDTO healthcareProfessionalDTO, @HeaderParam("Authorization") String auth) throws Exception {
         if (!securityContext.isUserInRole("Administrator") && id != personBean.getPersonByAuthToken(auth).getId())
             throw new MyUnauthorizedException("You are not allowed to modify this healthcare professional");
@@ -133,6 +121,7 @@ public class HealthcareProfessionalService {
 
     @PATCH
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response updateHealthcareProfessionalPasswordWS(@PathParam("id") long id, NewPasswordDTO newPasswordDTO, @HeaderParam("Authorization") String auth) throws Exception {
         if (personBean.getPersonByAuthToken(auth).getId() != id)
             throw new MyUnauthorizedException("You are not allowed to modify the password of this healthcare professional");
@@ -148,6 +137,7 @@ public class HealthcareProfessionalService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"Administrator"})
     public Response deleteHealthcareProfessionalWS(@PathParam("id") long id) throws Exception {
         if (healthcareProfessionalBean.delete(id))
             return Response.status(Response.Status.OK)
@@ -159,6 +149,7 @@ public class HealthcareProfessionalService {
 
     @POST
     @Path("{id}/restore")
+    @RolesAllowed({"Administrator"})
     public Response restoreHealthCareProfessionalWS(@PathParam("id") long id) throws Exception {
         if (healthcareProfessionalBean.restore(id))
             return Response.status(Response.Status.OK)
@@ -170,6 +161,7 @@ public class HealthcareProfessionalService {
 
     @GET
     @Path("{id}/prescriptions")
+    @RolesAllowed({"Administrator"})
     public Response getHealthcareProfessionalPrescriptionsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
@@ -180,6 +172,7 @@ public class HealthcareProfessionalService {
 
     @GET
     @Path("{id}/observations")
+    @RolesAllowed({"Administrator"})
     public Response getHealthcareProfessionalObservationsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 
@@ -190,6 +183,7 @@ public class HealthcareProfessionalService {
 
     @GET
     @Path("{id}/pacients")
+    @RolesAllowed({"Administrator"})
     public Response getHealthcareProfessionalPacientsWS(@PathParam("id") long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = healthcareProfessionalBean.findHealthcareProfessional(id);
 

@@ -21,16 +21,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Delete Patient</web-resource-name>
-            <url-pattern>/api/patients/*</url-pattern>
-            <http-method>DELETE</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Create Patient</web-resource-name>
             <url-pattern>/api/patients</url-pattern>
             <http-method>POST</http-method>
@@ -149,17 +139,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Get HealthcareProfessional</web-resource-name>
-            <url-pattern>/api/healthcareprofessionals/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>Create HealthcareProfessional</web-resource-name>
             <url-pattern>/api/healthcareprofessionals</url-pattern>
             <http-method>POST</http-method>
@@ -170,50 +149,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Update HealthcareProfessional</web-resource-name>
-            <url-pattern>/api/healthcareprofessionals/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Associate and Desassociate Patient to HealthcareProfessional</web-resource-name>
-            <url-pattern>/api/healthcareprofessionals/*/patients/*</url-pattern>
-            <http-method>PATCH</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete HealthcareProfessional</web-resource-name>
-            <url-pattern>/api/healthcareprofessionals/*</url-pattern>
-            <http-method>DELETE</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Administrator</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get Observations</web-resource-name>
+            <web-resource-name>Get All Observations</web-resource-name>
             <url-pattern>/api/observations</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-            <role-name>Patient</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Get Observation</web-resource-name>
-            <url-pattern>/api/observations/*</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
@@ -226,26 +163,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
             <web-resource-name>Create Observation</web-resource-name>
             <url-pattern>/api/observations</url-pattern>
             <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Update Observation</web-resource-name>
-            <url-pattern>/api/observations/*</url-pattern>
-            <http-method>PUT</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>HealthcareProfessional</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Delete Observation</web-resource-name>
-            <url-pattern>/api/observations/*</url-pattern>
-            <http-method>DELETE</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>HealthcareProfessional</role-name>

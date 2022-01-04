@@ -6,6 +6,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -50,6 +51,7 @@ public class ObservationService {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional", "Patient"})
     public Response getObservationWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Observation observation = observationBean.findObservation(id);
         long authId = personBean.getPersonByAuthToken(auth).getId();
@@ -86,6 +88,7 @@ public class ObservationService {
 
     @PUT
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response updateObservationWS(@PathParam("id") long id , ObservationDTO observationDTO, @HeaderParam("Authorization") String auth) throws Exception {
         observationBean.update(
                 id,
@@ -104,6 +107,7 @@ public class ObservationService {
 
     @DELETE
     @Path("{id}")
+    @RolesAllowed({"HealthcareProfessional"})
     public Response deleteObservationWS(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         if (observationBean.delete(id, personBean.getPersonByAuthToken(auth).getId()))
             return Response.status(Response.Status.OK)
@@ -115,7 +119,8 @@ public class ObservationService {
 
     @POST
     @Path("{id}/restore")
-    public Response restoreBiometricDataTypeWS(@PathParam("id") long id) throws Exception {
+    @RolesAllowed({"HealthcareProfessional"})
+    public Response restoreObservationWS(@PathParam("id") long id) throws Exception {
         if (observationBean.restore(id))
             return Response.status(Response.Status.OK)
                     .build();

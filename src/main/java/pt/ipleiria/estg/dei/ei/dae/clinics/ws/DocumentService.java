@@ -13,6 +13,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -40,6 +41,7 @@ public class DocumentService {
     @POST
     @Path("upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({"HealthcareProfessional"})
     public Response upload(MultipartFormDataInput input, @HeaderParam("Authorization") String auth) throws Exception {
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         // Get file data to save
@@ -77,6 +79,7 @@ public class DocumentService {
     @GET
     @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @RolesAllowed({"HealthcareProfessional", "Patient"})
     public Response download(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Document document = documentBean.findDocument(id);
 
@@ -93,6 +96,7 @@ public class DocumentService {
     @DELETE
     @Path("delete/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @RolesAllowed({"HealthcareProfessional"})
     public Response delete(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Document document = documentBean.findDocument(id);
 
@@ -113,6 +117,7 @@ public class DocumentService {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"HealthcareProfessional", "Patient"})
     public List<DocumentDTO> getDocumentsByObservation(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Observation observation = observationBean.findObservation(id);
 
@@ -125,6 +130,7 @@ public class DocumentService {
 
     @GET
     @Path("{id}/exists")
+    @RolesAllowed({"HealthcareProfessional", "Patient"})
     public Response hasDocuments(@PathParam("id") long id, @HeaderParam("Authorization") String auth) throws Exception {
         Observation observation = observationBean.findObservation(id);
 
