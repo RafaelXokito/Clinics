@@ -122,8 +122,8 @@ public class ConfigBean {
             biometricDataBean.create(altura.getId(), 1.75, "Paciente pálido e alto.",
                     pDanielId, pDanielId, "Sensor", new Date());
 
-            observationBean.create(hBrunaId, pAndreiaId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
-            observationBean.create(hBrunaId, pSilviaId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
+            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-01-10 11:30", "more notes");
+            observationBean.create(hBrunaId, pDanielId, "yesyesyes", "2021-12-29 11:30", "2022-02-01 11:30", "more notes");
             observationBean.create(hJoseId, pLeonelId, "nice one", "2021-12-29 11:30", "2022-01-11 18:30", "more notes");
 
             administratorBean.delete(aGasparId);

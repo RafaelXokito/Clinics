@@ -20,7 +20,7 @@ public class HealthcareProfessional extends Employee implements Serializable {
     @NotNull
     private String specialty;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by") // Código do Administrador
     @NotNull
     private Administrator created_by;

@@ -11,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +37,7 @@ public class PersonBean {
     }
 
     public List<Person> getAllPersons() {
-        return em.createNamedQuery("getAllPersons", Person.class).getResultList();
+        return em.createNamedQuery("getAllPersons", Person.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public Person authenticate(final String email, final String password) throws Exception {
@@ -74,6 +75,7 @@ public class PersonBean {
      */
     public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
         Person person = findPerson(id);
+        em.lock(person, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
@@ -100,6 +102,7 @@ public class PersonBean {
     public void updatePassword(long id, String oldPassword, String newPassword) throws
             MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
         Person person = findPerson(id);
+        em.lock(person, LockModeType.PESSIMISTIC_WRITE);
 
         //REQUIRED VALIDATION
         if (oldPassword == null || oldPassword.trim().isEmpty())

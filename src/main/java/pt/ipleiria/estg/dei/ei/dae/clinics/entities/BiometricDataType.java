@@ -48,6 +48,9 @@ public class BiometricDataType implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleted_at;
 
+    @Version
+    private int version;
+
     public BiometricDataType(String name, double min, double max, String unit, String unit_name) {
         this.name = name;
         this.min = min;

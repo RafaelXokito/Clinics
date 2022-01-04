@@ -46,7 +46,7 @@ public class BiometricDataService {
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
             return Response.status(Response.Status.OK)
-                    .entity(biometricDataToDTOs(biometricDataBean.getAllBiometricDatasClassWithTrashed()))
+                    .entity(biometricDataToDTOs(biometricDataBean.getAllBiometricDatasClassWithTrashed(person.getId())))
                     .build();
         }
 

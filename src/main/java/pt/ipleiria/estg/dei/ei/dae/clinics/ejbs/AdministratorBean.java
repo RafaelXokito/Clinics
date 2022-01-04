@@ -7,11 +7,9 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -25,21 +23,11 @@ public class AdministratorBean {
     private EntityManager entityManager;
 
     /***
-     * Execute Administrator query getAllAdministrators getting all Administrators
-     * @return a list of All Administrators
-     */
-    public List<Object[]> getAllAdministrators() {
-        Query query = entityManager.createQuery("SELECT a.id, a.email, a.name, a.gender, a.deleted_at  FROM Administrator a ORDER BY a.id DESC");
-        List<Object[]> administratorList = query.getResultList();
-        return administratorList;
-    }
-
-    /***
      * Execute Administrator query getAllAdministrators getting all Administrators Class
      * @return a list of All Administrators
      */
     public List<Administrator> getAllAdministratorsClass() {
-        return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).getResultList();
+        return entityManager.createNamedQuery("getAllAdministrators", Administrator.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     /***
@@ -47,7 +35,7 @@ public class AdministratorBean {
      * @return a list of All Administrators
      */
     public List<Administrator> getAllAdministratorsClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllAdministratorsWithTrashed", Administrator.class).getResultList();
+        return entityManager.createNamedQuery("getAllAdministratorsWithTrashed", Administrator.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     /***
@@ -69,6 +57,7 @@ public class AdministratorBean {
      */
     public Person findPerson(String email) {
         TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.email = '" + email + "'", Person.class);
+        query.setLockMode(LockModeType.OPTIMISTIC);
         return query.getResultList().size() > 0 ? query.getSingleResult() : null;
     }
 
@@ -121,6 +110,7 @@ public class AdministratorBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Administrator administrator = findAdministrator(id);
+        entityManager.lock(administrator, LockModeType.PESSIMISTIC_WRITE);
         administrator.setDeleted_at();
         return true;
         //entityManager.remove(administrator);
@@ -157,6 +147,7 @@ public class AdministratorBean {
         if (Date.from(Instant.now()).compareTo(birthDate) < 0)
             throw new MyIllegalArgumentException("Field \"birthDate\" must be lower or equal to the current date");
 
+        entityManager.lock(administrator, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
         administrator.setEmail(email.trim());
         administrator.setName(name.trim());
         administrator.setGender(gender.trim());
@@ -195,6 +186,7 @@ public class AdministratorBean {
         if (!Person.validatePassword(oldPassword.trim(), administrator.getPassword()))
             throw new MyIllegalArgumentException("Field \"oldPassword\" does not match with the current password");
 
+        entityManager.lock(administrator, LockModeType.PESSIMISTIC_WRITE);
         administrator.setPassword(newPassword.trim());
     }
 

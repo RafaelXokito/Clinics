@@ -63,6 +63,9 @@ public abstract class Person {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleted_at;
 
+    @Version
+    private int version;
+
     @NotNull
     @OneToMany(mappedBy = "created_by", cascade = CascadeType.PERSIST)
     private List<BiometricData> biometricDatasCreated;

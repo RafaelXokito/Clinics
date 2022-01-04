@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -16,18 +17,12 @@ public class BiometricDataIssueBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Object[]> getAllBiometricDataIssues() {
-        Query query = entityManager.createQuery("SELECT b.id, b.name, b.biometric_data_type.name FROM BiometricDataIssue b ORDER BY b.id DESC");
-        List<Object[]> biometricDataIssueList = query.getResultList();
-        return biometricDataIssueList;
-    }
-
     public List<BiometricDataIssue> getAllBiometricDataIssuesClass() {
-        return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricDataIssues", BiometricDataIssue.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<BiometricDataIssue> getAllBiometricDataIssuesClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllBiometricDataIssuesWithTrashed", BiometricDataIssue.class).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricDataIssuesWithTrashed", BiometricDataIssue.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public BiometricDataIssue findBiometricDataIssue(long id) throws MyEntityNotFoundException {
@@ -51,7 +46,7 @@ public class BiometricDataIssueBean {
         if (biometric_data_type == 0)
             throw new MyIllegalArgumentException("Field \"biometricDataTypeId\" is required");
 
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometric_data_type);
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometric_data_type, LockModeType.PESSIMISTIC_READ);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometric_data_type + "\" does not exist");
 
@@ -84,6 +79,7 @@ public class BiometricDataIssueBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
+        entityManager.lock(biometricDataIssue, LockModeType.PESSIMISTIC_WRITE);
         biometricDataIssue.setDeleted_at();
         return true;
     }
@@ -116,11 +112,11 @@ public class BiometricDataIssueBean {
      */
     public BiometricDataIssue update(long id, String name, double min, double max, long biometricDataTypeId) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataIssue biometricDataIssue = findBiometricDataIssue(id);
-
+        entityManager.lock(biometricDataIssue, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
         if (biometricDataTypeId == 0)
             throw new MyIllegalArgumentException("Field \"biometricDataTypeId\" is required");
 
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId, LockModeType.OPTIMISTIC);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 

@@ -52,6 +52,9 @@ public class BiometricDataIssue implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "PRESCRIPTION_ID", referencedColumnName = "ID"))
     private List<Prescription> prescriptions;
 
+    @Version
+    private int version;
+
     public BiometricDataIssue(String name, double min, double max, BiometricDataType biometric_data_type) {
         this.name = name;
         this.min = min;

@@ -7,6 +7,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class DocumentBean {
 
     public Document create(long observation_id, String filepath, String filename) throws MyEntityNotFoundException, MyIllegalArgumentException {
         Observation observation = entityManager.find(Observation.class, observation_id);
+
         if (observation == null || observation.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Observation \"" + observation_id + "\" does not exist");
 
@@ -44,13 +46,12 @@ public class DocumentBean {
     }
 
     public List<Document> getObservationDocuments(long id){
-        return (List<Document>) entityManager.createNamedQuery("getObservationDocuments").setParameter("id",id).getResultList();
+        return (List<Document>) entityManager.createNamedQuery("getObservationDocuments").setParameter("id",id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
-
 
     public boolean deleteDocument(Document document) throws MyIllegalArgumentException, MyEntityNotFoundException {
         long observationId = document.getObservation().getId();
-        Observation observation = entityManager.find(Observation.class, observationId);
+        Observation observation = entityManager.find(Observation.class, observationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (observation == null || observation.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Observation \"" + observationId + "\" does not exist");
 

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,27 +36,15 @@ public class PatientService {
 
     @GET
     @Path("/")
-    public Response getAllPatientsWS() {
+    public Response getAllPatientsWS(@HeaderParam("Authorization") String auth) throws Exception {
         if (securityContext.isUserInRole("Administrator"))
             return Response.status(Response.Status.OK)
                 .entity(toDTOsSimple(patientBean.getAllPatientsClassWithTrashed()))
                 .build();
-        return Response.status(Response.Status.OK)
-                .entity(toDTOsSimple(patientBean.getAllPatientsClass()))
-                .build();
-    }
 
-    private List<PatientDTO> toDTOAllPatients(List<Object[]> allPatients) {
-        List<PatientDTO> patientDTOList = new ArrayList<>();
-        for (Object[] obj : allPatients) {
-            patientDTOList.add(new PatientDTO(
-                    Long.parseLong(obj[0].toString()),
-                    obj[1].toString(),
-                    obj[2].toString(),
-                    obj[3].toString(),
-                    Integer.parseInt(obj[4].toString())));
-        }
-        return patientDTOList;
+        return Response.status(Response.Status.OK)
+                .entity(toDTOsSimple(patientBean.getAllPatientsClassByHealthcareProfessional(personBean.getPersonByAuthToken(auth).getId())))
+                .build();
     }
 
     @GET

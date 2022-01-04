@@ -60,19 +60,20 @@ public class Prescription implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleted_at;
 
+    @Version
+    private int version;
+
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Prescription(HealthcareProfessional healthcareProfessional, Patient patient, String start_date, String end_date, String notes) {
         this.healthcareProfessional = healthcareProfessional;
         this.start_date = LocalDateTime.parse(start_date, formatter);
         this.end_date = LocalDateTime.parse(end_date, formatter);
-
         this.notes = notes;
-
         this.created_at = new Date();
-
         this.biometricDataIssues = new ArrayList<>();
         this.patients = new ArrayList<>();
+        patients.add(patient);
     }
 
     public Prescription() {

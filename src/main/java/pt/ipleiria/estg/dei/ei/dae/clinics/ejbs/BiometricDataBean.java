@@ -10,13 +10,11 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,18 +27,21 @@ public class BiometricDataBean {
     @EJB
     private EmailBean emailBean;
 
-    public List<Object[]> getAllBiometricData() {
-        Query query = entityManager.createQuery("SELECT b.id, b.patient.name, b.patient.healthNo, b.biometric_data_type.name, b.value, b.biometric_data_type.unit, b.created_at FROM BiometricData b ORDER BY b.created_at DESC");
-        List<Object[]> biometricDataList = query.getResultList();
-        return biometricDataList;
-    }
-
     public List<BiometricData> getAllBiometricDatasClass() {
-        return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricData", BiometricData.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
-    public List<BiometricData> getAllBiometricDatasClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllBiometricDataWithTrashed", BiometricData.class).getResultList();
+    public List<BiometricData> getAllBiometricDatasClassWithTrashed(long healthcareProfessionalId) {
+        List<BiometricData> biometricDataList = new ArrayList<>();
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId, LockModeType.OPTIMISTIC);
+
+        if (healthcareProfessional == null) return biometricDataList;
+
+        for (Patient patient : healthcareProfessional.getPatients()) {
+            biometricDataList.addAll(patient.getBiometric_data());
+        }
+
+        return biometricDataList;
     }
 
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
@@ -75,15 +76,15 @@ public class BiometricDataBean {
         if (patientId == 0)
             throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId);
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricDataTypeId, LockModeType.OPTIMISTIC);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricDataTypeId + "\" does not exist");
 
-        Patient patient = entityManager.find(Patient.class, patientId);
+        Patient patient = entityManager.find(Patient.class, patientId, LockModeType.OPTIMISTIC);
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
-        Person person = entityManager.find(Person.class, personId);
+        Person person = entityManager.find(Person.class, personId, LockModeType.OPTIMISTIC);
         if (person == null || person.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Person \"" + personId + "\" does not exist");
 
@@ -104,7 +105,7 @@ public class BiometricDataBean {
 
         //THE LATEST BIOMETRIC DATA OF THAT TYPE
         TypedQuery<BiometricData> query = entityManager.createQuery("SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC", BiometricData.class);
-        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId);
+        query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId).setLockMode(LockModeType.OPTIMISTIC);
         List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
 
         //IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
@@ -160,7 +161,7 @@ public class BiometricDataBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricData biometricData = findBiometricData(id);
-
+        entityManager.lock(biometricData, LockModeType.PESSIMISTIC_WRITE);
         biometricData.setDeleted_at();
         return true;
     }
@@ -193,7 +194,7 @@ public class BiometricDataBean {
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
     public BiometricData update(long id, long biometricTypeId, double value, String notes, long patientId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MyUnauthorizedException {
-        BiometricData biometricData = entityManager.find(BiometricData.class, id);
+        BiometricData biometricData = entityManager.find(BiometricData.class, id, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
         //REQUIRED VALIDATION
         if (source == null || source.trim().isEmpty())
@@ -206,11 +207,11 @@ public class BiometricDataBean {
             throw new MyIllegalArgumentException("Field \"patientId\" is required");
 
 
-        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId);
+        BiometricDataType biometricDataType = entityManager.find(BiometricDataType.class, biometricTypeId, LockModeType.OPTIMISTIC);
         if (biometricDataType == null || biometricDataType.getDeleted_at() != null)
             throw new MyEntityNotFoundException("BiometricDataType \"" + biometricTypeId + "\" does not exist");
 
-        Patient patient = entityManager.find(Patient.class, patientId);
+        Patient patient = entityManager.find(Patient.class, patientId, LockModeType.OPTIMISTIC);
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
