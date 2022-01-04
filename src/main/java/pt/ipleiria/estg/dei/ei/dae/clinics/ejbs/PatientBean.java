@@ -5,7 +5,9 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -19,6 +21,9 @@ public class PatientBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private EmailBean emailBean;
 
     public List<Patient> getAllPatientsClass() {
         return entityManager.createNamedQuery("getAllPatients", Patient.class).getResultList();
@@ -72,7 +77,7 @@ public class PatientBean {
      * @param created_byId Administrator Username that is creating the current Patient
      */
     public long create(String email, String password, String name, String gender, int healthNo, long created_byId, Date birthDate)
-            throws MyEntityExistsException, MyEntityNotFoundException, MyIllegalArgumentException {
+            throws MyEntityExistsException, MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -113,6 +118,8 @@ public class PatientBean {
         }catch (Exception ex){
             throw new MyIllegalArgumentException("Error persisting your data");
         }
+        emailBean.send(newPatient.getEmail(), "Welcome to Clinics",
+                "Welcome "+newPatient.getName()+"!\nYou are now registered in Clinics!\nContact support to get more information.");
         return newPatient.getId();
     }
 
@@ -122,10 +129,12 @@ public class PatientBean {
      * 
      * @param id @Id to find the proposal delete Patient
      */
-    public boolean delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MessagingException {
         Patient patient = findPatient(id);
         entityManager.lock(patient, LockModeType.PESSIMISTIC_WRITE);
         patient.setDeleted_at();
+        emailBean.send(patient.getEmail(), "Your account from Clinics was deleted",
+                "Your account from Clinics was deleted! Contact support to get more information.");
         return true;
     }
 
@@ -201,13 +210,15 @@ public class PatientBean {
      * Restore a Patient by given @Id:id - Change deleted_at field to null date
      * @param id @Id to find the proposal restore Patient
      */
-    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException, MessagingException {
         Patient patient = entityManager.find(Patient.class, id);
         if (patient == null)
             throw new MyEntityNotFoundException("Patient \"" + id + "\" does not exist");
         if (patient.getDeleted_at() == null)
             throw new MyEntityExistsException("Patient \"" + id + "\" already exist");
         patient.setDeleted_at(null);
+        emailBean.send(patient.getEmail(), "Your account from Clinics was restored",
+                "Your account from Clinics was restored! Contact support to get more information.");
         return true;
     }
 

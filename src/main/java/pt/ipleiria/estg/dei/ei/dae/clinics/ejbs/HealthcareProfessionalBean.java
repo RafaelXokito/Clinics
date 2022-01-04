@@ -9,7 +9,9 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -21,6 +23,9 @@ import java.util.List;
 public class HealthcareProfessionalBean {
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private EmailBean emailBean;
 
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {
         return entityManager.createNamedQuery("getAllHealthcareProfessionals", HealthcareProfessional.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
@@ -52,7 +57,7 @@ public class HealthcareProfessionalBean {
      * @param specialty of doctor acc
      * @param created_ById Administrator Username that is creating the current Doctor
      */
-    public long create(String email, String password, String name, String gender, String specialty, long created_ById, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
+    public long create(String email, String password, String name, String gender, String specialty, long created_ById, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException, MessagingException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -94,6 +99,8 @@ public class HealthcareProfessionalBean {
         }catch (Exception ex){
             throw new MyIllegalArgumentException("Error persisting your data");
         }
+        emailBean.send(newHealthcareProfessional.getEmail(), "Welcome to Clinics",
+                "Welcome "+newHealthcareProfessional.getName()+"!\nYou are now registered in Clinics!\nContact support to get more information.");
         return newHealthcareProfessional.getId();
     }
 
@@ -101,10 +108,12 @@ public class HealthcareProfessionalBean {
      * Delete a Doctor by given @Id:username - Change deleted_at field to NOW() date
      * @param id @Id to find the proposal delete Doctor
      */
-    public boolean delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MessagingException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
         entityManager.lock(healthcareProfessional, LockModeType.PESSIMISTIC_WRITE);
         healthcareProfessional.setDeleted_at();
+        emailBean.send(healthcareProfessional.getEmail(), "Your account from Clinics was deleted",
+                "Your account from Clinics was deleted! Contact support to get more information.");
         return true;
     }
 
@@ -181,17 +190,19 @@ public class HealthcareProfessionalBean {
      * Restore a Healthcare professional by given @Id:id - Change deleted_at field to null date
      * @param id @Id to find the proposal restore Healthcare professional
      */
-    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException, MessagingException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
         if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + id + "\" does not exist");
         if (healthcareProfessional.getDeleted_at() == null)
             throw new MyEntityExistsException("Healthcare Professional \"" + id + "\" already exist");
         healthcareProfessional.setDeleted_at(null);
+        emailBean.send(healthcareProfessional.getEmail(), "Your account from Clinics was restored",
+                "Your account from Clinics was restored! Contact support to get more information.");
         return true;
     }
 
-    public Boolean associatePatient(long id, long patientId) throws MyEntityNotFoundException {
+    public Boolean associatePatient(long id, long patientId) throws MyEntityNotFoundException, MessagingException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
 
         Patient patient = entityManager.find(Patient.class, patientId);
@@ -200,7 +211,8 @@ public class HealthcareProfessionalBean {
 
         healthcareProfessional.addPatient(patient);
         patient.addHealthcareProfessional(healthcareProfessional);
-
+        emailBean.send(patient.getEmail(), "Great news from Clinics",
+                "Congratulations "+patient.getName()+"!\nYour account from Clinics was associated to a new Healthcare Professional! Dr \n"+healthcareProfessional.getName()+" ("+healthcareProfessional.getSpecialty()+") \n"+healthcareProfessional.getEmail()+"\nContact support to get more information.");
         return true;
     }
 

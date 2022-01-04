@@ -7,8 +7,10 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
+import javax.ejb.EJB;
 import javax.ejb.LockType;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +23,9 @@ import java.util.List;
 public class AdministratorBean {
     @PersistenceContext
     private EntityManager entityManager;
+
+    @EJB
+    private EmailBean emailBean;
 
     /***
      * Execute Administrator query getAllAdministrators getting all Administrators Class
@@ -68,7 +73,7 @@ public class AdministratorBean {
      * @param name of administrator acc
      * @param gender of administrator acc
      */
-    public long create(String email, String password, String name, String gender, Date birthDate) throws MyEntityExistsException, MyIllegalArgumentException {
+    public long create(String email, String password, String name, String gender, Date birthDate) throws MyEntityExistsException, MyIllegalArgumentException, MessagingException {
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -101,6 +106,8 @@ public class AdministratorBean {
         }catch (Exception ex){
             throw new MyIllegalArgumentException("Error persisting your data");
         }
+        emailBean.send(newAdministrator.getEmail(), "Welcome to Clinics",
+                "Welcome "+newAdministrator.getName()+"!\nYou are now registered in Clinics!\nContact support to get more information.");
         return newAdministrator.getId();
     }
 
@@ -108,10 +115,13 @@ public class AdministratorBean {
      * Delete a Administrator by given @Id:id - Change deleted_at field to NOW() date
      * @param id @Id to find the proposal delete Administrator
      */
-    public boolean delete(long id) throws MyEntityNotFoundException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MessagingException {
         Administrator administrator = findAdministrator(id);
         entityManager.lock(administrator, LockModeType.PESSIMISTIC_WRITE);
         administrator.setDeleted_at();
+
+        emailBean.send(administrator.getEmail(), "Your account from Clinics was deleted",
+                "Your account from Clinics was deleted! Contact support to get more information.");
         return true;
         //entityManager.remove(administrator);
         //return entityManager.find(Administrator.class, id) == null;
@@ -194,13 +204,15 @@ public class AdministratorBean {
      * Restore a Administrator by given @Id:id - Change deleted_at field to null date
      * @param id @Id to find the proposal restore Administrator
      */
-    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException, MessagingException {
         Administrator administrator = entityManager.find(Administrator.class, id);
         if (administrator == null)
             throw new MyEntityNotFoundException("Administrator \"" + id + "\" does not exist");
         if (administrator.getDeleted_at() == null)
             throw new MyEntityExistsException("Administrator \"" + id + "\" already exist");
         administrator.setDeleted_at(null);
+        emailBean.send(administrator.getEmail(), "Your account from Clinics was restored",
+                "Your account from Clinics was restored! Contact support to get more information.");
         return true;
     }
 }
