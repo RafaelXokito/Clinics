@@ -14,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,13 +36,13 @@ public class PatientService {
 
     @GET
     @Path("/")
-    public Response getAllPatientsWS() {
+    public Response getAllPatientsWS(@HeaderParam("Authorization") String auth) throws ParseException {
         if (securityContext.isUserInRole("Administrator"))
             return Response.status(Response.Status.OK)
                 .entity(toDTOsSimple(patientBean.getAllPatientsClassWithTrashed()))
                 .build();
         return Response.status(Response.Status.OK)
-                .entity(toDTOsSimple(patientBean.getAllPatientsClass()))
+                .entity(toDTOsSimple( ( (HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients() ) )
                 .build();
     }
 

@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.clinics.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Administrator;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.HealthcareProfessional;
+import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Patient;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.Person;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityExistsException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
@@ -184,12 +185,38 @@ public class HealthcareProfessionalBean {
      * @param id @Id to find the proposal restore Healthcare professional
      */
     public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
-        HealthcareProfessional administrator = entityManager.find(HealthcareProfessional.class, id);
-        if (administrator == null)
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, id);
+        if (healthcareProfessional == null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + id + "\" does not exist");
-        if (administrator.getDeleted_at() == null)
+        if (healthcareProfessional.getDeleted_at() == null)
             throw new MyEntityExistsException("Healthcare Professional \"" + id + "\" already exist");
-        administrator.setDeleted_at(null);
+        healthcareProfessional.setDeleted_at(null);
+        return true;
+    }
+
+    public Boolean associatePatient(long id, long patientId) throws MyEntityNotFoundException {
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+
+        Patient patient = entityManager.find(Patient.class, patientId);
+        if (patient == null || patient.getDeleted_at() != null)
+            throw new MyEntityNotFoundException("Patient \"" + id + "\" does not exist");
+
+        healthcareProfessional.addPatient(patient);
+        patient.addHealthcareProfessional(healthcareProfessional);
+
+        return true;
+    }
+
+    public Boolean deassociatePatient(long id, long patientId) throws MyEntityNotFoundException {
+        HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+
+        Patient patient = entityManager.find(Patient.class, patientId);
+        if (patient == null || patient.getDeleted_at() != null)
+            throw new MyEntityNotFoundException("Patient \"" + id + "\" does not exist");
+
+        healthcareProfessional.removePacient(patient);
+        patient.removeHealthcareProfessional(healthcareProfessional);
+
         return true;
     }
 }

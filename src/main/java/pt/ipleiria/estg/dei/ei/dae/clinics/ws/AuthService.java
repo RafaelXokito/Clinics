@@ -16,6 +16,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.jwt.Jwt;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -54,6 +55,7 @@ public class AuthService {
 
     @GET
     @Path("/user")
+    @RolesAllowed({"Administrator", "HealthcareProfessional", "Patient"})
     public Response demonstrateClaims(@HeaderParam("Authorization") String auth) {
         if (auth != null && auth.startsWith("Bearer ")) {
             try {
@@ -69,6 +71,7 @@ public class AuthService {
 
     @PATCH
     @Path("/updatepassword")
+    @RolesAllowed({"Administrator", "HealthcareProfessional", "Patient"})
     public Response selfUpdatePasswordWS(@HeaderParam("Authorization") String auth, NewPasswordDTO newPasswordDTO) throws Exception {
         Person person = personBean.getPersonByAuthToken(auth);
 
@@ -83,6 +86,7 @@ public class AuthService {
 
     @PUT
     @Path("/update")
+    @RolesAllowed({"Administrator", "HealthcareProfessional", "Patient"})
     public Response selfUpdateWS(@HeaderParam("Authorization") String auth, PersonDTO administratorDTO) throws Exception {
         Person person = personBean.getPersonByAuthToken(auth);
 

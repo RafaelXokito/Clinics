@@ -72,7 +72,8 @@ public class PersonBean {
      */
     public void update(long id, String email, String name, String gender) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
         Person person = findPerson(id);
-
+        if (person == null || person.getDeleted_at() != null)
+            throw new MyEntityExistsException("Person with id "+id+" does not exist");
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -96,9 +97,11 @@ public class PersonBean {
     }
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws
-            MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
+            MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException, MyEntityExistsException {
         Person person = findPerson(id);
 
+        if (person == null || person.getDeleted_at() != null)
+            throw new MyEntityExistsException("Person with id "+id+" does not exist");
         //REQUIRED VALIDATION
         if (oldPassword == null || oldPassword.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"oldPassword\" is required");

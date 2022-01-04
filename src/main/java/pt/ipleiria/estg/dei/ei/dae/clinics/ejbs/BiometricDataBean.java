@@ -43,6 +43,10 @@ public class BiometricDataBean {
         return entityManager.createNamedQuery("getAllBiometricDataWithTrashed", BiometricData.class).getResultList();
     }
 
+    public List<BiometricData> getAllBiometricDatasClassWithTrashedByHealthcareProfessional(long id) {
+        return entityManager.createNamedQuery("getAllBiometricDatasClassWithTrashedByHealthcareProfessional", BiometricData.class).setParameter("id", id).getResultList();
+    }
+
     public BiometricData findBiometricData(long id) throws MyEntityNotFoundException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
         if (biometricData == null || biometricData.getDeleted_at() != null)
@@ -72,7 +76,7 @@ public class BiometricDataBean {
      *         null if Not found Person with this username (Who is trying to create this biometric data)
      *         null if Value out of bounds for limits in Biometric_Data_Type
      */
-    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
+    public BiometricData create(long biometricDataTypeId, double value, String notes, long patientId, long personId, String source, Date createdAt) throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException, MyUnauthorizedException {
         //REQUIRED VALIDATION
         if (source == null || source.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"source\" is required");
@@ -94,6 +98,12 @@ public class BiometricDataBean {
         Person person = entityManager.find(Person.class, personId);
         if (person == null || person.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Person \"" + personId + "\" does not exist");
+
+        if (person.getClass().getSimpleName().equals("Patient") && patientId != personId)
+            throw new MyUnauthorizedException("You cant create this biometric data");
+
+        if (person.getClass().getSimpleName().equals("HealthcareProfessional") && !((HealthcareProfessional)person).getPatients().contains(patient))
+            throw new MyUnauthorizedException("Patient \"" + patientId + "\" does not belongs to this healthcare professional");
 
         if (value < biometricDataType.getMin() || value >= biometricDataType.getMax())
             throw new MyIllegalArgumentException("BiometricData \"" + value + "\" should be in bounds [" + biometricDataType.getMin() + ", " + biometricDataType.getMax() + "[");

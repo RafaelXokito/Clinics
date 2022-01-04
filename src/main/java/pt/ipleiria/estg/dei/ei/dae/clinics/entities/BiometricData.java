@@ -17,6 +17,10 @@ import java.util.Date;
         @NamedQuery(
                 name = "getAllBiometricDataWithTrashed",
                 query = "SELECT bioData FROM BiometricData bioData ORDER BY bioData.id"
+        ),
+        @NamedQuery(
+                name = "getAllBiometricDatasClassWithTrashedByHealthcareProfessional",
+                query = "SELECT bioData FROM BiometricData bioData WHERE bioData.patient.id IN (SELECT p.id FROM HealthcareProfessional h JOIN h.patients p WHERE h.id = :id) ORDER BY bioData.id"
         )
 })
 public class BiometricData implements Serializable {

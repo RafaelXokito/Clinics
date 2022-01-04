@@ -29,7 +29,7 @@ public class ObservationBean {
         return observation;
     }
 
-    public long create(long healthcareProfessionalId, long patientId, String notes, String start_date, String end_date, String notesPrescription) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
+    public long create(long healthcareProfessionalId, long patientId, String notes, String start_date, String end_date, String notesPrescription) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException, MyUnauthorizedException {
         HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId);
         if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
@@ -38,12 +38,14 @@ public class ObservationBean {
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
+        if (!healthcareProfessional.getPatients().contains(patient))
+            throw new MyUnauthorizedException("Patient \"" + patientId + "\" does not belongs to this healthcare professional");
+
         if (notes == null || notes.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"notes\" of observation is required");
 
         Observation newObservation = new Observation(healthcareProfessional, patient, notes.trim());
         healthcareProfessional.addObservation(newObservation);
-        healthcareProfessional.addPatient(patient);
         patient.addObservation(newObservation);
 
         boolean hasPrescription = notesPrescription != null && !notesPrescription.trim().isEmpty();
