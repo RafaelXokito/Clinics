@@ -22,6 +22,10 @@ import java.util.Objects;
         @NamedQuery(
                 name = "getAllBiometricDatasClassWithTrashedByHealthcareProfessional",
                 query = "SELECT bioData FROM BiometricData bioData WHERE bioData.patient.id IN (SELECT p.id FROM HealthcareProfessional h JOIN h.patients p WHERE h.id = :id) ORDER BY bioData.id"
+        ),
+        @NamedQuery(
+                name = "getAllBiometricDatasClassByPatient",
+                query = "SELECT bioData FROM BiometricData bioData WHERE bioData.patient.id = :id AND bioData.id IN (SELECT bioDataAux.id FROM BiometricData bioDataAux WHERE bioDataAux.deleted_at IS NULL OR bioDataAux.created_by.id = :id) ORDER BY bioData.id"
         )
 })
 public class BiometricData implements Serializable {
