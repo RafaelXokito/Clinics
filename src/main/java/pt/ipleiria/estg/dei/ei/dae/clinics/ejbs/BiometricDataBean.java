@@ -147,7 +147,7 @@ public class BiometricDataBean {
 
         // THE LATEST BIOMETRIC DATA OF THAT TYPE
         TypedQuery<BiometricData> query = entityManager.createQuery(
-                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC",
+                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id AND b.deleted_at IS NOT NULL ORDER BY b.created_at DESC",
                 BiometricData.class);
         query.setParameter("type_id", biometricDataTypeId).setParameter("patient_id", patientId)
                 .setLockMode(LockModeType.OPTIMISTIC);
@@ -205,10 +205,62 @@ public class BiometricDataBean {
      * 
      * @param id @Id to find the proposal delete Biometric Data
      */
-    public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException {
+    public boolean delete(long id) throws MyEntityNotFoundException, MyIllegalArgumentException, MessagingException {
         BiometricData biometricData = findBiometricData(id);
         entityManager.lock(biometricData, LockModeType.PESSIMISTIC_WRITE);
         biometricData.setDeleted_at();
+        entityManager.flush();
+
+        BiometricDataType biometricDataType = biometricData.getBiometric_data_type();
+        Patient patient = biometricData.getPatient();
+
+        // THE LATEST BIOMETRIC DATA OF THAT TYPE
+        TypedQuery<BiometricData> query = entityManager.createQuery(
+                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id AND b.deleted_at IS NOT NULL ORDER BY b.created_at DESC",
+                BiometricData.class);
+        query.setParameter("type_id", biometricDataType.getId()).setParameter("patient_id", patient.getId())
+                .setLockMode(LockModeType.OPTIMISTIC);
+        List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
+
+        // IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
+        if (latestBioDatas.size() == 0 || latestBioDatas.get(0).getCreated_at().compareTo(biometricData.getCreated_at()) < 0) {
+
+            // REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+                for (Prescription prescription : issue.getPrescriptions()) {
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(endDate) <= 0) {
+                        patient.removePrescription(prescription);
+                        prescription.removePatient(patient);
+                    }
+                }
+            }
+            BiometricDataIssue biometricDataIssue = biometricData.getBiometricDataIssue();
+
+            if (biometricDataIssue != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                // FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+                for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(endDate) <= 0) {
+                        // ADD PRESCRIPTION TO PATIENT
+                        patient.addPrescription(prescription);
+                        prescription.addPatient(patient);
+
+                        emailBean.send(patient.getEmail(), "You received a prescription",
+                                prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to "
+                                        + prescription.getEnd_date().format(formatter));
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -218,13 +270,65 @@ public class BiometricDataBean {
      * 
      * @param id @Id to find the proposal restore Biometric Data
      */
-    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException {
+    public boolean restore(long id) throws MyEntityNotFoundException, MyEntityExistsException, MessagingException {
         BiometricData biometricData = entityManager.find(BiometricData.class, id);
         if (biometricData == null)
             throw new MyEntityNotFoundException("Biometric Data \"" + id + "\" does not exist");
         if (biometricData.getDeleted_at() == null)
             throw new MyEntityExistsException("Biometric Data \"" + id + "\" already exist");
         biometricData.setDeleted_at(null);
+        entityManager.flush();
+
+        BiometricDataType biometricDataType = biometricData.getBiometric_data_type();
+        Patient patient = biometricData.getPatient();
+
+        // THE LATEST BIOMETRIC DATA OF THAT TYPE
+        TypedQuery<BiometricData> query = entityManager.createQuery(
+                "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id AND b.deleted_at IS NOT NULL ORDER BY b.created_at DESC",
+                BiometricData.class);
+        query.setParameter("type_id", biometricDataType.getId()).setParameter("patient_id", patient.getId())
+                .setLockMode(LockModeType.OPTIMISTIC);
+        List<BiometricData> latestBioDatas = query.setMaxResults(1).getResultList();
+
+        // IF THE NEW BIOMETRIC DATA IS THE FIRST INSERT OR IS MORE RECENT
+        if (latestBioDatas.size() == 0 || latestBioDatas.get(0).getCreated_at().compareTo(biometricData.getCreated_at()) < 0) {
+
+            // REMOVE TO ALL PRESCRIPTIONS RELATED TO THE BIOMETRIC DATA TYPE
+            for (BiometricDataIssue issue : biometricDataType.getIssues()) {
+                for (Prescription prescription : issue.getPrescriptions()) {
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(endDate) <= 0) {
+                        patient.removePrescription(prescription);
+                        prescription.removePatient(patient);
+                    }
+                }
+            }
+            BiometricDataIssue biometricDataIssue = biometricData.getBiometricDataIssue();
+
+            if (biometricDataIssue != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                // FOREACH GLOBAL PRESCRIPTIONS OF THE ISSUE RELATED TO THE BIOMETRIC DATA
+                for (Prescription prescription : biometricDataIssue.getPrescriptions()) {
+                    LocalDateTime endDate = prescription.getEnd_date();
+                    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+
+                    // ONLY ACTIVE PRESCRIPTIONS WILL BE REMOVED
+                    if (now.compareTo(endDate) <= 0) {
+                        // ADD PRESCRIPTION TO PATIENT
+                        patient.addPrescription(prescription);
+                        prescription.addPatient(patient);
+
+                        emailBean.send(patient.getEmail(), "You received a prescription",
+                                prescription.getNotes() + "\n" + prescription.getStart_date().format(formatter) + " to "
+                                        + prescription.getEnd_date().format(formatter));
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -306,7 +410,7 @@ public class BiometricDataBean {
 
             // THE LATEST BIOMETRIC DATA OF THAT TYPE
             TypedQuery<BiometricData> query = entityManager.createQuery(
-                    "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id ORDER BY b.created_at DESC",
+                    "SELECT b FROM BiometricData b WHERE b.biometric_data_type.id = :type_id AND b.patient.id = :patient_id AND b.deleted_at IS NOT NULL ORDER BY b.created_at DESC",
                     BiometricData.class);
             query.setParameter("type_id", biometricType.getId()).setParameter("patient_id", patientId)
                     .setLockMode(LockModeType.OPTIMISTIC);
