@@ -6,13 +6,11 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,18 +20,27 @@ public class PatientBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Object[]> getAllPatients() {
-        Query query = entityManager.createQuery("SELECT p.id, p.email, p.name, p.gender, p.healthNo  FROM Patient p ORDER BY p.id DESC");
-        List<Object[]> patientList = query.getResultList();
-        return patientList;
-    }
-
     public List<Patient> getAllPatientsClass() {
         return entityManager.createNamedQuery("getAllPatients", Patient.class).getResultList();
     }
 
+    public List<Patient> getAllPatientsClassByHealthcareProfessional(long healthcareProfessionalId) {
+        List<Patient> patients = new ArrayList<>();
+        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, healthcareProfessionalId, LockModeType.OPTIMISTIC);
+
+        if (healthcareProfessional == null) return patients;
+
+        for (Patient patient : healthcareProfessional.getPatients()) {
+            if (patient.getDeleted_at() == null) {
+                patients.add(patient);
+            }
+        }
+
+        return patients;
+    }
+
     public List<Patient> getAllPatientsClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllPatientsWithTrashed", Patient.class).getResultList();
+        return entityManager.createNamedQuery("getAllPatientsWithTrashed", Patient.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public Patient findPatient(long id) throws MyEntityNotFoundException {
@@ -117,6 +124,7 @@ public class PatientBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         Patient patient = findPatient(id);
+        entityManager.lock(patient, LockModeType.PESSIMISTIC_WRITE);
         patient.setDeleted_at();
         return true;
     }
@@ -131,6 +139,7 @@ public class PatientBean {
      */
     public void update(long id, String email, String name, String gender, int healthNo, Date birthDate) throws MyEntityNotFoundException, MyEntityExistsException, MyIllegalArgumentException {
         Patient patient = findPatient(id);
+        entityManager.lock(patient, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
@@ -170,6 +179,7 @@ public class PatientBean {
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
         Patient patient = findPatient(id);
+        entityManager.lock(patient, LockModeType.PESSIMISTIC_WRITE);
 
         //REQUIRED VALIDATION
         if (oldPassword == null || oldPassword.trim().isEmpty())

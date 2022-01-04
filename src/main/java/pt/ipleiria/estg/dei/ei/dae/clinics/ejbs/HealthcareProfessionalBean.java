@@ -22,18 +22,12 @@ public class HealthcareProfessionalBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Object[]> getAllHealthcareProfessionals() {
-        Query query = entityManager.createQuery("SELECT d.id, d.email, d.name, d.gender, d.specialty  FROM HealthcareProfessional d ORDER BY d.id DESC");
-        List<Object[]> healthcareProfessionalList = query.getResultList();
-        return healthcareProfessionalList;
-    }
-
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClass() {
-        return entityManager.createNamedQuery("getAllHealthcareProfessionals", HealthcareProfessional.class).getResultList();
+        return entityManager.createNamedQuery("getAllHealthcareProfessionals", HealthcareProfessional.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<HealthcareProfessional> getAllHealthcareProfessionalsClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllHealthcareProfessionalsWithTrashed", HealthcareProfessional.class).getResultList();
+        return entityManager.createNamedQuery("getAllHealthcareProfessionalsWithTrashed", HealthcareProfessional.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public HealthcareProfessional findHealthcareProfessional(long id) throws MyEntityNotFoundException {
@@ -109,6 +103,7 @@ public class HealthcareProfessionalBean {
      */
     public boolean delete(long id) throws MyEntityNotFoundException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+        entityManager.lock(healthcareProfessional, LockModeType.PESSIMISTIC_WRITE);
         healthcareProfessional.setDeleted_at();
         return true;
     }
@@ -122,6 +117,7 @@ public class HealthcareProfessionalBean {
      */
     public void update(long id, String email, String name, String gender, String specialty, Date birthDate) throws MyEntityNotFoundException, MyIllegalArgumentException, MyEntityExistsException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+        entityManager.lock(healthcareProfessional, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
@@ -162,6 +158,7 @@ public class HealthcareProfessionalBean {
 
     public void updatePassword(long id, String oldPassword, String newPassword) throws MyEntityNotFoundException, MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException {
         HealthcareProfessional healthcareProfessional = findHealthcareProfessional(id);
+        entityManager.lock(healthcareProfessional, LockModeType.PESSIMISTIC_WRITE);
 
         //REQUIRED VALIDATION
         if (oldPassword == null || oldPassword.trim().isEmpty())

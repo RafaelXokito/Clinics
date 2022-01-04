@@ -8,6 +8,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -34,11 +35,11 @@ public class PrescriptionBean {
     }
 
     public List<Prescription> getAllPrescriptionByPatient(long id) {
-        return entityManager.createNamedQuery("getAllPrescriptionsByPatient", Prescription.class).setParameter("id", id).getResultList();
+        return entityManager.createNamedQuery("getAllPrescriptionsByPatient", Prescription.class).setParameter("id", id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<Prescription> getAllPrescriptionByHealthcareProfessional(long id) {
-        return entityManager.createNamedQuery("getAllPrescriptionsByHealthcareProfessional", Prescription.class).setParameter("id", id).getResultList();
+        return entityManager.createNamedQuery("getAllPrescriptionsByHealthcareProfessional", Prescription.class).setParameter("id", id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     /***
@@ -99,6 +100,7 @@ public class PrescriptionBean {
      */
     public boolean delete(long id, long personId) throws MyEntityNotFoundException, MyUnauthorizedException {
         Prescription prescription = findPrescription(id);
+        entityManager.lock(prescription, LockModeType.PESSIMISTIC_WRITE);
         if (prescription.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to delete this prescription");
 
@@ -153,6 +155,8 @@ public class PrescriptionBean {
         if (prescription.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to modify this prescription");
 
+        entityManager.lock(prescription, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+
         //REQUIRED VALIDATION
         if (start_date == null || start_date.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"start_date\" is required");
@@ -203,6 +207,6 @@ public class PrescriptionBean {
     }
 
     public List<Prescription> getActivePrescriptionsByPatient(long patientId) {
-        return entityManager.createNamedQuery("getActivePrescriptionsByPatient", Prescription.class).setParameter("id", patientId).getResultList();
+        return entityManager.createNamedQuery("getActivePrescriptionsByPatient", Prescription.class).setParameter("id", patientId).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 }

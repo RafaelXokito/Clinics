@@ -62,7 +62,8 @@ public class BiometricData implements Serializable {
     @NotNull
     private String source;
 
-
+    @Version
+    private int version;
 
     public BiometricData(BiometricDataType biometric_data_type, double value, String notes, Patient patient, Person person, String source, BiometricDataIssue biometricDataIssue, Date created_at) {
         this.biometric_data_type = biometric_data_type;

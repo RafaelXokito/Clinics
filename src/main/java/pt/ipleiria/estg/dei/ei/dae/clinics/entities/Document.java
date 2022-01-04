@@ -13,7 +13,7 @@ public class Document implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "observation_id") // ID da Observação
     private Observation observation;
 
@@ -22,6 +22,9 @@ public class Document implements Serializable {
 
     @NotNull
     private String filepath;
+
+    @Version
+    private int version;
 
     public Document(Observation observation, String filename, String filepath) {
         this.observation = observation;

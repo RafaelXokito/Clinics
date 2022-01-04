@@ -30,7 +30,7 @@ public class Patient extends Person implements Serializable {
     private List<BiometricData> biometric_data;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CREATED_BY")
     private Employee created_by;
 

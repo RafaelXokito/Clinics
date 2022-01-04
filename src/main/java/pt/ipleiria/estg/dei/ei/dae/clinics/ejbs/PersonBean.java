@@ -11,6 +11,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +37,7 @@ public class PersonBean {
     }
 
     public List<Person> getAllPersons() {
-        return em.createNamedQuery("getAllPersons", Person.class).getResultList();
+        return em.createNamedQuery("getAllPersons", Person.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public Person authenticate(final String email, final String password) throws Exception {
@@ -74,6 +75,8 @@ public class PersonBean {
         Person person = findPerson(id);
         if (person == null || person.getDeleted_at() != null)
             throw new MyEntityExistsException("Person with id "+id+" does not exist");
+        em.lock(person, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+
         //REQUIRED VALIDATION
         if (email == null || email.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"email\" is required");
@@ -99,6 +102,7 @@ public class PersonBean {
     public void updatePassword(long id, String oldPassword, String newPassword) throws
             MyIllegalArgumentException, NoSuchAlgorithmException, InvalidKeySpecException, MyEntityExistsException {
         Person person = findPerson(id);
+        em.lock(person, LockModeType.PESSIMISTIC_WRITE);
 
         if (person == null || person.getDeleted_at() != null)
             throw new MyEntityExistsException("Person with id "+id+" does not exist");

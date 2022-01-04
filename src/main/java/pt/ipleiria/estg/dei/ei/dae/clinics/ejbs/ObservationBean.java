@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyUnauthorizedException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
@@ -34,7 +35,7 @@ public class ObservationBean {
         if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Healthcare Professional \"" + healthcareProfessionalId + "\" does not exist");
 
-        Patient patient = entityManager.find(Patient.class, patientId);
+        Patient patient = entityManager.find(Patient.class, patientId, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
         if (patient == null || patient.getDeleted_at() != null)
             throw new MyEntityNotFoundException("Patient \"" + patientId + "\" does not exist");
 
@@ -78,6 +79,8 @@ public class ObservationBean {
         if (observation.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to modify this observation");
 
+        entityManager.lock(observation, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+
         if (notesObservation == null || notesObservation.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"notes\" of observation is required");
 
@@ -109,14 +112,7 @@ public class ObservationBean {
         if (observation.getHealthcareProfessional().getId() != personId)
             throw new MyUnauthorizedException("You are not allowed to delete this observation");
 
-        HealthcareProfessional healthcareProfessional = entityManager.find(HealthcareProfessional.class, observation.getHealthcareProfessional().getId());
-        if (healthcareProfessional == null || healthcareProfessional.getDeleted_at() != null)
-            throw new MyEntityNotFoundException("Healthcare Professional \"" + observation.getHealthcareProfessional().getId() + "\" does not exist");
-
-        Patient patient = entityManager.find(Patient.class, observation.getPatient().getId());
-        if (patient == null || patient.getDeleted_at() != null)
-            throw new MyEntityNotFoundException("Patient \"" + observation.getPatient().getId() + "\" does not exist");
-
+        entityManager.lock(observation, LockModeType.PESSIMISTIC_WRITE);
 
         Prescription prescription = observation.getPrescription();
         if (prescription != null)
@@ -146,11 +142,11 @@ public class ObservationBean {
     }
 
     public List<Observation> getAllObservationByPatient(long id) {
-        return entityManager.createNamedQuery("getAllObservationsByPatient", Observation.class).setParameter("id", id).getResultList();
+        return entityManager.createNamedQuery("getAllObservationsByPatient", Observation.class).setParameter("id", id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<Observation> getAllObservationByHealthcareProfessional(long id) {
-        return entityManager.createNamedQuery("getAllObservationsByHealthcareProfessional", Observation.class).setParameter("id", id).getResultList();
+        return entityManager.createNamedQuery("getAllObservationsByHealthcareProfessional", Observation.class).setParameter("id", id).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     /**

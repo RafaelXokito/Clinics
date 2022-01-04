@@ -49,6 +49,8 @@ public class Observation implements Serializable {
     @OneToMany(mappedBy = "observation", cascade = CascadeType.REMOVE)
     private List<Document> documents;
 
+    @Version
+    private int version;
 
     public Observation(HealthcareProfessional healthcareProfessional, Patient patient, String notes, Prescription prescription) {
         this.healthcareProfessional = healthcareProfessional;

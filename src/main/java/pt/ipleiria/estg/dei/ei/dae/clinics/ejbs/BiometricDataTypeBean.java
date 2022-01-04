@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.clinics.exceptions.MyIllegalArgumentException
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -26,11 +27,11 @@ public class BiometricDataTypeBean {
     }
 
     public List<BiometricDataType> getAllBiometricDataTypeClass() {
-        return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricDataTypes", BiometricDataType.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public List<BiometricDataType> getAllBiometricDataTypeClassWithTrashed() {
-        return entityManager.createNamedQuery("getAllBiometricDataTypesWithTrashed", BiometricDataType.class).getResultList();
+        return entityManager.createNamedQuery("getAllBiometricDataTypesWithTrashed", BiometricDataType.class).setLockMode(LockModeType.OPTIMISTIC).getResultList();
     }
 
     public BiometricDataType findBiometricDataType(long id) throws MyEntityNotFoundException {
@@ -66,7 +67,6 @@ public class BiometricDataTypeBean {
         entityManager.flush();
 
         return newBiometricDataType;
-
     }
 
     /***
@@ -97,6 +97,7 @@ public class BiometricDataTypeBean {
      */
     public BiometricDataType update(long id, String name, double min, double max, String unit, String unit_name) throws MyEntityNotFoundException, MyIllegalArgumentException {
         BiometricDataType biometricDataType = findBiometricDataType(id);
+        entityManager.lock(biometricDataType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
         if (name == null || name.trim().isEmpty())
             throw new MyIllegalArgumentException("Field \"name\" is required");
