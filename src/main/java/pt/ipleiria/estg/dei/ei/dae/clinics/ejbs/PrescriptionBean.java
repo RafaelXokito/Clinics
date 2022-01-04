@@ -86,7 +86,8 @@ public class PrescriptionBean {
         Prescription prescription = new Prescription(healthcareProfessional, start_date.trim(), end_date.trim(), notes.trim(), biometricDataIssues);
 
         for (BiometricDataIssue issue : biometricDataIssues) {
-            issue.addPrescription(prescription);
+            BiometricDataIssue biometricDataIssue = entityManager.find(BiometricDataIssue.class, issue.getId());
+            biometricDataIssue.addPrescription(prescription);
         }
 
         healthcareProfessional.addPrescription(prescription);
@@ -188,22 +189,28 @@ public class PrescriptionBean {
         if (!isGlobalPrescription)
             return;
 
+        //REMOVE ALL OLD ISSUES
         for (BiometricDataIssue oldBiometricDataIssue : prescription.getBiometric_data_issue()) {
-            //IF THERE IS ANY REMOVAL OF ISSUES FROM GLOBAL PRESCRIPTION, ALL PATIENT ARE UNLINKED TO THE PRESCRIPTION
-            if (!biometricDataIssues.contains(oldBiometricDataIssue)) {
-                oldBiometricDataIssue.removePrescription(prescription);
-                for (Patient patient : prescription.getPatients()) {
-                    patient.removePrescription(prescription);
-                    prescription.removePatient(patient);
-                }
-                break;
-            }
+            if (biometricDataIssues.contains(oldBiometricDataIssue)) continue;
+
+            oldBiometricDataIssue.removePrescription(prescription);
         }
 
-        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
-            biometricDataIssue.addPrescription(prescription);
-            prescription.addBiometricDataIssue(biometricDataIssue);
+        //REMOVE ALL PATIENT ASSOCIATED WITH PRESCRIPTION
+        for (Patient patient : prescription.getPatients()) {
+            patient.removePrescription(prescription);
         }
+        prescription.setPatients(new ArrayList<>());
+
+        prescription.setBiometricDataIssues(new ArrayList<>());
+        //ADD ALL ISSUES
+        for (BiometricDataIssue biometricDataIssue : biometricDataIssues) {
+            BiometricDataIssue issue = entityManager.find(BiometricDataIssue.class, biometricDataIssue.getId());
+            issue.addPrescription(prescription);
+            prescription.addBiometricDataIssue(issue);
+        }
+
+        entityManager.flush();
     }
 
     /**
