@@ -122,6 +122,7 @@ public class ConfigBean {
             healthcareProfessionalBean.associatePatient(hBrunaId,pAndreiaId);
             healthcareProfessionalBean.associatePatient(hBrunaId,pSilviaId);
             healthcareProfessionalBean.associatePatient(hJoseId,pLeonelId);
+            healthcareProfessionalBean.associatePatient(hJoseId,pDanielId);
 
             System.out.println("Creating some Biometric Data");
             biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
