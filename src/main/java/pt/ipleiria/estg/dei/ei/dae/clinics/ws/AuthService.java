@@ -27,12 +27,16 @@ import java.util.logging.Logger;
 @Produces({MediaType.APPLICATION_JSON}) // injects header “Content-Type: application/json”
 @Consumes({MediaType.APPLICATION_JSON}) // injects header “Accept: application/json”
 public class AuthService {
+
     private static final Logger log =
             Logger.getLogger(AuthService.class.getName());
+
     @EJB
     JwtBean jwtBean;
+
     @EJB
     PersonBean personBean;
+
     @POST
     @Path("/login")
     public Response authenticateUser(AuthDTO authDTO) {
