@@ -55,11 +55,15 @@ public class PatientService {
             throw new MyUnauthorizedException("You are not allowed to view this patient");
 
         if (securityContext.isUserInRole("HealthcareProfessional")) {
+            boolean isMyPatient = false;
             for (Patient patient:((HealthcareProfessional)personBean.getPersonByAuthToken(auth)).getPatients()) {
-                if (patient.getId() == id)
+                if (patient.getId() == id) {
+                    isMyPatient = true;
                     break;
+                }
             }
-            throw new MyUnauthorizedException("You are not allowed to view this patient");
+            if(!isMyPatient)
+                throw new MyUnauthorizedException("You are not allowed to view this patient");
         }
 
         Patient patient = patientBean.findPatient(id);
