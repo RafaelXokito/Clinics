@@ -126,29 +126,30 @@ public class ConfigBean {
 
             System.out.println("Creating some Biometric Data");
             biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 20).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 40.5,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 22).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 36.3,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 24).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 35.9,
-                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", new Date());
+                    "Paciente com dores no peito.", pDanielId, hBrunaId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 26).atZone(ZoneId.systemDefault()).toInstant()));
 
             biometricDataBean.create(temperaturaCorporal.getId(), 39.5,
-                    "", pDanielId, pDanielId, "Exam", new Date());
+                    "", pDanielId, pDanielId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 28).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 40.5,
-                    "", pDanielId, pDanielId, "Exam", new Date());
+                    "", pDanielId, pDanielId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 30).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 36.3,
-                    "", pLeonelId, pLeonelId, "Exam", new Date());
+                    "", pLeonelId, pLeonelId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 32).atZone(ZoneId.systemDefault()).toInstant()));
             biometricDataBean.create(temperaturaCorporal.getId(), 35.9,
-                    "", pLeonelId, pLeonelId, "Exam", new Date());
+                    "", pLeonelId, pLeonelId, "Exam", Date.from(LocalDateTime.of(2022, 1, 12, 10, 34).atZone(ZoneId.systemDefault()).toInstant()));
 
             System.out.println("Creating some Observations");
             observationBean.create(hBrunaId, pAndreiaId, "Tudo normal", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "Descanço");
             observationBean.create(hBrunaId, pSilviaId, "Tudo normal", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-29 11:30", "Repouso");
             observationBean.create(hBrunaId, pDanielId, "Tudo normal", "", "", "");
             observationBean.create(hBrunaId, pDanielId, "Tudo normal", "", "", "");
-            observationBean.create(hJoseId, pLeonelId, "Tudo normal", "", "", "");
+            observationBean.create(hJoseId, pLeonelId, "Abdomen dilatado", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-30 11:30", "Tomar 1mg de ben-u-ron a cada 12 horas e repousar totalmente");
+            observationBean.create(hJoseId, pDanielId, "Abdomen dilatado", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), "2022-01-30 11:30", "Tomar 1mg de ben-u-ron a cada 12 horas e repousar totalmente");
 
             administratorBean.delete(aGasparId);
         } catch (Exception e) {
