@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.clinics.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.clinics.dtos.*;
+import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.HealthcareProfessionalBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PatientBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.ejbs.PersonBean;
 import pt.ipleiria.estg.dei.ei.dae.clinics.entities.*;
@@ -28,6 +29,9 @@ public class PatientService {
 
     @EJB
     private PatientBean patientBean;
+
+    @EJB
+    private HealthcareProfessionalBean healthcareProfessionalBean;
 
     @EJB
     private PersonBean personBean;
@@ -84,6 +88,9 @@ public class PatientService {
                 patientDTO.getHealthNo(),
                 personBean.getPersonByAuthToken(auth).getId(),
                 patientDTO.getBirthDate());
+
+        if (securityContext.isUserInRole("HealthcareProfessional"))
+            healthcareProfessionalBean.associatePatient(personBean.getPersonByAuthToken(auth).getId(), id);
 
         Patient patient = patientBean.findPatient(id);
 
